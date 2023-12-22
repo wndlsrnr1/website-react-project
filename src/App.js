@@ -16,7 +16,7 @@ const App = () => {
   const dispatch = useDispatch();
   const [loaded, setLoaded] = useState(false);
 
-  //최상위 트리에서 로그인 검증
+  // 최상위 트리에서 로그인 검증
   useEffect(() => {
     fetch("/login/auth")
       .then(
