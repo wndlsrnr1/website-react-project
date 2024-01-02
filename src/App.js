@@ -10,6 +10,9 @@ import Logout from "./login/Logout";
 import MyPage from "./user/MyPage";
 import {useDispatch, useSelector} from "react-redux";
 import {login, logout} from "./store/action";
+import AdminMain from "./admin/AdminMain";
+import ItemManage from "./admin/item/ItemManage";
+import CategoryManage from "./admin/category/CategoryManage";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -29,6 +32,7 @@ const App = () => {
       .then(
         (data) => {
           const check = data.data.login;
+          console.log("check", check);
           if (check === true) {
             dispatch(login());
           } else {
@@ -47,6 +51,9 @@ const App = () => {
         <Route path={"/user/find"} exact component={FindPassword}/>
         <Route path={"/logout"} exact component={Logout}/>
         <Route path={"/user/mypage"} component={MyPage}/>
+        <Route path={"/admin"} exact component={AdminMain}/>
+        <Route path={"/admin/items"} exact component={ItemManage}/>
+        <Route path={"/admin/categories"} exact component={CategoryManage}/>
       </Switch>
     </BrowserRouter>
   );

@@ -8,6 +8,10 @@ const Header = () => {
 
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
 
+  useEffect(() => {
+    console.log("isLoggedIn", isLoggedIn);
+  })
+
   return (
     <>
       <Container className={"d-flex flex-column"}>

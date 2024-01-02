@@ -8,6 +8,7 @@ const saveState = (state) => {
 
 const loadState = () => {
   const userLoginJSON = sessionStorage.getItem("user");
+  console.log(userLoginJSON);
   if (userLoginJSON === null) {
     return undefined;
   }
