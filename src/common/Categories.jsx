@@ -34,7 +34,7 @@ const Categories = () => {
     if (loaded) {
       return;
     }
-    fetch("/category", {method: "get"}).then((resp) => {
+    fetch("/categories", {method: "get"}).then((resp) => {
       return resp.json()
     }).then((data) => {
       console.log(data);
