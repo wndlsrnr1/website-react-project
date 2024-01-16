@@ -18,12 +18,12 @@ const togglePrevPage = (pageNumber, totalPage, pagePerChunk) => {
 
 const hasNextPage = (pageNumber, totalPage, pagePerChunk) => {
   const thisPageGroup = Math.floor(pageNumber / pagePerChunk);
-  const totalPageGroup = Math.floor(totalPage / pagePerChunk);
+  const totalPageGroup = Math.floor((totalPage - 1) / pagePerChunk);
   return thisPageGroup < totalPageGroup;
 }
 
 const makePageArray = (presentPageNumber, pagePerChunk) => {
-  const start = Math.floor(presentPageNumber / pagePerChunk);
+  const start = Math.floor(presentPageNumber / pagePerChunk) * pagePerChunk;
   const result = [];
   for (let i = start; i < start + pagePerChunk; i++) {
     result.push(i + 1);
@@ -51,21 +51,48 @@ const CategoryManage = () => {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+
+  //About Paging Category
   const [categoryPageSize, setCategoryPageSize] = useState(0);
   const [categoryTotalElements, setCategoryTotalElements] = useState(0);
   const [categoryTotalPages, setCategoryTotalPages] = useState(0);
   const [categoryNumberOfElements, setCategoryNumberOfElements] = useState(0);
   const [categoryPageNumber, setCategoryPageNumber] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(-1);
-  const [categorySearchInput, setCategorySearchInput] = useState("");
-  const [categorySearchCond, setCategorySearchCond] = useState(null);
 
-  useEffect(() => {
-    if (isLoaded) {
+  //About Paging Subcategory
+  const [subcategoryPageSize, setSubcategoryPageSize] = useState(0);
+  const [subcategoryTotalElements, setSubcategoryTotalElements] = useState(0);
+  const [subcategoryTotalPages, setSubcategoryTotalPages] = useState(0);
+  const [subcategoryNumberOfElements, setSubcategoryNumberOfElements] = useState(0);
+  const [subcategoryPageNumber, setSubcategoryPageNumber] = useState(0);
+
+  const [selectedSubcategory, setSelectedSubcategory] = useState(-1);
+  const [selectedCategory, setSelectedCategory] = useState(-1);
+  const [categorySearchCond, setCategorySearchCond] = useState(null);
+  const [subcategorySearchCond, setSubcategorySearchCond] = useState(null);
+  //controlled input
+  const [categorySearchInput, setCategorySearchInput] = useState("");
+  const [subcategorySearchInput, setSubcategorySearchInput] = useState("");
+
+  // onSubmitSubcategorySearchName, onChangeSubcategoryInput, subcategorySearchInput
+
+  const onChangeSubcategoryInput = (event) => {
+    const value = event.currentTarget.value;
+    setSubcategorySearchInput(value);
+  }
+
+  const onSubmitSubcategorySearchName = (event) => {
+    event.preventDefault();
+    let path = `/admin/subcategories?size=10&page=${0}`;
+    if (selectedCategory !== -1) {
+      path += `&categoryId=${selectedCategory}`
+    }
+    if (!subcategorySearchInput && !subcategorySearchCond) {
       return;
     }
-
-    fetch("/admin/categories?size=10&page=" + 0, {method: "get"})
+    path += `&searchName=${subcategorySearchInput}`;
+    fetch(path, {method: "get"})
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -73,7 +100,32 @@ const CategoryManage = () => {
       })
       .then(resp => {
         const {data, error, message} = resp;
-        console.log(data);
+        const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
+        setSubcategories(content);
+        setSubcategoryPageSize(size);
+        setSubcategoryTotalElements(totalElements);
+        setSubcategoryTotalPages(totalPages);
+        setSubcategoryNumberOfElements(number);
+        setSubcategoryPageNumber(number);
+        setSubcategorySearchCond(subcategorySearchInput);
+        setSelectedSubcategory(-1);
+      });
+    setIsLoaded(true);
+  }
+  //loaded first
+  useEffect(() => {
+    if (isLoaded) {
+      return;
+    }
+    fetch("/admin/categories?size=10&page=" + 0, {method: "get"})
+      .then((response) => {
+        if (response.status !== response.ok) {
+          console.error("response status is not 200")
+        }
+        return response.json();
+      })
+      .then(resp => {
+        const {data, error, message} = resp;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
         setCategoryPageSize(size);
@@ -82,15 +134,37 @@ const CategoryManage = () => {
         setCategoryNumberOfElements(number);
         setCategoryPageNumber(number);
       });
-
     setIsLoaded(true);
+
+    fetch("/admin/subcategories?size=10&page=0", {method: "get"})
+      .then((response) => {
+        if (response.status !== response.ok) {
+          console.error("response status is not 200")
+        }
+        return response.json();
+      }).then(json => {
+      const {data, error, message} = json;
+      const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
+      setSubcategories(content);
+      setSubcategoryPageSize(size);
+      setSubcategoryTotalElements(totalElements);
+      setSubcategoryTotalPages(totalPages);
+      setSubcategoryNumberOfElements(number);
+      setSubcategoryPageNumber(number);
+    });
   }, [categories]);
 
-  //clearSelected
+
+  //check State on Develope process
+  useEffect(() => {
+  })
+
+  //clear state
   const clearSelectedAfterSearch = () => {
     setSelectedCategory(-1);
   };
 
+  //
   const onChangeCategoryInput = (event) => {
     const categorySearchInput = event.currentTarget.value;
     setCategorySearchInput(categorySearchInput);
@@ -98,7 +172,15 @@ const CategoryManage = () => {
 
   const onSubmitCategorySearchName = (event) => {
     event.preventDefault();
-    fetch(`/admin/categories?size=10&page=${0}&searchName=${categorySearchInput}`, {method: "get"})
+    let path = `/admin/categories?size=10&page=${0}`;
+    if (categorySearchInput) {
+      path += `&searchName=${categorySearchInput}`;
+    }
+
+    if (!categorySearchInput && !categorySearchCond) {
+      return;
+    }
+    fetch(path, {method: "get"})
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -106,7 +188,6 @@ const CategoryManage = () => {
       })
       .then(resp => {
         const {data, error, message} = resp;
-        console.log(data);
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
         setCategoryPageSize(size);
@@ -119,6 +200,37 @@ const CategoryManage = () => {
     setIsLoaded(true);
     clearSelectedAfterSearch();
   }
+
+  useEffect(() => {
+    let path = "/admin/subcategories?size=10&page=0";
+    if (selectedCategory === -1) {
+      setSubcategories([]);
+      setSubcategoryPageSize(0);
+      setSubcategoryTotalElements(0);
+      setSubcategoryTotalPages(0);
+      setSubcategoryNumberOfElements(0);
+      setSubcategoryPageNumber(0);
+      return;
+    } else {
+      path += "&categoryId=" + selectedCategory;
+    }
+    fetch(path, {method: "get"})
+      .then((response) => {
+        if (response.status !== response.ok) {
+          console.error("response status is not 200")
+        }
+        return response.json();
+      }).then(json => {
+      const {data, error, message} = json;
+      const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
+      setSubcategories(content);
+      setSubcategoryPageSize(size);
+      setSubcategoryTotalElements(totalElements);
+      setSubcategoryTotalPages(totalPages);
+      setSubcategoryNumberOfElements(number);
+      setSubcategoryPageNumber(number);
+    });
+  }, [selectedCategory]);
 
   const onClickCategoryPage = (pageNumber) => {
     let requestPath = `/admin/categories?size=10&page=${pageNumber - 1}`;
@@ -134,7 +246,6 @@ const CategoryManage = () => {
       })
       .then(resp => {
         const {data, error, message} = resp;
-        console.log(data);
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
         setCategoryPageSize(size);
@@ -156,6 +267,75 @@ const CategoryManage = () => {
     setSelectedCategory(categoryId);
   }
 
+  const onClickSubCategoryItem = (event) => {
+    event.preventDefault();
+    const subcategoryId = event.currentTarget.getAttribute("subcategory_id");
+    if (subcategoryId === selectedSubcategory) {
+      setSelectedSubcategory(-1);
+      return;
+    }
+    setSelectedSubcategory(subcategoryId);
+  }
+
+  const onClickSubCategoryPage = (pageNumber) => {
+    let requestPath = `/admin/subcategories?size=10&page=${pageNumber - 1}`;
+    if (subcategorySearchCond !== null && subcategorySearchCond !== undefined && subcategorySearchCond) {
+      requestPath += `&searchName=${subcategorySearchCond}`;
+    }
+    fetch(requestPath, {method: "get"})
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(resp => {
+        const {data, error, message} = resp;
+        const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
+        setSubcategories(content);
+        setSubcategoryPageSize(size);
+        setSubcategoryTotalElements(totalElements);
+        setSubcategoryTotalPages(totalPages);
+        setSubcategoryNumberOfElements(number);
+        setSubcategoryPageNumber(number);
+      });
+  }
+
+  const onClickSubCategoryPreviousPage = (pageNumber) => {
+    const previous = (Math.floor(pageNumber / 5) - 1) * 5 + 1;
+    onClickSubCategoryPage(previous);
+  }
+
+  const onClickSubCategoryFirstPage = () => {
+    onClickSubCategoryPage(1);
+  }
+
+  const onClickSubCategoryNextPage = (pageNumber) => {
+    onClickSubCategoryPage(Math.floor(pageNumber / 5) * 5 + 5 + 1);
+  }
+
+  const onClickSubCategoryLastPage = () => {
+    onClickSubCategoryPage(subcategoryTotalPages);
+  }
+
+  const onClickCategoryPreviousPage = (pageNumber) => {
+    const move = (Math.floor(pageNumber / 5) - 1) * 5 + 1;
+    onClickCategoryPage(move);
+  }
+
+  const onClickCategoryFirstPage = (pageNumber) => {
+    const move = 1;
+    onClickCategoryPage(move);
+  }
+
+  const onClickCategoryNextPage = (pageNumber) => {
+    const move = (Math.floor(pageNumber / 5) + 1) * 5 + 1;
+    onClickCategoryPage(move);
+  }
+
+  const onClickCategoryLastPage = (pageNumber) => {
+    const move = categoryTotalPages;
+    onClickCategoryPage(move);
+  }
 
 
   return (
@@ -181,7 +361,8 @@ const CategoryManage = () => {
                   categories.map((elem, index) => {
                     return (
                       <>
-                        <ListGroupItem active={isActiveList(elem.id, selectedCategory)} tag="button" category_id={elem.id} onClick={onClickCategoryItem}>
+                        <ListGroupItem active={isActiveList(elem.id, selectedCategory)} tag="button"
+                                       category_id={elem.id} onClick={onClickCategoryItem}>
                           {elem.nameKor} ({elem.name})
                         </ListGroupItem>
                       </>
@@ -194,10 +375,12 @@ const CategoryManage = () => {
               <div className={"d-flex justify-content-center"}>
                 <Pagination size={"sm"}>
                   <PaginationItem disabled={togglePrevPage(categoryPageNumber, categoryTotalPages, 5)}>
-                    <PaginationLink href="#" tag={"button"}>&lt;&lt;</PaginationLink>
+                    <PaginationLink href="#" tag={"button"}
+                                    onClick={() => onClickCategoryFirstPage(categoryPageNumber)}>&lt;&lt;</PaginationLink>
                   </PaginationItem>
                   <PaginationItem disabled={togglePrevPage(categoryPageNumber, categoryTotalPages, 5)}>
-                    <PaginationLink tag={"button"} href="#">&lt;</PaginationLink>
+                    <PaginationLink tag={"button"} href="#"
+                                    onClick={() => onClickCategoryPreviousPage(categoryPageNumber)}>&lt;</PaginationLink>
                   </PaginationItem>
                   {
                     makePageArray(categoryPageNumber, 5).map((elem, index) => {
@@ -214,10 +397,12 @@ const CategoryManage = () => {
                     })
                   }
                   <PaginationItem disabled={!hasNextPage(categoryPageNumber, categoryTotalPages, 5)}>
-                    <PaginationLink tag={"button"} href="#">></PaginationLink>
+                    <PaginationLink tag={"button"} href="#"
+                                    onClick={() => onClickCategoryNextPage(categoryPageNumber)}>></PaginationLink>
                   </PaginationItem>
                   <PaginationItem disabled={!hasNextPage(categoryPageNumber, categoryTotalPages, 5)}>
-                    <PaginationLink tag={"button"} href="#">>></PaginationLink>
+                    <PaginationLink tag={"button"} href="#"
+                                    onClick={() => onClickCategoryLastPage(categoryPageNumber)}>>></PaginationLink>
                   </PaginationItem>
                 </Pagination>
               </div>
@@ -225,9 +410,18 @@ const CategoryManage = () => {
             <div>
               <h4 className={"text-center"}>수정</h4>
               <FormGroup>
-                <ListGroupItem action={true} active={true} className={"mb-2"}>Dapibus ac facilisis
-                  in</ListGroupItem>
-
+                {
+                  selectedCategory === -1 ?
+                    <ListGroupItem action={true} active={true} className={"mb-2"}>
+                      카테고리를 선택해주세요
+                    </ListGroupItem> :
+                    categories.filter((elem) => parseInt(elem.id) === parseInt(selectedCategory)).map((elem) => {
+                      return (
+                        <ListGroupItem category_id={elem.id} action={true} active={true} className={"mb-2"}>
+                          {elem.nameKor} ({elem.name})
+                        </ListGroupItem>
+                      )
+                    })}
                 <InputGroup className={"mb-2"}>
                   <InputGroupText>한국 이름</InputGroupText>
                   <Input name={"name_kor"} placeholder={"바꿀 한국 이름 입력"} /*value={"원래 한국이름"}*//>
@@ -255,75 +449,62 @@ const CategoryManage = () => {
               </div>
             </FormGroup>
           </div>
+
           <div className={"subcategory p-5 w-100"}>
-            <InputGroup className={"pb-5"}>
-              <InputGroupText>이름 검색</InputGroupText>
-              <Input name={"category_cond"} type="text" placeholder={"서브카테고리 이름을 검색해주세요"}/>
-              <Button className={"bg-primary"}>검색</Button>
-            </InputGroup>
+            <Form onSubmit={onSubmitSubcategorySearchName}>
+              <InputGroup className={"pb-5"}>
+                <InputGroupText>이름 검색</InputGroupText>
+                <Input name={"subcategory_cond"} type="text" placeholder={"서브카테고리 이름을 검색해주세요"}
+                       onChange={onChangeSubcategoryInput} value={subcategorySearchInput}/>
+                <Button className={"bg-primary"}>검색</Button>
+              </InputGroup>
+            </Form>
+
             <h3 className={"text-center"}>서브카테고리</h3>
+
             <div className={"pb-5"}>
               <ListGroup className={"pb-4"}>
-                <ListGroupItem action active={false} tag="button">
-                  Cras justo odio
-                </ListGroupItem>
-                <ListGroupItem action active={true} tag="button">
-                  Dapibus ac facilisis in
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Morbi leo risus
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
-                <ListGroupItem action={true} tag="button">
-                  Porta ac consectetur ac
-                </ListGroupItem>
+                {
+                  subcategories.map((elem, index) => {
+                    return (
+                      <ListGroupItem active={isActiveList(elem.subcategoryId, selectedSubcategory)} tag="button"
+                                     category_id={elem.categoryId} subcategory_id={elem.subcategoryId}
+                                     onClick={onClickSubCategoryItem}>
+                        {elem.nameKor} ({elem.name})
+                      </ListGroupItem>
+                    )
+                  })
+                }
               </ListGroup>
 
               <div className={"d-flex justify-content-center"}>
                 <Pagination size={"sm"}>
-                  <PaginationItem disabled>
-                    <PaginationLink href="#" tag={"button"}>&lt;&lt;</PaginationLink>
+                  <PaginationItem disabled={togglePrevPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
+                    <PaginationLink href="#" tag={"button"}
+                                    onClick={() => onClickSubCategoryFirstPage()}>&lt;&lt;</PaginationLink>
                   </PaginationItem>
-                  <PaginationItem disabled>
-                    <PaginationLink tag={"button"} href="#">&lt;</PaginationLink>
+                  <PaginationItem disabled={togglePrevPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
+                    <PaginationLink tag={"button"} href="#"
+                                    onClick={() => onClickSubCategoryPreviousPage(subcategoryPageNumber)}>&lt;</PaginationLink>
                   </PaginationItem>
-                  <PaginationItem active>
-                    <PaginationLink tag={"button"} href="#">1</PaginationLink>
+                  {
+                    makePageArray(subcategoryPageNumber, 5).map((elem, index) => {
+                      return (
+                        <PaginationItem active={pageActive(elem, subcategoryPageNumber)}
+                                        disabled={isDisablePage(elem, subcategoryTotalPages)} key={elem.toString()}>
+                          <PaginationLink tag={"button"} href="#"
+                                          onClick={() => onClickSubCategoryPage(elem)}>{elem}</PaginationLink>
+                        </PaginationItem>
+                      )
+                    })
+                  }
+                  <PaginationItem disabled={!hasNextPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
+                    <PaginationLink tag={"button"} href="#"
+                                    onClick={() => onClickSubCategoryNextPage(subcategoryPageNumber)}>></PaginationLink>
                   </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink tag={"button"} href="#">2</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem disabled>
-                    <PaginationLink tag={"button"} href="#">3</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink tag={"button"} href="#">4</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink tag={"button"} href="#">5</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink tag={"button"} href="#">></PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink tag={"button"} href="#">>></PaginationLink>
+                  <PaginationItem disabled={!hasNextPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
+                    <PaginationLink tag={"button"} href="#"
+                                    onClick={() => onClickSubCategoryLastPage()}>>></PaginationLink>
                   </PaginationItem>
                 </Pagination>
               </div>
@@ -337,7 +518,23 @@ const CategoryManage = () => {
                   <option value="1">카테고리2</option>
                   <option value="1">카테고리3</option>
                 </Input>
-                <ListGroupItem action={true} active={true} className={"mb-2"}>Dapibus ac facilisis in</ListGroupItem>
+
+                {
+                  selectedSubcategory !== -1 ? (
+                    subcategories.filter(elem => elem.subcategoryId == selectedSubcategory).map((elem => {
+                      return (
+                        <ListGroupItem action={true} active={true} className={"mb-2"} subcategory_id={elem.subcategoryId} category_id={elem.categoryId}>
+                          {elem.nameKor} ({elem.name})
+                        </ListGroupItem>
+                      )
+                    }))
+                  ) : (
+                    <ListGroupItem action={true} active={true} className={"mb-2"}>
+                      서브카테고리를 선택해주세요
+                    </ListGroupItem>
+                  )
+                }
+
 
                 <InputGroup className={"mb-2"}>
                   <InputGroupText>한국 이름</InputGroupText>
@@ -354,7 +551,18 @@ const CategoryManage = () => {
             </div>
             <div>
               <h4 className={"text-center"}>추가</h4>
-              <ListGroupItem action={true} active={true} className={"mb-2"}>Dapibus ac facilisis in</ListGroupItem>
+              {
+                selectedCategory !== -1 ? (
+                  categories.filter(elem => elem.id == selectedCategory).map((elem, idx) => {
+                    return (
+                      <ListGroupItem action={true} active={true} className={"mb-2"}>선택된 카테고리: {elem.nameKor} (elem.name)</ListGroupItem>
+                    )
+                  })
+                ) : (
+                  <ListGroupItem action={true} active={true} className={"mb-2"}>카테고리를 선택해주세요</ListGroupItem>
+                )
+              }
+
               <FormGroup>
                 <InputGroup className={"mb-2"}>
                   <InputGroupText>한국 이름</InputGroupText>
