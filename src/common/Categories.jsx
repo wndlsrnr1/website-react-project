@@ -38,7 +38,7 @@ const Categories = () => {
       return resp.json()
     }).then((data) => {
       console.log(data);
-      setCategories(data.data);
+      setCategories(data.data.slice(0, 10));
     });
     setLoaded(true);
   }, [categories, subCategories, loaded])
