@@ -104,20 +104,6 @@ const CategoryManage = () => {
   }, [categories]);
 
 
-  //check State on Develope process
-
-  const onSubmitFindCategoryForUpdateSubcategory = (event) => {
-    event.preventDefault();
-    let path = `/admin/categories?page=0&size=100&searchName=${categorySearchInput2}`
-    fetch(path, {method: "get"})
-      .then(resp => resp.json())
-      .then(json => {
-        const {data, error, message} = json;
-        const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-        setSelectedCategoryForSubcategoryUpdate(selectedCategory);
-      });
-  }
-
   //clear state
   const clearSelectedAfterSearch = () => {
     setSelectedCategory(-1);
@@ -240,56 +226,6 @@ const CategoryManage = () => {
     setSelectedCategory(categoryId);
   }
 
-  const onClickSubCategoryItem = (event) => {
-    event.preventDefault();
-    const subcategoryId = event.currentTarget.getAttribute("subcategory_id");
-    if (subcategoryId === selectedSubcategory) {
-      setSelectedSubcategory(-1);
-      return;
-    }
-    setSelectedSubcategory(subcategoryId);
-  }
-
-  const onClickSubCategoryPage = (pageNumber) => {
-    let requestPath = `/admin/subcategories?size=10&page=${pageNumber - 1}`;
-    if (subcategorySearchCond !== null && subcategorySearchCond !== undefined && subcategorySearchCond) {
-      requestPath += `&searchName=${subcategorySearchCond}`;
-    }
-    if (selectedCategory) {
-      requestPath += `&categoryId=${selectedCategory}`;
-    }
-    fetch(requestPath, {method: "get"})
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then(resp => {
-        const {data, error, message} = resp;
-        const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-        setSubcategoryTotalPages(totalPages);
-        setSubcategoryPageNumber(number);
-      });
-  }
-
-  const onClickSubCategoryPreviousPage = (pageNumber) => {
-    const previous = (Math.floor(pageNumber / 5) - 1) * 5 + 1;
-    onClickSubCategoryPage(previous);
-  }
-
-  const onClickSubCategoryFirstPage = () => {
-    onClickSubCategoryPage(1);
-  }
-
-  const onClickSubCategoryNextPage = (pageNumber) => {
-    onClickSubCategoryPage(Math.floor(pageNumber / 5) * 5 + 5 + 1);
-  }
-
-  const onClickSubCategoryLastPage = () => {
-    onClickSubCategoryPage(subcategoryTotalPages);
-  }
-
-  //
   const onClickCategoryPreviousPage = (pageNumber) => {
     const previous = (Math.floor(pageNumber / 5) - 1) * 5 + 1;
     onClickCategoryPage(previous);
@@ -361,7 +297,6 @@ const CategoryManage = () => {
       path += `&searchName=${categorySearchCond}`
     }
 
-    console.log(path);
     fetch(path, {method: "get"})
       .then(resp => resp.json())
       .then(json => {
@@ -392,7 +327,6 @@ const CategoryManage = () => {
     if (selectedCategory) {
       path += `&categoryId=${selectedCategory}`
     }
-    console.log(path);
     fetch(path, {method: "get"})
       .then(resp => resp.json())
       .then(json => {

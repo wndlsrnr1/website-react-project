@@ -11,6 +11,9 @@ const AdminMain = () => {
             <Link to={"/admin/categories"} className={"h-100"}>카테고리 관리</Link>
           </li>
           <li>
+            <Link to={"/admin/subcategories"} className={"h-100"}>서브 카테고리 관리</Link>
+          </li>
+          <li>
             <Link to={"/admin/items"} className={"h-100"}>아이템 관리</Link>
           </li>
         </ul>

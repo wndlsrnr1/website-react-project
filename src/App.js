@@ -13,6 +13,7 @@ import {login, logout} from "./store/action";
 import AdminMain from "./admin/AdminMain";
 import ItemManage from "./admin/item/ItemManage";
 import CategoryManage from "./admin/category/CategoryManage";
+import SubcategoryManage from "./admin/category/SubcategoryManage";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -54,6 +55,7 @@ const App = () => {
         <Route path={"/admin"} exact component={AdminMain}/>
         <Route path={"/admin/items"} exact component={ItemManage}/>
         <Route path={"/admin/categories"} exact component={CategoryManage}/>
+        <Route path={"/admin/subcategories"} exact component={SubcategoryManage}/>
       </Switch>
     </BrowserRouter>
   );
