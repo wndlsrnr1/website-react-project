@@ -51,21 +51,13 @@ const CategoryManage = () => {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
 
-  //About Paging Category
-  const [categoryPageSize, setCategoryPageSize] = useState(0);
-  const [categoryTotalElements, setCategoryTotalElements] = useState(0);
   const [categoryTotalPages, setCategoryTotalPages] = useState(0);
-  const [categoryNumberOfElements, setCategoryNumberOfElements] = useState(0);
   const [subcategoryPageNumber, setSubcategoryPageNumber] = useState(0);
   const [categoryPageNumber, setCategoryPageNumber] = useState(0);
 
   //About Paging Subcategory
-  const [subcategoryPageSize, setSubcategoryPageSize] = useState(0);
-  const [subcategoryTotalElements, setSubcategoryTotalElements] = useState(0);
   const [subcategoryTotalPages, setSubcategoryTotalPages] = useState(0);
-  const [subcategoryNumberOfElements, setSubcategoryNumberOfElements] = useState(0);
 
   const [selectedSubcategory, setSelectedSubcategory] = useState(-1);
   const [selectedCategory, setSelectedCategory] = useState(-1);
@@ -77,8 +69,6 @@ const CategoryManage = () => {
 
   const [categoryNameKorUpdateInput, setCategoryNameKorUpdateInput] = useState("");
   const [categoryNameUpdateInput, setCategoryNameUpdateInput] = useState("");
-  const [subcategoryNameKorUpdateInput, setSubcategoryNameKorUpdateInput] = useState("");
-  const [subcategoryNameUpdateInput, setSubcategoryNameUpdateInput] = useState("");
   const [categoryNameAddInput, setCategoryNameAddInput] = useState("");
   const [categoryNameKorAddInput, setCategoryNameKorAddInput] = useState("");
   const [subcategoryNameAddInput, setSubcategoryNameAddInput] = useState("");
@@ -86,49 +76,11 @@ const CategoryManage = () => {
   const [isCategoryUpdated, setIsCategoryUpdated] = useState(false);
   const [isSubcategoryUpdated, setIsSubcategoryUpdated] = useState(false);
 
-  //Contollred input : Edit category
-  const [categoryNameInput, setCategoryNameInput] = useState("");
-  const [categoryNameKorInput, setCategoryNameKorInput] = useState("");
-  //Contollred input : add category
-  const [subcategoryNameInput, setSubcategoryNameInput] = useState("");
-  const [subcategoryNameKorInput, setSubcategoryNameKorInput] = useState("");
+  const [categorySearchInput2, setCategorySearchInput2] = useState("");
+  const [selectedCategoryForSubcategoryUpdate, setSelectedCategoryForSubcategoryUpdate] = useState(-1);
 
 
-  const onChangeSubcategoryInput = (event) => {
-    const value = event.currentTarget.value;
-    setSubcategorySearchInput(value);
-  }
 
-  const onSubmitSubcategorySearchName = (event) => {
-    event.preventDefault();
-    let path = `/admin/subcategories?size=10&page=${0}`;
-    if (selectedCategory !== -1) {
-      path += `&categoryId=${selectedCategory}`
-    }
-    if (!subcategorySearchInput && !subcategorySearchCond) {
-      return;
-    }
-    path += `&searchName=${subcategorySearchInput}`;
-    fetch(path, {method: "get"})
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then(resp => {
-        const {data, error, message} = resp;
-        const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-        setSubcategories(content);
-        setSubcategoryPageSize(size);
-        setSubcategoryTotalElements(totalElements);
-        setSubcategoryTotalPages(totalPages);
-        setSubcategoryNumberOfElements(number);
-        setSubcategoryPageNumber(number);
-        setSubcategorySearchCond(subcategorySearchInput);
-        setSelectedSubcategory(-1);
-      });
-    setIsLoaded(true);
-  }
   //loaded first
   useEffect(() => {
     if (isLoaded) {
@@ -145,36 +97,26 @@ const CategoryManage = () => {
         const {data, error, message} = resp;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
-        setCategoryPageSize(size);
-        setCategoryTotalElements(totalElements);
         setCategoryTotalPages(totalPages);
-        setCategoryNumberOfElements(number);
         setCategoryPageNumber(number);
       });
     setIsLoaded(true);
-
-    fetch("/admin/subcategories?size=10&page=0", {method: "get"})
-      .then((response) => {
-        if (response.status !== response.ok) {
-          console.error("response status is not 200")
-        }
-        return response.json();
-      }).then(json => {
-      const {data, error, message} = json;
-      const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-      setSubcategories(content);
-      setSubcategoryPageSize(size);
-      setSubcategoryTotalElements(totalElements);
-      setSubcategoryTotalPages(totalPages);
-      setSubcategoryNumberOfElements(number);
-      setSubcategoryPageNumber(number);
-    });
   }, [categories]);
 
 
   //check State on Develope process
-  useEffect(() => {
-  })
+
+  const onSubmitFindCategoryForUpdateSubcategory = (event) => {
+    event.preventDefault();
+    let path = `/admin/categories?page=0&size=100&searchName=${categorySearchInput2}`
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(json => {
+        const {data, error, message} = json;
+        const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
+        setSelectedCategoryForSubcategoryUpdate(selectedCategory);
+      });
+  }
 
   //clear state
   const clearSelectedAfterSearch = () => {
@@ -207,11 +149,8 @@ const CategoryManage = () => {
         const {data, error, message} = resp;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
-        setCategoryPageSize(size);
-        setCategoryTotalElements(totalElements);
         setCategoryTotalPages(totalPages);
-        setCategoryNumberOfElements(number);
-        setSubcategoryPageNumber(number);
+        setCategoryPageNumber(number);
         setCategorySearchCond(categorySearchInput);
       });
     setIsLoaded(true);
@@ -219,7 +158,7 @@ const CategoryManage = () => {
   }
 
   const onClickDeleteCategorySelected = () => {
-    fetch(`/admin/category/delete/${selectedCategory}`, {method: "delete"})
+    fetch(`/admin/sucategory/delete/${selectedCategory}`, {method: "delete"})
       .then(resp => {
         if (resp.ok) {
           setIsCategoryUpdated(true);
@@ -233,11 +172,7 @@ const CategoryManage = () => {
   useEffect(() => {
     let path = "/admin/subcategories?size=10&page=0";
     if (selectedCategory === -1) {
-      setSubcategories([]);
-      setSubcategoryPageSize(0);
-      setSubcategoryTotalElements(0);
       setSubcategoryTotalPages(0);
-      setSubcategoryNumberOfElements(0);
       setSubcategoryPageNumber(0);
       return;
     } else {
@@ -252,20 +187,12 @@ const CategoryManage = () => {
       }).then(json => {
       const {data, error, message} = json;
       const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-      setSubcategories(content);
-      setSubcategoryPageSize(size);
-      setSubcategoryTotalElements(totalElements);
       setSubcategoryTotalPages(totalPages);
-      setSubcategoryNumberOfElements(number);
       setSubcategoryPageNumber(number);
     });
   }, [selectedCategory]);
-  /*
-  @PutMapping("/category/create")
-    public ResponseEntity createCategory(@Validated CreateCategoryRequest request) {
-        return categoryCRUDService.createCategory(request);
-    }
-   */
+
+
   const onSubmitCategoryAdd = (event) => {
     event.preventDefault();
     let formData = new FormData();
@@ -297,10 +224,7 @@ const CategoryManage = () => {
         const {data, error, message} = resp;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
-        setCategoryPageSize(size);
-        setCategoryTotalElements(totalElements);
         setCategoryTotalPages(totalPages);
-        setCategoryNumberOfElements(number);
         setCategoryPageNumber(number);
       });
     clearSelectedAfterSearch();
@@ -343,11 +267,7 @@ const CategoryManage = () => {
       .then(resp => {
         const {data, error, message} = resp;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-        setSubcategories(content);
-        setSubcategoryPageSize(size);
-        setSubcategoryTotalElements(totalElements);
         setSubcategoryTotalPages(totalPages);
-        setSubcategoryNumberOfElements(number);
         setSubcategoryPageNumber(number);
       });
   }
@@ -398,16 +318,6 @@ const CategoryManage = () => {
   }
 
 
-  const onChangeSubcategoryNameKorUpdateInput = (event) => {
-    const value = event.currentTarget.value;
-    setSubcategoryNameKorUpdateInput(value);
-  }
-
-  const onChangeSubcategoryNameUpdateInput = (event) => {
-    const value = event.currentTarget.value;
-    setSubcategoryNameUpdateInput(value);
-  }
-
   const onChangeCategoryNameAddInput = (event) => {
     const value = event.currentTarget.value;
     setCategoryNameAddInput(value);
@@ -418,15 +328,7 @@ const CategoryManage = () => {
     setCategoryNameKorAddInput(value);
   }
 
-  const onChangeSubcategoryNameKorAddInput = (event) => {
-    const value = event.currentTarget.value;
-    setSubcategoryNameKorAddInput(value);
-  }
 
-  const onChangeSubcategoryNameAddInput = (event) => {
-    const value = event.currentTarget.value;
-    setSubcategoryNameAddInput(value);
-  }
 
   const onSubmitCategoryEdit = (event) => {
     event.preventDefault();
@@ -442,19 +344,6 @@ const CategoryManage = () => {
       })
   }
 
-  const onSubmitSubcategoryAdd = (event) => {
-    event.preventDefault();
-    let formData = new FormData();
-    formData.append("name", subcategoryNameAddInput);
-    formData.append("nameKor", subcategoryNameKorAddInput);
-    formData.append("categoryId", selectedCategory);
-
-    fetch("/admin/subcategory/create", {method: "put", body: formData})
-      .then(resp => {
-            setIsSubcategoryUpdated(true);
-        }
-      )
-  }
 
   //카테고리 수정 삭제시 리로드
   useEffect(() => {
@@ -479,10 +368,7 @@ const CategoryManage = () => {
         const {data, error, message} = json;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
         setCategories(content);
-        setCategoryPageSize(size);
-        setCategoryTotalElements(totalElements);
         setCategoryTotalPages(totalPages);
-        setCategoryNumberOfElements(number);
         setSubcategoryPageNumber(number);
         setIsCategoryUpdated(false);
       });
@@ -512,15 +398,12 @@ const CategoryManage = () => {
       .then(json => {
         const {data, error, message} = json;
         const {content, empty, number, numberOfElements, size, totalElements, totalPages} = data;
-        setSubcategories(content);
-        setSubcategoryPageSize(size);
-        setSubcategoryTotalElements(totalElements);
         setSubcategoryTotalPages(totalPages);
-        setSubcategoryNumberOfElements(number);
         setSubcategoryPageNumber(number);
         setIsSubcategoryUpdated(false);
       });
   }, [isSubcategoryUpdated])
+
 
   return (
     <>
@@ -530,7 +413,7 @@ const CategoryManage = () => {
           <div className={"category p-5 w-100"}>
             <Form onSubmit={onSubmitCategorySearchName}>
               <InputGroup className={"pb-5"}>
-                <InputGroupText>이름 검색</InputGroupText>
+                <InputGroupText>카테고리 이름 검색</InputGroupText>
                 <Input name={"category_cond"} type="text" placeholder={"카테고리 이름을 검색해주세요"}
                        onChange={onChangeCategoryInput} value={categorySearchInput}/>
                 <Button type={"submit"} className={"bg-primary"}>검색</Button>
@@ -593,12 +476,13 @@ const CategoryManage = () => {
             </div>
             <div>
               {/*-------------------------update-------------------------------------------*/}
+              <hr/>
               <h4 className={"text-center"}>수정</h4>
               <Form onSubmit={onSubmitCategoryEdit}>
                 {
                   selectedCategory === -1 ?
                     <ListGroupItem action={true} active={true} className={"mb-2"}>
-                      카테고리를 선택해주세요z
+                      카테고리를 선택해주세요
                     </ListGroupItem> :
                     categories.filter((elem) => parseInt(elem.id) === parseInt(selectedCategory)).map((elem) => {
                       return (
@@ -639,6 +523,7 @@ const CategoryManage = () => {
                 </div>
               </Form>
             </div>
+            <hr/>
             <Form onSubmit={onSubmitCategoryAdd}>
               <h4 className={"text-center"}>카테고리 추가</h4>
               <InputGroup className={"mb-2"}>
@@ -654,140 +539,6 @@ const CategoryManage = () => {
                 <Button className={"submit bg-primary"} type={"submit"}>추가</Button>
               </div>
             </Form>
-          </div>
-
-          <div className={"subcategory p-5 w-100"}>
-            <Form onSubmit={onSubmitSubcategorySearchName}>
-              <InputGroup className={"pb-5"}>
-                <InputGroupText>이름 검색</InputGroupText>
-                <Input name={"subcategory_cond"} type="text" placeholder={"서브카테고리 이름을 검색해주세요"}
-                       onChange={onChangeSubcategoryInput} value={subcategorySearchInput}/>
-                <Button className={"bg-primary"}>검색</Button>
-              </InputGroup>
-            </Form>
-
-            <h3 className={"text-center"}>서브카테고리</h3>
-
-            <div className={"pb-5"}>
-              <ListGroup className={"pb-4"}>
-                {
-                  subcategories.map((elem, index) => {
-                    return (
-                      <ListGroupItem active={isActiveList(elem.subcategoryId, selectedSubcategory)} tag="button"
-                                     category_id={elem.categoryId} subcategory_id={elem.subcategoryId}
-                                     onClick={onClickSubCategoryItem}>
-                        {elem.nameKor} ({elem.name})
-                      </ListGroupItem>
-                    )
-                  })
-                }
-              </ListGroup>
-
-              <div className={"d-flex justify-content-center"}>
-                <Pagination size={"sm"}>
-                  <PaginationItem disabled={togglePrevPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
-                    <PaginationLink href="#" tag={"button"}
-                                    onClick={() => onClickSubCategoryFirstPage()}>&lt;&lt;</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem disabled={togglePrevPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
-                    <PaginationLink tag={"button"} href="#"
-                                    onClick={() => onClickSubCategoryPreviousPage(subcategoryPageNumber)}>&lt;</PaginationLink>
-                  </PaginationItem>
-                  {
-                    makePageArray(subcategoryPageNumber, 5).map((elem, index) => {
-                      return (
-                        <PaginationItem active={pageActive(elem, subcategoryPageNumber)}
-                                        disabled={isDisablePage(elem, subcategoryTotalPages)} key={elem.toString()}>
-                          <PaginationLink tag={"button"} href="#"
-                                          onClick={() => onClickSubCategoryPage(elem)}>{elem}</PaginationLink>
-                        </PaginationItem>
-                      )
-                    })
-                  }
-                  <PaginationItem disabled={!hasNextPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
-                    <PaginationLink tag={"button"} href="#"
-                                    onClick={() => onClickSubCategoryNextPage(subcategoryPageNumber)}>></PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem disabled={!hasNextPage(subcategoryPageNumber, subcategoryTotalPages, 5)}>
-                    <PaginationLink tag={"button"} href="#"
-                                    onClick={() => onClickSubCategoryLastPage()}>>></PaginationLink>
-                  </PaginationItem>
-                </Pagination>
-              </div>
-            </div>
-            <div>
-              <h4 className={"text-center"}>수정</h4>
-              <FormGroup>
-                <Input type={"select"} value={"null"} action={true} active={true}
-                       className={"mb-2 bg-primary text-white"}>
-                  <option value="1">카테고리1</option>
-                  <option value="1">카테고리2</option>
-                  <option value="1">카테고리3</option>
-                </Input>
-
-
-                {
-                  selectedSubcategory !== -1 ? (
-                    subcategories.filter(elem => elem.subcategoryId == selectedSubcategory).map((elem => {
-                      return (
-                        <ListGroupItem action={true} active={true} className={"mb-2"}
-                                       subcategory_id={elem.subcategoryId} category_id={elem.categoryId}>
-                          {elem.nameKor} ({elem.name})
-                        </ListGroupItem>
-                      )
-                    }))
-                  ) : (
-                    <ListGroupItem action={true} active={true} className={"mb-2"}>
-                      서브카테고리를 선택해주세요
-                    </ListGroupItem>
-                  )
-                }
-                <Form>
-                  <InputGroup className={"mb-2"}>
-                    <InputGroupText>한국 이름</InputGroupText>
-                    <Input name={"name_kor"} placeholder={"바꿀 한국 이름 입력"}
-                           onChange={onChangeSubcategoryNameKorUpdateInput} value={subcategoryNameKorUpdateInput}/>
-                    <InputGroupText>영어 이름</InputGroupText>
-                    <Input name={"name"} placeholder={"바꿀 영어 이름 입력"} onChange={onChangeSubcategoryNameUpdateInput}
-                           value={subcategoryNameUpdateInput}/>
-                  </InputGroup>
-
-                  <div className={"d-flex justify-content-between"}>
-                    <Button className={"button"}>삭제</Button>
-                    <Button className={"submit bg-primary"} type={"submit"}>수정</Button>
-                  </div>
-                </Form>
-
-              </FormGroup>
-            </div>
-            <div>
-              <h4 className={"text-center"}>추가</h4>
-              {
-                selectedCategory !== -1 ? (
-                  categories.filter(elem => elem.id == selectedCategory).map((elem, idx) => {
-                    return (
-                      <ListGroupItem action={true} active={true} className={"mb-2"}>선택된
-                        카테고리: {elem.nameKor} (elem.name)</ListGroupItem>
-                    )
-                  })
-                ) : (
-                  <ListGroupItem action={true} active={true} className={"mb-2"}>카테고리를 선택해주세요</ListGroupItem>
-                )
-              }
-              <Form onSubmit={onSubmitSubcategoryAdd}>
-                <InputGroup className={"mb-2"}>
-                  <InputGroupText>한국 이름</InputGroupText>
-                  <Input name={"name_kor"} placeholder={"바꿀 한국 이름 입력"} onChange={onChangeSubcategoryNameKorAddInput}
-                         value={subcategoryNameKorAddInput}/>
-                  <InputGroupText>영어 이름</InputGroupText>
-                  <Input name={"name"} placeholder={"바꿀 영어 이름 입력"} onChange={onChangeSubcategoryNameAddInput}
-                         value={subcategoryNameAddInput}/>
-                </InputGroup>
-                <div className={"d-flex justify-content-end"}>
-                  <Button className={"submit bg-primary"} type={"submit"}>추가</Button>
-                </div>
-              </Form>
-            </div>
           </div>
         </div>
       </Container>
