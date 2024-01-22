@@ -61,17 +61,6 @@ const Paging = (props) => {
   //requests
 
   //useEffects
-  // useEffect(() => {
-  //   console.log(props);
-  //   console.log(pageGroupSize)
-  //   console.log(pageSize)
-  //   console.log(pageNumber)
-  //   console.log(totalPages)
-  //   console.log(requestDomain)
-  //   console.log(requestMethod)
-  //   console.log(parameterOption)
-  //
-  // }, []);
 
   //onClicks
   const move = (targetPage) => {
@@ -102,7 +91,7 @@ const Paging = (props) => {
           getPageArray(pageNumber, pageGroupSize).map((elem, index) => {
             return (
               <>
-                <PaginationItem key={elem.toString() + index} active={checkActivation(pageNumber, elem.subcategoryId)}
+                <PaginationItem key={elem.toString() + index} active={checkActivation(elem, pageNumber)}
                                 disabled={checkDisablePage(pageGroupSize, elem, totalPages)}>
                   <PaginationLink tag={"button"} href="#" onClick={() => move(elem)}>
                     {elem + 1}
