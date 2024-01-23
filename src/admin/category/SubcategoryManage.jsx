@@ -1,4 +1,15 @@
-import {Button, Container, Form, Input, InputGroup, InputGroupText, ListGroup, ListGroupItem} from "reactstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Input,
+  InputGroup,
+  InputGroupText,
+  ListGroup,
+  ListGroupItem,
+  Row
+} from "reactstrap";
 import {useEffect, useRef, useState} from "react";
 import Paging from "../../common/Paging";
 
@@ -10,6 +21,23 @@ const getParamOption = (key, value) => {
   const result = {};
   result[key] = value;
   return result;
+}
+
+const getValueFromArray = (array, id, paramName) => {
+  if (!array || array.length === 0 || id === -1) {
+    return "";
+  }
+  return array.filter((elem, index) => elem.id == id)[0][paramName];
+}
+
+const getValueFromArraySub = (array, id, paramName) => {
+  if (!array || array.length === 0 || id === -1) {
+    return "";
+  }
+  console.log("array", array);
+  console.log("id", id);
+
+  return array.filter((elem, index) => elem.subcategoryId === id)[0][paramName];
 }
 
 const SubcategoryManage = () => {
@@ -41,6 +69,12 @@ const SubcategoryManage = () => {
   const [number2, setNumber2] = useState(0);
   const [numberOfElements2, setNumberOfElements2] = useState(0);
 
+  //submit
+  const [nameKorInputSubcategoryEdit, setNameKorInputSubcategoryEdit] = useState("");
+  const [nameInputSubcategoryEdit, setNameInputSubcategoryEdit] = useState("");
+
+  const [nameKorInputSubcategoryAdd, setNameKorInputSubcategoryAdd] = useState("");
+  const [nameInputSubcategoryAdd, setNameInputSubcategoryAdd] = useState("");
 
   //Request
   const requestSubcategory = (path) => {
@@ -94,6 +128,11 @@ const SubcategoryManage = () => {
     setSelectedCategoryId(-1);
   }, [categorySearchInputCond]);
 
+  useEffect(() => {
+    setNameKorInputSubcategoryEdit(getValueFromArraySub(subcategories, selectedSubcategoryId, "nameKor"));
+    setNameInputSubcategoryEdit(getValueFromArraySub(subcategories, selectedSubcategoryId, "name"));
+  }, [selectedSubcategoryId]);
+
   //Submit
   const searchSubcategoryByOnSubmit = (event) => {
     event.preventDefault();
@@ -121,6 +160,15 @@ const SubcategoryManage = () => {
     requestCategory(path);
   }
 
+  const onSubmitSubcategoryEditForm = (event) => {
+    event.preventDefault();
+
+  }
+
+  const onSubmitSubcategoryAddForm = (event) => {
+    event.preventDefault();
+  }
+
   //onClick
   const selectSubcategoryOnClick = (subcategoryId, currentSubcategoryId) => {
     if (subcategoryId === currentSubcategoryId) {
@@ -140,6 +188,11 @@ const SubcategoryManage = () => {
     setSelectedCategoryId(categoryId);
   }
 
+  const onClickSubcategoryDelete = (event) => {
+    event.preventDefault();
+
+  }
+
   //onChange
   const onChangeSubcategoryInput = (event) => {
     const value = event.currentTarget.value;
@@ -151,93 +204,201 @@ const SubcategoryManage = () => {
     setCategorySearchInput(value);
   }
 
+  const onChangeNameKorInputSubcategoryEdit = (event) => {
+    const value = event.currentTarget.value;
+    setNameKorInputSubcategoryEdit(value);
+  }
+
+  const onChangeNameInputSubcategoryEdit = (event) => {
+    const value = event.currentTarget.value;
+    setNameInputSubcategoryEdit(value);
+  }
+
+  const onChangeNameKorInputSubcategoryAdd = (event) => {
+    const value = event.currentTarget.value;
+    setNameKorInputSubcategoryAdd(value);
+  }
+
+  const onChangeNameInputSubcategoryAdd = (event) => {
+    const value = event.currentTarget.value;
+    setNameInputSubcategoryAdd(value);
+  }
+
   return (
     <>
       <Container className={"mt-5"}>
         <h3 className={"text-center p-2"}>서브 카테고리 관리</h3>
-        <div className={"subcategory p-5 w-100"}>
-          <div>
-            <Form onSubmit={searchSubcategoryByOnSubmit}>
-              <InputGroup className={"pb-5"}>
-                <InputGroupText>서브카테고리 이름 검색</InputGroupText>
-                <Input name={"subcategory_cond"} type="text" placeholder={"카테고리 이름을 검색해주세요"}
-                       onChange={onChangeSubcategoryInput} value={subCategorySearchInput}/>
-                <Button type={"submit"} className={"bg-primary"}>검색</Button>
-              </InputGroup>
-            </Form>
-          </div>
-          <div>
-            <ListGroup className={"pb-4"}>
-              {
-                subcategories.length !== 0 ? subcategories.map((subcategory, index) => {
-                  return (
-                    <ListGroupItem active={isActive(subcategory.subcategoryId, selectedSubcategoryId)} tag={"button"}
-                                   subcategory_id={"123"}
-                                   onClick={() => selectSubcategoryOnClick(subcategory.subcategoryId, selectedSubcategoryId)}>
-                      카테고리 ({subcategory.categoryId}) 서브카테고리
-                      ({subcategory.subcategoryId}, {subcategory.name}, {subcategory.nameKor})
+        <Row className={"d-flex justify-content-around"}>
+          <Col>
+            <h4>서브 카테고리 선택</h4>
+            <div>
+              <Form onSubmit={searchSubcategoryByOnSubmit}>
+                <InputGroup className={"pb-5"}>
+                  <InputGroupText>서브카테고리 이름 검색</InputGroupText>
+                  <Input name={"subcategory_cond"} type="text" placeholder={"카테고리 이름을 검색해주세요"}
+                         onChange={onChangeSubcategoryInput} value={subCategorySearchInput}/>
+                  <Button type={"submit"} className={"bg-primary"}>검색</Button>
+                </InputGroup>
+              </Form>
+            </div>
+            <div>
+              <ListGroup className={"pb-4"}>
+                {
+                  subcategories.length !== 0 ? subcategories.map((subcategory, index) => {
+                    return (
+                      <ListGroupItem active={isActive(subcategory.subcategoryId, selectedSubcategoryId)} tag={"button"}
+                                     subcategory_id={"123"}
+                                     onClick={() => selectSubcategoryOnClick(subcategory.subcategoryId, selectedSubcategoryId)}>
+                        카테고리 ({subcategory.categoryId}) 서브카테고리
+                        ({subcategory.subcategoryId}, {subcategory.name}, {subcategory.nameKor})
+                      </ListGroupItem>
+                    )
+                  }) : (
+                    <ListGroupItem>
+                      찾는 서브카테고리가 없습니다
                     </ListGroupItem>
                   )
-                }) : (
-                  <ListGroupItem>
-                    찾는 서브카테고리가 없습니다
-                  </ListGroupItem>
-                )
-              }
-            </ListGroup>
-          </div>
-          <div>
-            {
-              subcategories.length !== 0 ? (
-                <Paging pageGroupSize={pageGroupSize} pageSize={pageSize} pageNumber={number} totalPages={totalPages}
-                        requestDomain={"/admin/subcategories"} requestMethod={requestSubcategory}
-                        parameterOption={getParamOption("searchName", subcategorySearchInputCond)}>
-
-                </Paging>
-              ) : null
-            }
-
-          </div>
-          <hr/>
-          <h4 className={"p-2"}>서브 카테고리 수정</h4>
-          <h4>카테고리 선택</h4>
-          <div>
-            <Form onSubmit={searchCategoryByOnSubmit}>
-              <InputGroup className={"pb-5"}>
-                <InputGroupText>카테고리 이름 검색</InputGroupText>
-                <Input name={"category_cond"} type="text" placeholder={"카테고리 이름을 검색해주세요"}
-                       onChange={onChangeCategoryInput} value={categorySearchInput}/>
-                <Button type={"submit"} className={"bg-primary"}>검색</Button>
-              </InputGroup>
-            </Form>
-          </div>
-          <div>
-            <ListGroup className={"pb-4"}>
+                }
+              </ListGroup>
+            </div>
+            <div>
               {
-                categories.length !== 0 ? categories.map((category, index) => {
-                  return (
-                    <ListGroupItem active={isActive(category.id, selectedCategoryId)} tag={"button"}
-                                   category_id={category.id}
-                                   onClick={() => selectCategoryOnClick(category.id, selectedCategoryId)}>
-                      아이디: ({category.id}) 이름: {category.nameKor} 영문이름:{category.name}
+                subcategories.length !== 0 ? (
+                  <Paging pageGroupSize={pageGroupSize} pageSize={pageSize} pageNumber={number} totalPages={totalPages}
+                          requestDomain={"/admin/subcategories"} requestMethod={requestSubcategory}
+                          parameterOption={getParamOption("searchName", subcategorySearchInputCond)}>
+
+                  </Paging>
+                ) : null
+              }
+
+            </div>
+          </Col>
+          <Col>
+            <h4>카테고리 선택</h4>
+            <div>
+              <Form onSubmit={searchCategoryByOnSubmit}>
+                <InputGroup className={"pb-5"}>
+                  <InputGroupText>카테고리 이름 검색</InputGroupText>
+                  <Input name={"category_cond"} type="text" placeholder={"카테고리 이름을 검색해주세요"}
+                         onChange={onChangeCategoryInput} value={categorySearchInput}/>
+                  <Button type={"submit"} className={"bg-primary"}>검색</Button>
+                </InputGroup>
+              </Form>
+            </div>
+            <div>
+              <ListGroup className={"pb-4"}>
+                {
+                  categories.length !== 0 ? categories.map((category, index) => {
+                    return (
+                      <ListGroupItem active={isActive(category.id, selectedCategoryId)} tag={"button"}
+                                     category_id={category.id}
+                                     onClick={() => selectCategoryOnClick(category.id, selectedCategoryId)}>
+                        아이디: ({category.id}) 이름: {category.nameKor} 영문이름:{category.name}
+                      </ListGroupItem>
+                    )
+                  }) : (
+                    <ListGroupItem>
+                      찾는 서브카테고리가 없습니다
                     </ListGroupItem>
                   )
-                }) : (
-                  <ListGroupItem>
-                    찾는 서브카테고리가 없습니다
-                  </ListGroupItem>
-                )
-              }
-            </ListGroup>
+                }
+              </ListGroup>
+            </div>
             <div>
               <Paging pageGroupSize={pageGroupSize} pageSize={pageSize}
                       pageNumber={number2} totalPages={totalPages2}
                       requestDomain={"/admin/categories"} requestMethod={requestCategory}
                       parameterOption={getParamOption("searchName", categorySearchInputCond)}/>
             </div>
+          </Col>
+        </Row>
+
+
+        <div className={"subcategory p-5 w-100"}>
+
+          <hr/>
+          <div className={"d-flex justify-content-evenly"}>
+            <div className={"flex-grow-1 subcategory-edit pe-5"}>
+              <h4 className={"p-2"}>서브 카테고리 수정</h4>
+              <Form onSubmit={onSubmitSubcategoryEditForm}>
+                <InputGroup className={"pb-2"}>
+                  <InputGroupText>선택된카테고리</InputGroupText>
+                  <Input name={"categoryId"} placeholder={"카테고리를 선택해주세요"} value={selectedCategoryId === -1 ? "" : selectedCategoryId} type={"number"} disabled={true}/>
+                </InputGroup>
+                <div className={"d-flex pb-2"}>
+                  <InputGroup>
+                    <InputGroupText>이름</InputGroupText>
+                    <Input name={"categoryNameKor"} value={getValueFromArray(categories, selectedCategoryId, "nameKor")} type={"text"} disabled={true}/>
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupText>영문이름</InputGroupText>
+                    <Input name={"categoryName"} value={getValueFromArray(categories, selectedCategoryId, "name")} type={"text"} disabled={true}/>
+                  </InputGroup>
+                </div>
+                <hr/>
+                <InputGroup className={"pb-2"}>
+                  <InputGroupText>선택된 서브카테고리</InputGroupText>
+                  <Input name={"subcategoryId"} value={selectedSubcategoryId === -1 ? "" : selectedSubcategoryId} type={"number"} disabled={true}/>
+                </InputGroup>
+                <div className={"d-flex pb-2"}>
+                  <InputGroup>
+                    <InputGroupText>이름</InputGroupText>
+                    <Input name={"subcategoryNameKor"} type={"text"} placeholder={"변경할 이름을 입력해주세요"} onChange={onChangeNameKorInputSubcategoryEdit}
+                           value={nameKorInputSubcategoryEdit} />
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupText>영문이름</InputGroupText>
+                    <Input name={"subcategoryName"} placeholder={"변경할 영문이름을 입력해주세요"} value={nameInputSubcategoryEdit} type={"text"}
+                           onChange={onChangeNameInputSubcategoryEdit}
+                    />
+                  </InputGroup>
+                </div>
+
+                <div className={"d-flex justify-content-between"}>
+                  <Button type={"button"} onClick={onClickSubcategoryDelete}>삭제</Button>
+                  <Button type={"submit"} className={"bg-primary"}>수정</Button>
+                </div>
+              </Form>
+            </div>
+            <div className={"flex-grow-1 subcategory-add"}>
+              <h4 className={"p-2"}>서브 카테고리 추가</h4>
+              <Form onSubmit={onSubmitSubcategoryAddForm}>
+                <InputGroup className={"pb-2"}>
+                  <InputGroupText>선택된카테고리</InputGroupText>
+                  <Input name={"categoryId"} placeholder={"카테고리를 선택해주세요"} value={selectedCategoryId === -1 ? "" : selectedCategoryId} type={"number"} disabled={true}/>
+                </InputGroup>
+                <div className={"d-flex pb-2"}>
+                  <InputGroup>
+                    <InputGroupText>이름</InputGroupText>
+                    <Input name={"categoryNameKor"} value={getValueFromArray(categories, selectedCategoryId, "nameKor")} type={"text"} disabled={true}/>
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupText>영문이름</InputGroupText>
+                    <Input name={"categoryName"} value={getValueFromArray(categories, selectedCategoryId, "name")} type={"text"} disabled={true}/>
+                  </InputGroup>
+                </div>
+                <hr/>
+                <div className={"d-flex pb-2"}>
+                  <InputGroup>
+                    <InputGroupText>이름</InputGroupText>
+                    <Input name={"subcategoryNameKor"} type={"text"} placeholder={"이름을 입력해주세요"} onChange={onChangeNameKorInputSubcategoryAdd}
+                           value={nameKorInputSubcategoryAdd} />
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupText>영문이름</InputGroupText>
+                    <Input name={"subcategoryName"} placeholder={"영문이름을 입력해주세요"} value={nameInputSubcategoryAdd} type={"text"}
+                           onChange={onChangeNameInputSubcategoryAdd}
+                    />
+                  </InputGroup>
+                </div>
+
+                <div className={"d-flex justify-content-end"}>
+                  <Button type={"submit"} className={"bg-primary"}>추가</Button>
+                </div>
+              </Form>
+            </div>
           </div>
-          <h4>한글 이름</h4>
-          <h4>영어 이름</h4>
         </div>
       </Container>
     </>
