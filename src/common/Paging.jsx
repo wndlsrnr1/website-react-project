@@ -6,8 +6,6 @@ const checkDisablePage = (pageGroupSize, targetPage, totalPages) => {
 }
 
 const isNextPage = (pageGroupSize, currentPage, totalPages) => {
-  console.log("getNextPage(pageGroupSize, currentPage)", getNextPage(pageGroupSize, currentPage));
-  console.log("totalPages", totalPages);
   return getNextPage(currentPage, pageGroupSize) < totalPages;
 }
 
