@@ -27,17 +27,14 @@ const getValueFromArray = (array, id, paramName) => {
   if (!array || array.length === 0 || id === -1) {
     return "";
   }
-  return array.filter((elem, index) => elem.id == id)[0][paramName];
+  return array.filter((elem, index) => elem.id == id)?.[0]?.[paramName];
 }
 
 const getValueFromArraySub = (array, id, paramName) => {
   if (!array || array.length === 0 || id === -1) {
     return "";
   }
-  console.log("array", array);
-  console.log("id", id);
-
-  return array.filter((elem, index) => elem.subcategoryId === id)[0][paramName];
+  return array.filter((elem, index) => elem.subcategoryId === id)?.[0]?.[paramName];
 }
 
 const SubcategoryManage = () => {
@@ -57,6 +54,7 @@ const SubcategoryManage = () => {
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState(-1);
   const pageGroupSize = 5;
   const pageSize = 10;
+  const [errorCategory, setErrorCategory] = useState({});
 
   //category
   const [categorySearchInput, setCategorySearchInput] = useState("");
@@ -68,13 +66,22 @@ const SubcategoryManage = () => {
   const [totalPages2, setTotalPages2] = useState(0);
   const [number2, setNumber2] = useState(0);
   const [numberOfElements2, setNumberOfElements2] = useState(0);
+  const [errorSubCategory, setErrorSubCategory] = useState({});
+  const [categoryInputEdit, setCategoryInputEdit] = useState(-1);
+  const [categoryInputNameEdit, setCategoryInputNameEdit] = useState("");
+  const [categoryInputNameKorEdit, setCategoryInputNameKorEdit] = useState("");
 
+  const [categoryInputAdd, setCategoryInputAdd] = useState(-1);
+  const [categoryInputNameAdd, setCategoryInputNameAdd] = useState("");
+  const [categoryInputNameKorAdd, setCategoryInputNameKorAdd] = useState("");
   //submit
   const [nameKorInputSubcategoryEdit, setNameKorInputSubcategoryEdit] = useState("");
   const [nameInputSubcategoryEdit, setNameInputSubcategoryEdit] = useState("");
 
   const [nameKorInputSubcategoryAdd, setNameKorInputSubcategoryAdd] = useState("");
   const [nameInputSubcategoryAdd, setNameInputSubcategoryAdd] = useState("");
+
+  const [updatePage, setUpdatePage] = useState(false);
 
   //Request
   const requestSubcategory = (path) => {
@@ -96,7 +103,6 @@ const SubcategoryManage = () => {
     fetch(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
-        console.log(data);
         const datum = data.data;
         const {content, size, totalElements, totalPages, number, numberOfElements} = datum;
         setCategories(content);
@@ -106,6 +112,46 @@ const SubcategoryManage = () => {
         setNumber2(number);
         setNumberOfElements2(numberOfElements);
       });
+  }
+
+  const requestCategoryById = (path, categoryId) => {
+    if (!categoryId) {
+      return;
+    }
+    fetch(path + "/" + categoryId)
+      .then(resp => resp.json())
+      .then(data => {
+        const {id, name, nameKor} = data.data;
+        setCategoryInputNameAdd(name);
+        setCategoryInputNameEdit(name);
+
+        setCategoryInputNameKorAdd(nameKor);
+        setCategoryInputNameKorEdit(nameKor);
+
+        setCategoryInputEdit(id);
+        setCategoryInputAdd(id);
+      });
+  }
+
+  const requestSubcategoryEdit = (formData, path) => {
+    fetch(path, {method: "post", body: formData})
+      .then(resp => resp.json())
+      .then(data => {
+        setUpdatePage(true);
+      });
+  }
+
+  const requestSubcategoryDelete = (path, subcategoryId) => {
+    fetch(path + "/" + subcategoryId, {method: "delete"})
+      .then(resp => resp.json())
+      .then((data) => {
+        setUpdatePage(true);
+      });
+  }
+
+  const requestSubcategoryAdd = (formData, path) => {
+    fetch(path, {method: "put", body: formData})
+      .then((resp) => setUpdatePage(true));
   }
 
   //Effects
@@ -119,19 +165,56 @@ const SubcategoryManage = () => {
     requestCategory(path2);
   }, [loaded])
 
-  //category request
-  useEffect(() => {
-    setSelectedSubcategoryId(-1);
-  }, [subcategorySearchInputCond])
-
   useEffect(() => {
     setSelectedCategoryId(-1);
-  }, [categorySearchInputCond]);
+  }, [selectedSubcategoryId])
+
+  //category request
+  // useEffect(() => {
+  //   setSelectedSubcategoryId(-1);
+  // }, [subcategorySearchInputCond])
+  //
+  // useEffect(() => {
+  //   setSelectedCategoryId(-1);
+  // }, [categorySearchInputCond]);
 
   useEffect(() => {
     setNameKorInputSubcategoryEdit(getValueFromArraySub(subcategories, selectedSubcategoryId, "nameKor"));
     setNameInputSubcategoryEdit(getValueFromArraySub(subcategories, selectedSubcategoryId, "name"));
+    const categoryId = parseInt(getValueFromArraySub(subcategories, selectedSubcategoryId, "categoryId"));
+    requestCategoryById("/admin/category", categoryId);
   }, [selectedSubcategoryId]);
+
+  useEffect(() => {
+    if (updatePage === false) {
+      return;
+    }
+
+    let categoryPath = `/admin/categories?size=${pageSize}`;
+    if (number) {
+      categoryPath += `&page=${number2}`
+    } else {
+      categoryPath += `&page=0`;
+    }
+    if (subcategorySearchInputCond) {
+      categoryPath += `&searchName=${categorySearchInputCond}`
+    }
+    requestCategory(categoryPath);
+
+    let subcategoryPath = `/admin/subcategories?size=${pageSize}`;
+    if (number2) {
+      subcategoryPath += `&page=${number}`
+    } else {
+      subcategoryPath += `&page=0`;
+    }
+    if (subcategorySearchInputCond) {
+      subcategoryPath += `&searchName=${subcategorySearchInputCond}`
+    }
+    requestSubcategory(subcategoryPath);
+
+    setUpdatePage(false);
+  }, [updatePage])
+
 
   //Submit
   const searchSubcategoryByOnSubmit = (event) => {
@@ -162,11 +245,27 @@ const SubcategoryManage = () => {
 
   const onSubmitSubcategoryEditForm = (event) => {
     event.preventDefault();
-
+    let form = new FormData();
+    const categoryId = selectedCategoryId !== -1 ? selectedCategoryId : categoryInputAdd;
+    form.append("categoryId", categoryId);
+    form.append("subcategoryId", selectedSubcategoryId);
+    form.append("name", nameInputSubcategoryEdit);
+    form.append("nameKor", nameKorInputSubcategoryEdit);
+    requestSubcategoryEdit(form, "/admin/subcategory/update");
   }
 
   const onSubmitSubcategoryAddForm = (event) => {
     event.preventDefault();
+    let formData = new FormData();
+    if (selectedCategoryId === -1) {
+      return;
+    }
+    console.log("??")
+    formData.append("categoryId", selectedCategoryId);
+    formData.append("name", nameInputSubcategoryAdd)
+    formData.append("nameKor", nameKorInputSubcategoryAdd);
+    console.log("????????????")
+    requestSubcategoryAdd(formData, "/admin/subcategory/create");
   }
 
   //onClick
@@ -175,7 +274,6 @@ const SubcategoryManage = () => {
       setSelectedSubcategoryId(-1);
       return;
     }
-    console.log(subcategoryId);
     setSelectedSubcategoryId(subcategoryId);
   }
 
@@ -184,13 +282,17 @@ const SubcategoryManage = () => {
       setSelectedCategoryId(-1);
       return;
     }
-    console.log(categoryId);
     setSelectedCategoryId(categoryId);
   }
 
   const onClickSubcategoryDelete = (event) => {
-    event.preventDefault();
-
+    if (selectedSubcategoryId === -1) {
+      return;
+    }
+    const path = `/admin/subcategory/delete`;
+    console.log(path);
+    requestSubcategoryDelete(path, selectedSubcategoryId);
+    setSelectedSubcategoryId(-1);
   }
 
   //onChange
@@ -227,7 +329,7 @@ const SubcategoryManage = () => {
   return (
     <>
       <Container className={"mt-5"}>
-        <h3 className={"text-center p-2"}>서브 카테고리 관리</h3>
+        <h2 className={"text-center p-5"}>서브 카테고리 관리</h2>
         <Row className={"d-flex justify-content-around"}>
           <Col>
             <h4>서브 카테고리 선택</h4>
@@ -324,32 +426,43 @@ const SubcategoryManage = () => {
               <Form onSubmit={onSubmitSubcategoryEditForm}>
                 <InputGroup className={"pb-2"}>
                   <InputGroupText>선택된카테고리</InputGroupText>
-                  <Input name={"categoryId"} placeholder={"카테고리를 선택해주세요"} value={selectedCategoryId === -1 ? "" : selectedCategoryId} type={"number"} disabled={true}/>
+                  <Input name={"categoryId"} placeholder={"카테고리를 선택해주세요"}
+                         value={selectedCategoryId !== -1 ? selectedCategoryId : (categoryInputEdit !== -1 ? categoryInputEdit : "")}
+                         type={"number"} disabled={true}/>
                 </InputGroup>
+                {errorCategory?.error ?
+                  <div><p className={"bg-danger"}>{errorCategory.error?.categoryId}</p></div> : null}
                 <div className={"d-flex pb-2"}>
                   <InputGroup>
                     <InputGroupText>이름</InputGroupText>
-                    <Input name={"categoryNameKor"} value={getValueFromArray(categories, selectedCategoryId, "nameKor")} type={"text"} disabled={true}/>
+                    <Input name={"categoryNameKor"}
+                           value={selectedCategoryId !== -1 && categories.length !== 0 ? getValueFromArray(categories, selectedCategoryId, "nameKor") : categoryInputNameKorEdit}
+                           type={"text"} disabled={true}/>
                   </InputGroup>
                   <InputGroup>
                     <InputGroupText>영문이름</InputGroupText>
-                    <Input name={"categoryName"} value={getValueFromArray(categories, selectedCategoryId, "name")} type={"text"} disabled={true}/>
+                    <Input name={"categoryName"}
+                           value={selectedCategoryId !== -1 && categories.length !== 0 ? getValueFromArray(categories, selectedCategoryId, "name") : categoryInputNameEdit}
+                           type={"text"} disabled={true}/>
                   </InputGroup>
                 </div>
                 <hr/>
                 <InputGroup className={"pb-2"}>
                   <InputGroupText>선택된 서브카테고리</InputGroupText>
-                  <Input name={"subcategoryId"} value={selectedSubcategoryId === -1 ? "" : selectedSubcategoryId} type={"number"} disabled={true}/>
+                  <Input name={"subcategoryId"} value={selectedSubcategoryId !== -1 ? selectedSubcategoryId : ""}
+                         type={"number"} disabled={true}/>
                 </InputGroup>
                 <div className={"d-flex pb-2"}>
                   <InputGroup>
                     <InputGroupText>이름</InputGroupText>
-                    <Input name={"subcategoryNameKor"} type={"text"} placeholder={"변경할 이름을 입력해주세요"} onChange={onChangeNameKorInputSubcategoryEdit}
-                           value={nameKorInputSubcategoryEdit} />
+                    <Input name={"subcategoryNameKor"} type={"text"} placeholder={"변경할 이름을 입력해주세요"}
+                           onChange={onChangeNameKorInputSubcategoryEdit}
+                           value={nameKorInputSubcategoryEdit}/>
                   </InputGroup>
                   <InputGroup>
                     <InputGroupText>영문이름</InputGroupText>
-                    <Input name={"subcategoryName"} placeholder={"변경할 영문이름을 입력해주세요"} value={nameInputSubcategoryEdit} type={"text"}
+                    <Input name={"subcategoryName"} placeholder={"변경할 영문이름을 입력해주세요"} value={nameInputSubcategoryEdit}
+                           type={"text"}
                            onChange={onChangeNameInputSubcategoryEdit}
                     />
                   </InputGroup>
@@ -366,33 +479,37 @@ const SubcategoryManage = () => {
               <Form onSubmit={onSubmitSubcategoryAddForm}>
                 <InputGroup className={"pb-2"}>
                   <InputGroupText>선택된카테고리</InputGroupText>
-                  <Input name={"categoryId"} placeholder={"카테고리를 선택해주세요"} value={selectedCategoryId === -1 ? "" : selectedCategoryId} type={"number"} disabled={true}/>
+                  <Input name={"categoryId"} placeholder={"카테고리를 선택해주세요"}
+                         value={selectedCategoryId !== -1 ? selectedCategoryId : ""} type={"number"} disabled={true}/>
                 </InputGroup>
                 <div className={"d-flex pb-2"}>
                   <InputGroup>
                     <InputGroupText>이름</InputGroupText>
-                    <Input name={"categoryNameKor"} value={getValueFromArray(categories, selectedCategoryId, "nameKor")} type={"text"} disabled={true}/>
+                    <Input name={"categoryNameKor"} value={getValueFromArray(categories, selectedCategoryId, "nameKor")}
+                           type={"text"} disabled={true}/>
                   </InputGroup>
                   <InputGroup>
                     <InputGroupText>영문이름</InputGroupText>
-                    <Input name={"categoryName"} value={getValueFromArray(categories, selectedCategoryId, "name")} type={"text"} disabled={true}/>
+                    <Input name={"categoryName"} value={getValueFromArray(categories, selectedCategoryId, "name")}
+                           type={"text"} disabled={true}/>
                   </InputGroup>
                 </div>
                 <hr/>
                 <div className={"d-flex pb-2"}>
                   <InputGroup>
                     <InputGroupText>이름</InputGroupText>
-                    <Input name={"subcategoryNameKor"} type={"text"} placeholder={"이름을 입력해주세요"} onChange={onChangeNameKorInputSubcategoryAdd}
-                           value={nameKorInputSubcategoryAdd} />
+                    <Input name={"subcategoryNameKor"} type={"text"} placeholder={"이름을 입력해주세요"}
+                           onChange={onChangeNameKorInputSubcategoryAdd}
+                           value={nameKorInputSubcategoryAdd}/>
                   </InputGroup>
                   <InputGroup>
                     <InputGroupText>영문이름</InputGroupText>
-                    <Input name={"subcategoryName"} placeholder={"영문이름을 입력해주세요"} value={nameInputSubcategoryAdd} type={"text"}
+                    <Input name={"subcategoryName"} placeholder={"영문이름을 입력해주세요"} value={nameInputSubcategoryAdd}
+                           type={"text"}
                            onChange={onChangeNameInputSubcategoryAdd}
                     />
                   </InputGroup>
                 </div>
-
                 <div className={"d-flex justify-content-end"}>
                   <Button type={"submit"} className={"bg-primary"}>추가</Button>
                 </div>
