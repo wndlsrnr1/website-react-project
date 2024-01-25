@@ -1,5 +1,4 @@
 import './App.css';
-import {BrowserRouter, Route, Switch} from "react-router-dom";
 import HomeMain from "./home/HomeMain";
 import Login from "./login/Login";
 import Join from "./login/Join";
@@ -14,6 +13,8 @@ import AdminMain from "./admin/AdminMain";
 import ItemManage from "./admin/item/ItemManage";
 import CategoryManage from "./admin/category/CategoryManage";
 import SubcategoryManage from "./admin/category/SubcategoryManage";
+import ItemDetail from "./admin/item/ItemDetail";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -54,9 +55,11 @@ const App = () => {
         <Route path={"/user/mypage"} component={MyPage}/>
         <Route path={"/admin"} exact component={AdminMain}/>
         <Route path={"/admin/items"} exact component={ItemManage}/>
+        <Route path={"/admin/items/:itemId"} component={ItemDetail}/>
         <Route path={"/admin/categories"} exact component={CategoryManage}/>
         <Route path={"/admin/subcategories"} exact component={SubcategoryManage}/>
       </Switch>
+
     </BrowserRouter>
   );
 }

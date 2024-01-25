@@ -36,19 +36,20 @@ const ItemManage = () => {
   const [searchCondObj, setSearchCondObj] = useState({});
 
   //requests
-  const itemsRequest = (params) => {
-    console.log(params);
-    let path = `/admin/items?size=${pageSize}`;
-    Object.keys(params).forEach((key) => {
-      const value = params[key];
-      path += "&" + key + "=" + value;
-    });
+
+  const itemsRequest = (path) => {
     fetch(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
-        console.log(data);
-        setItems(data.data);
-        setSubmitted(true);
+        if (data?.data) {
+          const {content, totalPages, number} = data.data;
+          setItems(content);
+          setPageNumber(number);
+          setTotalPages(totalPages);
+          setSubmitted(true);
+          console.log(content);
+        }
+
       });
   }
 
@@ -81,12 +82,16 @@ const ItemManage = () => {
       searchCondObjUpdated["quantityMax"] = quantityMax
     }
     if (categoryId !== null && categoryId) {
-      searchCondObjUpdated["categoryId"] = categoryId
+      if (categoryId === -1 || categoryId == -1) {
+        delete searchCondObjUpdated.categoryId;
+      } else {
+        searchCondObjUpdated["categoryId"] = categoryId;
+      }
     }
     if (searchName) {
       searchCondObjUpdated["searchName"] = searchName
     }
-
+    console.log(searchCondObjUpdated);
     setSearchCondObj(searchCondObjUpdated)
     setSubmitted(false);
 
@@ -97,7 +102,8 @@ const ItemManage = () => {
       return;
     }
     categoryRequest();
-    itemsRequest({});
+    let path = `/admin/items?size=${pageSize}`;
+    itemsRequest(path);
     setLoaded(true);
   }, [loaded]);
 
@@ -106,7 +112,31 @@ const ItemManage = () => {
   //onSubmits
   const searchFormOnSubmit = (event) => {
     event.preventDefault();
-    itemsRequest(searchCondObj);
+    let path = `/admin/items?size=${pageSize}`;
+    const obj = {};
+    if (priceMin !== null && priceMin) {
+      obj["priceMin"] = priceMin
+    }
+    if (priceMax !== null && priceMax) {
+      obj["priceMax"] = priceMax
+    }
+    if (quantityMin !== null && quantityMin) {
+      obj["quantityMin"] = quantityMin
+    }
+    if (quantityMax !== null && quantityMax) {
+      obj["quantityMax"] = quantityMax
+    }
+    if (categoryId !== null && categoryId) {
+      obj["categoryId"] = categoryId
+    }
+    if (searchName) {
+      obj["searchName"] = searchName
+    }
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key];
+      path += "&" + key + "=" + value;
+    });
+    itemsRequest(path);
   }
 
   //onChange
@@ -194,31 +224,31 @@ const ItemManage = () => {
         <hr/>
         <div>
           <ListGroup>
-            <ListGroupItem className="justify-content-between">
-              <Badge pill className={"text-white bg-primary me-2"} color={"primary"}>
-                카테고리 이름
-              </Badge>
-              <Link className={"text-decoration-none text-black"}>아이템 이름</Link>
-            </ListGroupItem>
-            <ListGroupItem className="justify-content-between">
-              <Badge pill className={"text-white bg-primary me-2"} color={"primary"}>
-                카테고리 이름
-              </Badge>
-              아이템 이름
-            </ListGroupItem>
-            <ListGroupItem className="justify-content-between">
-              <Badge pill className={"text-white bg-primary me-2"} color={"primary"}>
-                카테고리 이름
-              </Badge>
-              아이템 이름
-            </ListGroupItem>
+            {
+              items && items.length !== 0 ? (
+                items.map((item, idx) => {
+                  return (
+                    <ListGroupItem key={item.toString() + idx} className="justify-content-between">
+                      <Badge pill className={"text-white bg-primary me-2"} color={"primary"}>
+                        {item.subcategory.nameKor}
+                      </Badge>
+                      <Link to={"/admin/items/" + item.id} className={"text-decoration-none text-black"}>{item.nameKor}  ({item.name})</Link>
+                    </ListGroupItem>
+                  )
+                })
+              ) : (
+                <ListGroupItem className="justify-content-between">
+                  <Link className={"text-decoration-none text-black"}>아이템이 없습니다</Link>
+                </ListGroupItem>
+              )
+            }
           </ListGroup>
         </div>
         <Paging pageGroupSize={pageGroupSize} pageSize={pageSize} pageNumber={pageNumber} totalPages={totalPages}
-                requestDomain={""} requestMethod={setItems} parameterOption={searchCondObj}/>
+                requestDomain={"/admin/items"} requestMethod={itemsRequest} parameterOption={searchCondObj}/>
       </Container>
     </>
-  )
+  );
 }
 
 export default ItemManage;
