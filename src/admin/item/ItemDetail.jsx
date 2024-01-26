@@ -36,7 +36,6 @@ const ItemDetail = (props) => {
 
   return (
     <>
-      <div>ItemId {itemId}</div>
       <Container className={"w-75"}>
 
         <h2 className={"text-center p-4"}>아이템 상세</h2>
