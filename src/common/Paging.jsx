@@ -62,9 +62,11 @@ const Paging = (props) => {
 
   //onClicks
   const move = (targetPage) => {
+    console.log(parameterOption);
     let path = requestDomain + entry("page", targetPage, true) + entry("size", pageSize);
-    Object.keys(parameterOption).forEach((key, value) => {
-      if (value) {
+    Object.keys(parameterOption).forEach((key, idx) => {
+      const value = parameterOption[key];
+      if (parameterOption[key]) {
         path += entry(key, value);
       }
     });

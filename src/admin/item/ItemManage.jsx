@@ -38,6 +38,7 @@ const ItemManage = () => {
   //requests
 
   const itemsRequest = (path) => {
+    console.log("path", path);
     fetch(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
@@ -49,7 +50,6 @@ const ItemManage = () => {
           setSubmitted(true);
           console.log(content);
         }
-
       });
   }
 
@@ -101,8 +101,10 @@ const ItemManage = () => {
     if (loaded) {
       return;
     }
+
     categoryRequest();
     let path = `/admin/items?size=${pageSize}`;
+
     itemsRequest(path);
     setLoaded(true);
   }, [loaded]);
@@ -132,11 +134,13 @@ const ItemManage = () => {
     if (searchName) {
       obj["searchName"] = searchName
     }
+
     Object.keys(obj).forEach((key) => {
       const value = obj[key];
       path += "&" + key + "=" + value;
     });
     itemsRequest(path);
+    setSearchCondObj(obj);
   }
 
   //onChange
@@ -232,7 +236,8 @@ const ItemManage = () => {
                       <Badge pill className={"text-white bg-primary me-2"} color={"primary"}>
                         {item.subcategory.nameKor}
                       </Badge>
-                      <Link to={"/admin/items/" + item.id} className={"text-decoration-none text-black"}>{item.nameKor}  ({item.name})</Link>
+                      <Link to={"/admin/items/" + item.id}
+                            className={"text-decoration-none text-black"}>{item.nameKor} ({item.name})</Link>
                     </ListGroupItem>
                   )
                 })
