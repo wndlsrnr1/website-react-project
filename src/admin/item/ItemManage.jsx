@@ -174,7 +174,7 @@ const ItemManage = () => {
 
         <h2 className={"p-5 text-center"}>아이템 관리</h2>
         <div className={"d-flex justify-content-end pb-2"}>
-          <Button tag={"a"} className={"bg-primary"}>아이템 추가</Button>
+          <Link to={"/admin/items/add"} className={"bg-primary text-white btn"}>아이템 추가</Link>
         </div>
         <div>
           <Form onSubmit={searchFormOnSubmit}>

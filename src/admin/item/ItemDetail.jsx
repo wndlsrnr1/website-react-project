@@ -37,7 +37,6 @@ const ItemDetail = (props) => {
   return (
     <>
       <Container className={"w-75"}>
-
         <h2 className={"text-center p-4"}>아이템 상세</h2>
         <div className={"box"}>
           <Row className={"mb-3"}>

@@ -10,11 +10,12 @@ import MyPage from "./user/MyPage";
 import {useDispatch, useSelector} from "react-redux";
 import {login, logout} from "./store/action";
 import AdminMain from "./admin/AdminMain";
-import ItemManage from "./admin/item/ItemManage";
 import CategoryManage from "./admin/category/CategoryManage";
 import SubcategoryManage from "./admin/category/SubcategoryManage";
+import ItemManage from "./admin/item/ItemManage";
 import ItemDetail from "./admin/item/ItemDetail";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
+import ItemAdd from "./admin/item/ItemAdd";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -54,10 +55,11 @@ const App = () => {
         <Route path={"/logout"} exact component={Logout}/>
         <Route path={"/user/mypage"} component={MyPage}/>
         <Route path={"/admin"} exact component={AdminMain}/>
-        <Route path={"/admin/items"} exact component={ItemManage}/>
-        <Route path={"/admin/items/:itemId"} component={ItemDetail}/>
         <Route path={"/admin/categories"} exact component={CategoryManage}/>
         <Route path={"/admin/subcategories"} exact component={SubcategoryManage}/>
+        <Route path={"/admin/items"} exact component={ItemManage}/>
+        <Route path={"/admin/items/add"} exact component={ItemAdd}/>
+        <Route path={"/admin/items/:itemId"} exact component={ItemDetail}/>
       </Switch>
 
     </BrowserRouter>
