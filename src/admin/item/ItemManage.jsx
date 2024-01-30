@@ -234,7 +234,7 @@ const ItemManage = () => {
                   return (
                     <ListGroupItem key={item.toString() + idx} className="justify-content-between">
                       <Badge pill className={"text-white bg-primary me-2"} color={"primary"}>
-                        {item.subcategory.nameKor}
+                        {item.subcategory?.nameKor ? item.subcategory?.nameKor : null}
                       </Badge>
                       <Link to={"/admin/items/" + item.id}
                             className={"text-decoration-none text-black"}>{item.nameKor} ({item.name})</Link>
