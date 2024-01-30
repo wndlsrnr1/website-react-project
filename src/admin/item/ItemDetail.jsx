@@ -1,12 +1,26 @@
 import {Link, useParams} from "react-router-dom";
 import {Button, Col, Container, Input, InputGroup, InputGroupText, Row} from "reactstrap";
 import {useEffect, useState} from "react";
+const getTime = (localDateTimeString) => {
+  return localDateTimeString.split("T")[1];
+}
+const getDate = (localDateTimeString) => {
+  return localDateTimeString.split("T")[0];
+}
 
 const ItemDetail = (props) => {
   //variables
   const {itemId} = useParams();
   const [loaded, setLoaded] = useState(false);
-  const [item, setItem] = useState({});
+  const [item, setItem] = useState([]);
+  const [category, setCategory] = useState(null);
+  const [releasedAt, setReleasedAt] = useState("");
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [price, setPrice] = useState("");
+  const [images, setImages] = useState([]);
+  const [status, setStatus] = useState("");
+  const [description, setDescription] = useState("");
 
   //requests
   const requestItem = () => {
@@ -15,7 +29,24 @@ const ItemDetail = (props) => {
       .then(resp => resp.json())
       .then(data => {
         console.log(data);
-        setItem(data.data);
+        const {category, releasedAt, updatedAt, createdAt, price, status, description} = data.data[0];
+        setItem(data.data[0]);
+        setCategory(category);
+        setReleasedAt(releasedAt);
+        setUpdatedAt(updatedAt);
+        setCreatedAt(createdAt);
+        setPrice(price);
+        setStatus(status);
+        setDescription(description);
+      });
+  };
+
+  const requestCategory = (subcategoryId) => {
+    const path = "/admin/category?" + "subcategoryId" + "=" + subcategoryId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setCategory(data.data);
       });
   };
 
@@ -28,6 +59,16 @@ const ItemDetail = (props) => {
     setLoaded(true);
   }, [loaded]);
 
+  useEffect(() => {
+    if (!item || item.length === 0) {
+      return;
+    }
+    requestCategory(item.subcategory.id);
+  }, [item])
+
+  useEffect(() => {
+    console.log(category);
+  }, [category])
   //onClicks
 
   //onSubmits
@@ -44,15 +85,20 @@ const ItemDetail = (props) => {
               <InputGroup>
                 <InputGroupText>카테고리</InputGroupText>
                 <Input className={"bg-white"} disabled={true} type={"select"}>
-                  <option>카테고리</option>
+                  {
+                    category ? <option value={category.id}
+                                       selected={true}>{category.nameKor}</option> : null
+                  }
                 </Input>
               </InputGroup>
             </Col>
             <Col>
               <InputGroup>
                 <InputGroupText>서브카테고리</InputGroupText>
-                <Input className={"bg-white"} disabled={true} value={"아이템 이름1"}>
-                  <option>서브 카테고리</option>
+                <Input className={"bg-white"} disabled={true} type={"select"}>
+
+                  <option selected={true}
+                          value={item.length !== 0 && item ? item.subcategory.id : null}>{item.length !== 0 && item ? item.subcategory?.nameKor : null}</option>
                 </Input>
               </InputGroup>
             </Col>
@@ -70,23 +116,23 @@ const ItemDetail = (props) => {
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>출시일</InputGroupText>
-            <Input className={"bg-white"} type={"date"} disabled={false} value={item ? item.releasedAt : null}/>
-            <Input className={"bg-white"} type={"time"} disabled={true}/>
+            <Input className={"bg-white"} type={"date"} disabled={true} value={getDate(releasedAt)}/>
+            <Input className={"bg-white"} type={"time"} disabled={true} value={getTime(releasedAt)}/>
           </InputGroup>
 
           <Row className={"mb-3"}>
             <Col>
               <InputGroup>
                 <InputGroupText>생성일</InputGroupText>
-                <Input className={"bg-white"} disabled={true} type={"date"}/>
-                <Input className={"bg-white"} disabled={true} type={"time"}/>
+                <Input className={"bg-white"} disabled={true} type={"date"} value={getDate(createdAt)}/>
+                <Input className={"bg-white"} disabled={true} type={"time"} value={getTime(createdAt)}/>
               </InputGroup>
             </Col>
             <Col>
               <InputGroup>
                 <InputGroupText>수정일</InputGroupText>
-                <Input className={"bg-white"} disabled={true} type={"date"}/>
-                <Input className={"bg-white"} disabled={true} type={"time"}/>
+                <Input className={"bg-white"} disabled={true} type={"date"} value={getDate(updatedAt)}/>
+                <Input className={"bg-white"} disabled={true} type={"time"} value={getTime(updatedAt)}/>
               </InputGroup>
             </Col>
           </Row>
@@ -101,7 +147,8 @@ const ItemDetail = (props) => {
             <Col>
               <InputGroup>
                 <InputGroupText>수량</InputGroupText>
-                <Input className={"bg-white"} disabled={true} value={item ? item.quantity : null} type={"number"} min={0} max={20000000}/>
+                <Input className={"bg-white"} disabled={true} value={item ? item.quantity : null} type={"number"}
+                       min={0} max={20000000}/>
               </InputGroup>
             </Col>
           </Row>
