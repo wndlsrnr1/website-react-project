@@ -16,11 +16,13 @@ import ItemManage from "./admin/item/ItemManage";
 import ItemDetail from "./admin/item/ItemDetail";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import ItemAdd from "./admin/item/ItemAdd";
+import ItemEdit from "./admin/item/ItemEdit";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
   const dispatch = useDispatch();
   const [loaded, setLoaded] = useState(false);
+
 
   // 최상위 트리에서 로그인 검증
   useEffect(() => {
@@ -60,6 +62,7 @@ const App = () => {
         <Route path={"/admin/items"} exact component={ItemManage}/>
         <Route path={"/admin/items/add"} exact component={ItemAdd}/>
         <Route path={"/admin/items/:itemId"} exact component={ItemDetail}/>
+        <Route path={"/admin/items/edit/:itemId"} exact component={ItemEdit}/>
       </Switch>
 
     </BrowserRouter>
