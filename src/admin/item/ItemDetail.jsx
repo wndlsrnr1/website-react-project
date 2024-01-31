@@ -60,6 +60,17 @@ const ItemDetail = (props) => {
       });
   };
 
+  const deleteRequest = (url) => {
+    fetch(url, {method: "delete"})
+      .then((resp) => {
+        if (resp.ok) {
+          window.location.href = "/admin/items";
+        } else {
+          console.error("fail to delete");
+        }
+      });
+  }
+
   //useEffects
   useEffect(() => {
     if (loaded) {
@@ -79,7 +90,12 @@ const ItemDetail = (props) => {
   useEffect(() => {
     console.log(images);
   }, [images])
+
   //onClicks
+  const deleteOnClick = (event) => {
+    event.preventDefault();
+    deleteRequest("/admin/items/remove/" + itemId);
+  }
 
   //onSubmits
 
@@ -196,7 +212,7 @@ const ItemDetail = (props) => {
           </InputGroup>
         </div>
         <div className={"buttons"}>
-          <Button className={"w-100 mb-3"} to={"/admin/items/delete" + itemId}>삭제</Button>
+          <Button className={"w-100 mb-3"} onClick={deleteOnClick} >삭제</Button>
           <Link className={"w-100 bg-primary btn text-white"} to={"/admin/items/edit/" + itemId}>수정</Link>
         </div>
       </Container>
