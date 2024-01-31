@@ -1,6 +1,7 @@
 import {Link, useParams} from "react-router-dom";
-import {Button, Col, Container, Input, InputGroup, InputGroupText, Row} from "reactstrap";
+import {Button, Col, Container, Form, FormGroup, Input, InputGroup, InputGroupText, Label, Row} from "reactstrap";
 import {useEffect, useState} from "react";
+
 const getTime = (localDateTimeString) => {
   return localDateTimeString.split("T")[1];
 }
@@ -38,6 +39,15 @@ const ItemDetail = (props) => {
         setPrice(price);
         setStatus(status);
         setDescription(description);
+        const imagesUpdated = [];
+        for (const datum of data.data) {
+          const imageObj = {};
+          imageObj.fileId = datum.fileId;
+          imageObj.requestName = datum.requestName;
+          imageObj.savedFileName = datum.savedFileName;
+          imagesUpdated.push(imageObj);
+        }
+        setImages(imagesUpdated);
       });
   };
 
@@ -67,8 +77,8 @@ const ItemDetail = (props) => {
   }, [item])
 
   useEffect(() => {
-    console.log(category);
-  }, [category])
+    console.log(images);
+  }, [images])
   //onClicks
 
   //onSubmits
@@ -152,10 +162,27 @@ const ItemDetail = (props) => {
               </InputGroup>
             </Col>
           </Row>
+          <div className={"pb-3"}>
+            {
+              images ? images.map((image, idx) => {
+                return (
+                  <div className={"d-inline-block me-3"}>
+                    <div className={"border d-flex flex-column"}>
+                      <div className={"d-inline-block"}>
+                        <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
+                      </div>
+                      <span className={"text-center"}>{image.requestName}</span>
+                      {/*<Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}>삭제</Button>*/}
+                    </div>
+                  </div>
+                )
+              }) : null
+            }
+          </div>
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>ImageFiles</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={"아이템 이미지 파일들"}/>
+            <Input className={"bg-white"} disabled={true} value={images.map((elem, idx) => elem.requestName).join(", ")}/>
           </InputGroup>
 
           <InputGroup className={"mb-3"}>
@@ -174,7 +201,7 @@ const ItemDetail = (props) => {
         </div>
       </Container>
     </>
-  )
+  );
 }
 
 export default ItemDetail;
