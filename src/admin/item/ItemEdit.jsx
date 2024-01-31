@@ -1,6 +1,7 @@
-import {Button, Col, Container, Form, Input, InputGroup, InputGroupText, Row} from "reactstrap";
+import {Button, Col, Container, Form, Input, InputGroup, InputGroupText, Label, Row} from "reactstrap";
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+
 const getTime = (localDateTimeString) => {
   return localDateTimeString.split("T")[1];
 }
@@ -18,9 +19,12 @@ const getLocalDateTime = (timeString) => {
 const ItemEdit = () => {
 
   //variables
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const {itemId} = useParams();
+  const [item, setItem] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
-  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [subcategories, setSubcategories] = useState([]);
   const [itemNameKor, setItemNameKor] = useState("");
   const [itemName, setItemName] = useState("");
@@ -28,35 +32,194 @@ const ItemEdit = () => {
   const [itemPrice, setItemPrice] = useState("");
   const [itemQuantity, setItemQuantity] = useState("");
   const [images, setImages] = useState([]);
+  const [imagesForUpdate, setImagesForUpdate] = useState([]);
+  const [imagesForDelete, setImagesForDelete] = useState([]);
   const [createdAt, setCreatedAt] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
   const [itemStatus, setItemStatus] = useState("");
   const [itemDescription, setItemDescription] = useState("");
+  const [imageFiles, setImageFiles] = useState([]);
 
   //requests
+  const requestItem = () => {
+    const path = "/admin/items/" + itemId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        const {
+          subcategory,
+          quantity,
+          name,
+          nameKor,
+          releasedAt,
+          updatedAt,
+          createdAt,
+          price,
+          status,
+          description
+        } = data.data[0];
+        setItem(data.data[0]);
+        setItemName(name);
+        setItemNameKor(nameKor)
+        setReleasedAt(releasedAt);
+        setUpdatedAt(updatedAt);
+        setCreatedAt(createdAt);
+        setItemPrice(price);
+        setItemStatus(status);
+        setItemDescription(description);
+        setSelectedSubcategory(subcategory);
+        setItemQuantity(quantity);
+        console.log(subcategory);
+        const imagesUpdated = [];
+        for (const datum of data.data) {
+          const imageObj = {};
+          imageObj.fileId = datum.fileId;
+          imageObj.requestName = datum.requestName;
+          imageObj.savedFileName = datum.savedFileName;
+          imagesUpdated.push(imageObj);
+        }
+        setImages(imagesUpdated);
+      });
+  };
 
-  //useEffects
+  const requestCategories = () => {
+    fetch("/admin/categories", {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setCategories(data.data.content);
+      });
+  }
+
+  const requestSubcategoriesByCategoryId = (categoryId) => {
+    fetch(`/admin/subcategories?categoryId=${categoryId}`, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setSubcategories(data.data.content);
+      });
+  }
+
+  const requestCategory = (subcategoryId) => {
+    const path = "/admin/category?" + "subcategoryId" + "=" + subcategoryId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setSelectedCategory(data.data);
+      });
+  };
+
+  const itemEditRequest = (url) => {
+    const formData = new FormData();
+    formData.append("releasedAt", getSpaceDateTime(releasedAt));
+    formData.append("subcategoryId", selectedSubcategory.id);
+    formData.append("nameKor", itemNameKor);
+    formData.append("name", itemName);
+    formData.append("releasedAt", releasedAt);
+    formData.append("price", itemPrice);
+    formData.append("quantity", itemQuantity);
+    formData.append("images", images);
+    // formData.append("imageFiles", imageFiles);
+    for (const imageFile of imageFiles) {
+      formData.append("imageFiles", imageFile);
+    }
+    formData.append("status", itemStatus);
+    formData.append("description", itemDescription);
+    formData.append("itemId", itemId)
+  };
+
+  const fileOnItemRemoveRequest = (url, removeList) => {
+
+  };
+
+  //useEffects 1차 로드
+  useEffect(() => {
+    if (loaded) {
+      return;
+    }
+    requestItem();
+    requestCategories();
+    setLoaded(true);
+  }, [loaded]);
+
+  //2차 로드
+  useEffect(() => {
+    if (!selectedSubcategory) {
+      return;
+    }
+    console.log(selectedSubcategory);
+    requestCategory(selectedSubcategory.id);
+  }, [selectedSubcategory]);
+
+  //category 따라서 바꾸기
+  useEffect(() => {
+    if (!selectedCategory) {
+      return;
+    }
+    requestSubcategoriesByCategoryId(selectedCategory.id);
+  }, [selectedCategory])
+
+  useEffect(() => {
+
+  }, [])
+
 
   //onClicks
-  const deleteImagesOnClick = (itemId) => {
-
+  const deleteImagesOnClick = (imageId) => {
+    let imagesUpdate = images.filter((image, idx) => parseInt(image.fileId) !== parseInt(imageId));
+    let imageForDelete = images.filter((image) => parseInt(image.fileId) === parseInt(imageId));
+    setImagesForDelete([...imagesForDelete, imageForDelete]);
+    setImages(imagesUpdate);
   }
 
   //onSubmits
   const editOnSubmit = (event) => {
     event.preventDefault();
-
+    itemEditRequest("/admin/items/edit/" + itemId);
+    fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
   }
 
   //onChanges
+  const imagesOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    const files = event.target.files;
+    const maxFiles = event.target.getAttribute("max-files");
+    const imagesList = [];
+    for (const file of event.target.files) {
+      imagesList.push(file.name);
+    }
+
+    if (maxFiles && (files.length <= parseInt(maxFiles))) {
+      setImagesForUpdate(imagesList);
+    } else {
+      setImagesForUpdate([]);
+      return;
+    }
+
+    const maxSize = event.target.getAttribute("max-size");
+    if (maxSize) {
+      let fileSize = 0;
+      Array.from(files).forEach(file => fileSize += file.size);
+      if (fileSize > maxSize) {
+        setImagesForUpdate([]);
+        return;
+      }
+    }
+    console.log("files = ", files);
+    setImageFiles(files);
+    setImagesForUpdate(imagesList);
+  }
+
   const categoryOnChangeInput = (event) => {
-    const value = event.target.value;
-    setSelectedCategoryId(value);
+    const categoryId = event.target.value;
+    const categoryObj = categories.filter((category, idx) => category.id == categoryId)[0];
+    setSelectedCategory(categoryObj);
   }
 
   const subCategoryOnChangeInput = (event) => {
-    const value = event.target.value;
-    setSelectedSubcategoryId(value);
+    const subcategoryId = event.target.value;
+    const subcategoryObj = subcategories.filter((elem, idx) => elem.subcategoryId == subcategoryId)[0];
+    subcategoryObj.id = subcategoryObj.subcategoryId;
+    setSelectedSubcategory(subcategoryObj);
   }
 
   const itemNameOnChangeInput = (event) => {
@@ -96,16 +259,31 @@ const ItemEdit = () => {
             <Col>
               <InputGroup>
                 <InputGroupText>카테고리</InputGroupText>
-                <Input className={"bg-white"} type={"select"} value={selectedCategoryId} onChange={categoryOnChangeInput}>
-                  <option value=""></option>
+                <Input className={"bg-white"} type={"select"} value={selectedCategory ? selectedCategory.id : null}
+                       onChange={categoryOnChangeInput}>
+                  {categories && categories.length !== 0 ? categories.map((category, idx) => {
+                    return (
+                      <option key={category.id.toString() + idx}
+                              value={category.id}>{category.nameKor} ({category.name})</option>
+                    )
+                  }) : null}
                 </Input>
               </InputGroup>
             </Col>
             <Col>
               <InputGroup>
                 <InputGroupText>서브카테고리</InputGroupText>
-                <Input className={"bg-white"} type={"select"} value={selectedSubcategoryId} onChange={subCategoryOnChangeInput}>
-                  <option value="">그냥</option>
+                <Input className={"bg-white"} type={"select"}
+                       value={selectedSubcategory ? selectedSubcategory.id : null}
+                       onChange={subCategoryOnChangeInput}>
+                  {
+                    subcategories.length !== 0 ? subcategories.map((subcategory, idx) => {
+                      return (
+                        <option key={subcategory.toString() + idx}
+                                value={subcategory.subcategoryId}>{subcategory.nameKor} ({subcategory.name})</option>
+                      )
+                    }) : null
+                  }
                 </Input>
               </InputGroup>
             </Col>
@@ -123,7 +301,8 @@ const ItemEdit = () => {
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>출시일</InputGroupText>
-            <Input className={"bg-white"} type={"datetime-local"} value={releasedAt} onChange={releasedAtOnChangeInput}/>
+            <Input className={"bg-white"} type={"datetime-local"} value={releasedAt}
+                   onChange={releasedAtOnChangeInput}/>
           </InputGroup>
 
           <Row className={"mb-3"}>
@@ -153,7 +332,8 @@ const ItemEdit = () => {
             <Col>
               <InputGroup>
                 <InputGroupText>수량</InputGroupText>
-                <Input className={"bg-white"} value={itemQuantity} onChange={itemQuantityOnChange} type={"number"} min={0} max={20000000}/>
+                <Input className={"bg-white"} value={itemQuantity} onChange={itemQuantityOnChange} type={"number"}
+                       min={0} max={20000000}/>
               </InputGroup>
             </Col>
           </Row>
@@ -167,18 +347,25 @@ const ItemEdit = () => {
                         <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
                       </div>
                       <span className={"text-center"}>{image.requestName}</span>
-                      <Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId} onClick={()=>deleteImagesOnClick(image.fileId)}>삭제</Button>
+                      <Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}
+                              onClick={() => deleteImagesOnClick(image.fileId)}>삭제</Button>
                     </div>
                   </div>
                 )
               }) : null
             }
           </div>
+          <Label tag={"label"} for={"file"} className={"w-100"}>
+            <InputGroup className={"mb-3"}>
+              <InputGroupText>파일 추가</InputGroupText>
+              <div className={"form-control"}>{images.map((elem, idx) => elem.requestName).join(", ")}</div>
+            </InputGroup>
+            <Input className={"d-none"} type={"file"} style={{width: "0px"}}
+                   onChange={imagesOnChangeInput}
+                   multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"3"} max-size={"31457280"}
+                   id={"file"}/>
+          </Label>
 
-          <InputGroup className={"mb-3"}>
-            <InputGroupText>ImageFiles</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={images.map((elem, idx) => elem.requestName).join(", ")}/>
-          </InputGroup>
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>상태</InputGroupText>
@@ -187,7 +374,8 @@ const ItemEdit = () => {
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>설명</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={itemDescription} onChange={itemDescriptionOnChange} type={"textarea"}/>
+            <Input className={"bg-white"} disabled={true} value={itemDescription} onChange={itemDescriptionOnChange}
+                   type={"textarea"}/>
           </InputGroup>
         </div>
         <div className={"buttons"}>
