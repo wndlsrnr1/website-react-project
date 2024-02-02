@@ -16,6 +16,13 @@ const getSpaceDateTime = (timeString) => {
 const getLocalDateTime = (timeString) => {
   return timeString.replace(" ", "T");
 }
+
+const getImageFromFileObj = (fileObj) => {
+  if (!fileObj) {
+    return null;
+  }
+  return URL.createObjectURL(fileObj);
+}
 const ItemEdit = () => {
 
   //variables
@@ -39,6 +46,7 @@ const ItemEdit = () => {
   const [itemStatus, setItemStatus] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
+  const [imageFilesForUpdate, setImageFilesForUpdate] = useState([]);
 
   //requests
   const requestItem = () => {
@@ -113,17 +121,25 @@ const ItemEdit = () => {
     formData.append("subcategoryId", selectedSubcategory.id);
     formData.append("nameKor", itemNameKor);
     formData.append("name", itemName);
-    formData.append("releasedAt", releasedAt);
+    // formData.append("releasedAt", releasedAt);
     formData.append("price", itemPrice);
     formData.append("quantity", itemQuantity);
-    formData.append("images", images);
+    formData.append("images", imagesForUpdate);
     // formData.append("imageFiles", imageFiles);
-    for (const imageFile of imageFiles) {
-      formData.append("imageFiles", imageFile);
+    for (const file of imageFilesForUpdate) {
+      formData.append("imageFiles", file);
     }
+
     formData.append("status", itemStatus);
     formData.append("description", itemDescription);
-    formData.append("itemId", itemId)
+    // formData.append("itemId", itemId)
+
+    fetch(url, {method: "post", body: formData})
+      .then((resp) => {
+        if (!resp.ok) {
+          console.error("파일 수정 실패");
+        }
+      });
   };
 
   const fileOnItemRemoveRequest = (url, removeList) => {
@@ -158,8 +174,9 @@ const ItemEdit = () => {
   }, [selectedCategory])
 
   useEffect(() => {
-
-  }, [])
+    console.log("sad", imagesForUpdate);
+    console.dir(imageFilesForUpdate);
+  }, [imagesForUpdate])
 
 
   //onClicks
@@ -187,7 +204,6 @@ const ItemEdit = () => {
     for (const file of event.target.files) {
       imagesList.push(file.name);
     }
-
     if (maxFiles && (files.length <= parseInt(maxFiles))) {
       setImagesForUpdate(imagesList);
     } else {
@@ -204,8 +220,7 @@ const ItemEdit = () => {
         return;
       }
     }
-    console.log("files = ", files);
-    setImageFiles(files);
+    setImageFilesForUpdate(files);
     setImagesForUpdate(imagesList);
   }
 
@@ -354,11 +369,30 @@ const ItemEdit = () => {
                 )
               }) : null
             }
+            <hr/>
+            {
+              imageFilesForUpdate ? Array.from(imageFilesForUpdate).map((file, idx) => {
+                return (
+                  <div className={"d-inline-block me-3"} key={file.toString() + idx}>
+                    <div className={"border d-flex flex-column"}>
+                      <div className={"d-inline-block"}>
+                        <img style={{maxHeight: "100px"}} src={getImageFromFileObj(file)} alt={file.name}/>
+                      </div>
+                      <span className={"text-center"}>{file.name}</span>
+                    </div>
+                  </div>
+                )
+              }) : null
+            }
           </div>
           <Label tag={"label"} for={"file"} className={"w-100"}>
             <InputGroup className={"mb-3"}>
               <InputGroupText>파일 추가</InputGroupText>
-              <div className={"form-control"}>{images.map((elem, idx) => elem.requestName).join(", ")}</div>
+              <div className={"form-control"}>
+                {images.map((elem, idx) => elem.requestName).join(", ")}
+                {imagesForUpdate.length !== 0 ? ", " : null}
+                {imagesForUpdate.map((elem, idx) => elem).join(", ")}
+              </div>
             </InputGroup>
             <Input className={"d-none"} type={"file"} style={{width: "0px"}}
                    onChange={imagesOnChangeInput}
@@ -369,12 +403,12 @@ const ItemEdit = () => {
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>상태</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={itemStatus} onChange={itemStatusOnChange}/>
+            <Input className={"bg-white"} value={itemStatus} onChange={itemStatusOnChange}/>
           </InputGroup>
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>설명</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={itemDescription} onChange={itemDescriptionOnChange}
+            <Input className={"bg-white"} value={itemDescription} onChange={itemDescriptionOnChange}
                    type={"textarea"}/>
           </InputGroup>
         </div>
@@ -385,7 +419,7 @@ const ItemEdit = () => {
       </Form>
 
     </Container>
-  )
+  );
 }
 
 export default ItemEdit;
