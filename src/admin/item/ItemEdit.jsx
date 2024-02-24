@@ -23,6 +23,7 @@ const getImageFromFileObj = (fileObj) => {
   }
   return URL.createObjectURL(fileObj);
 }
+
 const ItemEdit = () => {
 
   //variables
@@ -133,7 +134,12 @@ const ItemEdit = () => {
     formData.append("status", itemStatus);
     formData.append("description", itemDescription);
     // formData.append("itemId", itemId)
-
+    for (let i = 0; i < imagesForDelete.length; i++) {
+      const imagesForDeleteElement = imagesForDelete[i];
+      formData.append("imagesForDelete["+i+"].fileId", imagesForDeleteElement.fileId)
+      formData.append("imagesForDelete["+i+"].requestName", imagesForDeleteElement.requestName)
+      formData.append("imagesForDelete["+i+"].savedFileName", imagesForDeleteElement.savedFileName)
+    }
     fetch(url, {method: "post", body: formData})
       .then((resp) => {
         if (!resp.ok) {
@@ -142,7 +148,7 @@ const ItemEdit = () => {
       });
   };
 
-  const fileOnItemRemoveRequest = (url, removeList) => {
+  const fileOnItemRemoveRequest = (url, images, imageFiles) => {
 
   };
 
@@ -176,14 +182,16 @@ const ItemEdit = () => {
   useEffect(() => {
     console.log("sad", imagesForUpdate);
     console.dir(imageFilesForUpdate);
-  }, [imagesForUpdate])
+    console.log(imagesForDelete)
+  }, [imagesForUpdate, imagesForDelete])
 
 
   //onClicks
   const deleteImagesOnClick = (imageId) => {
     let imagesUpdate = images.filter((image, idx) => parseInt(image.fileId) !== parseInt(imageId));
-    let imageForDelete = images.filter((image) => parseInt(image.fileId) === parseInt(imageId));
-    setImagesForDelete([...imagesForDelete, imageForDelete]);
+    let imageForDeleteElem = images.filter((image) => parseInt(image.fileId) === parseInt(imageId))[0];
+
+    setImagesForDelete([...imagesForDelete, imageForDeleteElem]);
     setImages(imagesUpdate);
   }
 
@@ -191,7 +199,7 @@ const ItemEdit = () => {
   const editOnSubmit = (event) => {
     event.preventDefault();
     itemEditRequest("/admin/items/edit/" + itemId);
-    fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
+    // fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
   }
 
   //onChanges

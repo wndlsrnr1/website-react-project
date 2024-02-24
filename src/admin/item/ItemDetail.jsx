@@ -60,6 +60,7 @@ const ItemDetail = (props) => {
       });
   };
 
+
   const deleteRequest = (url) => {
     fetch(url, {method: "delete"})
       .then((resp) => {
@@ -84,11 +85,17 @@ const ItemDetail = (props) => {
     if (!item || item.length === 0) {
       return;
     }
+    if (!item.subcategory?.id) {
+      setCategory({});
+      return;
+    }
     requestCategory(item.subcategory.id);
   }, [item])
 
   useEffect(() => {
+
     console.log(images);
+    console.log(item);
   }, [images])
 
   //onClicks
@@ -124,7 +131,7 @@ const ItemDetail = (props) => {
                 <Input className={"bg-white"} disabled={true} type={"select"}>
 
                   <option selected={true}
-                          value={item.length !== 0 && item ? item.subcategory.id : null}>{item.length !== 0 && item ? item.subcategory?.nameKor : null}</option>
+                          value={item.length !== 0 && item && item.subcategory?.id ? item.subcategory.id : null}>{item.length !== 0 && item ? item.subcategory?.nameKor : null}</option>
                 </Input>
               </InputGroup>
             </Col>
