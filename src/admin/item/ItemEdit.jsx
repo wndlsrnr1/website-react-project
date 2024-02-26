@@ -134,17 +134,22 @@ const ItemEdit = () => {
     formData.append("status", itemStatus);
     formData.append("description", itemDescription);
     // formData.append("itemId", itemId)
-    for (let i = 0; i < imagesForDelete.length; i++) {
-      const imagesForDeleteElement = imagesForDelete[i];
-      formData.append("imagesForDelete["+i+"].fileId", imagesForDeleteElement.fileId)
-      formData.append("imagesForDelete["+i+"].requestName", imagesForDeleteElement.requestName)
-      formData.append("imagesForDelete["+i+"].savedFileName", imagesForDeleteElement.savedFileName)
-    }
+    // for (let i = 0; i < imagesForDelete.length; i++) {
+    //   const imagesForDeleteElement = imagesForDelete[i];
+    //   formData.append("imagesForDelete["+i+"].fileId", imagesForDeleteElement.fileId)
+    //   formData.append("imagesForDelete["+i+"].requestName", imagesForDeleteElement.requestName)
+    //   formData.append("imagesForDelete["+i+"].savedFileName", imagesForDeleteElement.savedFileName)
+    // }
+    const imageIdsForDelete = imagesForDelete.map((images, idx) => images.fileId);
+    formData.append("imagesForDelete[]", imageIdsForDelete);
+
     fetch(url, {method: "post", body: formData})
       .then((resp) => {
         if (!resp.ok) {
           console.error("파일 수정 실패");
+          return;
         }
+        window.location.href = "/admin/items/" + itemId;
       });
   };
 

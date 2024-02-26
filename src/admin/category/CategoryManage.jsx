@@ -65,19 +65,14 @@ const CategoryManage = () => {
   const [subcategorySearchCond, setSubcategorySearchCond] = useState(null);
   //controlled input
   const [categorySearchInput, setCategorySearchInput] = useState("");
-  const [subcategorySearchInput, setSubcategorySearchInput] = useState("");
 
   const [categoryNameKorUpdateInput, setCategoryNameKorUpdateInput] = useState("");
   const [categoryNameUpdateInput, setCategoryNameUpdateInput] = useState("");
   const [categoryNameAddInput, setCategoryNameAddInput] = useState("");
   const [categoryNameKorAddInput, setCategoryNameKorAddInput] = useState("");
-  const [subcategoryNameAddInput, setSubcategoryNameAddInput] = useState("");
-  const [subcategoryNameKorAddInput, setSubcategoryNameKorAddInput] = useState("");
   const [isCategoryUpdated, setIsCategoryUpdated] = useState(false);
   const [isSubcategoryUpdated, setIsSubcategoryUpdated] = useState(false);
 
-  const [categorySearchInput2, setCategorySearchInput2] = useState("");
-  const [selectedCategoryForSubcategoryUpdate, setSelectedCategoryForSubcategoryUpdate] = useState(-1);
 
 
 
@@ -144,7 +139,7 @@ const CategoryManage = () => {
   }
 
   const onClickDeleteCategorySelected = () => {
-    fetch(`/admin/sucategory/delete/${selectedCategory}`, {method: "delete"})
+    fetch(`/admin/category/delete/${selectedCategory}`, {method: "delete"})
       .then(resp => {
         if (resp.ok) {
           setIsCategoryUpdated(true);
