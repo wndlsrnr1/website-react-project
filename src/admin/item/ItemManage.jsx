@@ -210,15 +210,14 @@ const ItemManage = () => {
                         <option key={category.name + index} value={category.id}>{category.nameKor}</option>
                       )
                     }) : null}
-                    <option>카테고리1</option>
                   </Input>
                 </InputGroup>
               </Col>
               <Col className={"col-9"}>
                 <InputGroup className={"flex-grow-2"}>
                   <InputGroupText>검색</InputGroupText>
-                  <Input placeholder={"아이템 이름 검색"} name={"searchName"} type={"text"} value={searchName}
-                         onChange={searchNameOnChange}/>
+                  <Input placeholder={"아이템 이름 검색"} name={"searchName"} type={"text"}
+                         value={searchName} onChange={searchNameOnChange}/>
                   <Button type={"submit"} className={"bg-primary"}>검색</Button>
                 </InputGroup>
               </Col>

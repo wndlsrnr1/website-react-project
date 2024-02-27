@@ -17,6 +17,8 @@ import ItemDetail from "./admin/item/ItemDetail";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import ItemAdd from "./admin/item/ItemAdd";
 import ItemEdit from "./admin/item/ItemEdit";
+import HomeItemCarousel from "./admin/item/home/carousel/HomeItemCarousel"
+import HomeItemCarouselAdd from "./admin/item/home/carousel/HomeItemCarouselAdd";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -56,15 +58,20 @@ const App = () => {
         <Route path={"/user/find"} exact component={FindPassword}/>
         <Route path={"/logout"} exact component={Logout}/>
         <Route path={"/user/mypage"} component={MyPage}/>
+
+        <Route path={"/admin/home/items/carousel"} exact component={HomeItemCarousel}/>
+        <Route path={"/admin/home/items/carousel/add"} exact component={HomeItemCarouselAdd}/>
+
         <Route path={"/admin"} exact component={AdminMain}/>
         <Route path={"/admin/categories"} exact component={CategoryManage}/>
         <Route path={"/admin/subcategories"} exact component={SubcategoryManage}/>
+
         <Route path={"/admin/items"} exact component={ItemManage}/>
         <Route path={"/admin/items/add"} exact component={ItemAdd}/>
         <Route path={"/admin/items/:itemId"} exact component={ItemDetail}/>
         <Route path={"/admin/items/edit/:itemId"} exact component={ItemEdit}/>
-      </Switch>
 
+      </Switch>
     </BrowserRouter>
   );
 }

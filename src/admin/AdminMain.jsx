@@ -16,6 +16,12 @@ const AdminMain = () => {
           <li>
             <Link to={"/admin/items"} className={"h-100"}>아이템 관리</Link>
           </li>
+          <li>
+            <Link to={"/admin/items"} className={"h-100"}>아이템 관리</Link>
+          </li>
+          <li>
+            <Link to={"/admin/home/items/carousel"} className={"h-100"}>홈 캐러셀 관리</Link>
+          </li>
         </ul>
       </Container>
 
