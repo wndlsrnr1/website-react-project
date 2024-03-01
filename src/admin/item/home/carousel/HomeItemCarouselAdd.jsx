@@ -35,7 +35,7 @@ const HomeItemCarouselAdd = () => {
   const [submitted, setSubmitted] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
-  const [selectedImageIdList, setSelectedImageIdList] = useState([]);
+  const [selectedImageId, setSelectedImageId] = useState([]);
   const [images, setImages] = useState([]);
 
   //hook
@@ -91,6 +91,25 @@ const HomeItemCarouselAdd = () => {
       });
   }
 
+  const homeItemCarouselAddRequest = () => {
+    const formData = new FormData();
+    formData.append("itemId", selectedItemId);
+    formData.append("attachmentId", selectedImageId);
+
+    fetch("/admin/home/carousel/add", {method: "post", body: formData})
+      .then(resp => {
+        if (resp.ok) {
+          return {};
+        } else {
+          return resp.json();
+        }
+      })
+      .then(data => {
+        console.log(data);
+      });
+  };
+
+
   //useEffects
   useEffect(() => {
     if (submitted === false) {
@@ -144,7 +163,7 @@ const HomeItemCarouselAdd = () => {
   const toggleItemIdOnClick = (itemId) => {
     if (itemId === selectedItemId) {
       setSelectedItemId(null);
-      setSelectedImageIdList([]);
+      setSelectedImageId(null);
       return;
     }
     setSelectedItemId(parseInt(itemId));
@@ -184,14 +203,27 @@ const HomeItemCarouselAdd = () => {
   }
 
   const toggleSelectedImageOnclick = (imageId) => {
-    const ImageIdParsed = parseInt(imageId);
-    if (selectedImageIdList.includes(ImageIdParsed)) {
-      const newOne = selectedImageIdList.filter((selectedImageId, idx) => selectedImageId !== ImageIdParsed);
-      setSelectedImageIdList(newOne);
+    const imageIdParsed = parseInt(imageId);
+    // if (selectedImageIdList.includes(ImageIdParsed)) {
+    //   const newOne = selectedImageIdList.filter((selectedImageId, idx) => selectedImageId !== ImageIdParsed);
+    //   setSelectedImageIdList(newOne);
+    //   return;
+    // }
+    // const newOne = [...selectedImageIdList, ImageIdParsed];
+    if (!selectedImageId) {
+      setSelectedImageId(imageIdParsed)
       return;
     }
-    const newOne = [...selectedImageIdList, ImageIdParsed];
-    setSelectedImageIdList(newOne);
+    if (selectedImageId !== imageIdParsed) {
+      setSelectedImageId(imageIdParsed);
+    }
+    if (selectedImageId === imageIdParsed) {
+      setSelectedImageId(null);
+    }
+  }
+
+  const submitHomeItemCarouselAddOnClick = () => {
+    homeItemCarouselAddRequest();
   }
 
   //onChanges
@@ -318,7 +350,7 @@ const HomeItemCarouselAdd = () => {
             {
               images ? images.map((image, idx) => {
                 return (
-                  <ListGroupItem tag={"button"} className={"d-inline-block me-3"} key={image.toString() + idx} active={selectedImageIdList.includes(parseInt(image.fileId))} onClick={() => toggleSelectedImageOnclick(image.fileId)}>
+                  <ListGroupItem tag={"button"} className={"d-inline-block me-3"} key={image.toString() + idx} active={selectedImageId === parseInt(image.fileId)} onClick={() => toggleSelectedImageOnclick(image.fileId)}>
                     <div className={"border d-flex flex-column"}>
                       <div className={"d-inline-block"}>
                         <div className={"d-flex justify-content-center"}>
@@ -336,7 +368,7 @@ const HomeItemCarouselAdd = () => {
 
         <div className={"buttons d-flex justify-content-end"}>
           <Link className={"btn btn-secondary me-2"}>취소</Link>
-          <Button className={"bg-primary"}>추가</Button>
+          <Button className={"bg-primary"} onClick={submitHomeItemCarouselAddOnClick}>추가</Button>
         </div>
       </Container>
     </>
