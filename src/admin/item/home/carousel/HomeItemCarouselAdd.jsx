@@ -99,6 +99,7 @@ const HomeItemCarouselAdd = () => {
     fetch("/admin/home/carousel/add", {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
+          window.location.href = "/admin/home/items/carousel";
           return {};
         } else {
           return resp.json();
@@ -345,7 +346,7 @@ const HomeItemCarouselAdd = () => {
         </div>
 
         <div>
-          <h3 className={"text-center"}>사진 선택</h3>
+          <h3 className={"text-center p-2"}>사진 선택</h3>
           <ListGroup horizontal={true} style={{overflowX: "auto"}}>
             {
               images ? images.map((image, idx) => {
