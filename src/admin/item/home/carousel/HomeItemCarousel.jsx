@@ -2,6 +2,7 @@ import {Badge, Button, Container, ListGroup, ListGroupItem, ListGroupItemText} f
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import carousel from "bootstrap/js/src/carousel";
+import {type} from "@testing-library/user-event/dist/type";
 
 const HomeItemCarousel = () => {
 
@@ -17,17 +18,27 @@ const HomeItemCarousel = () => {
   }
   //requests
   const updatePriorityRequest = () => {
-    const formData = new FormData();
-    formData.append("carouselList", carouselList);
-    fetch("/admin/home/carousel/update/all", {method: "post", body: formData})
-      .then(resp => {
+
+    const body = carouselList.map((carousel, idx) => {
+      return {
+        id: carousel.id,
+        itemId: carousel.itemId,
+        attachmentId: carousel.attachmentId,
+        priority: carousel.priority
+      }
+    });
+
+    fetch("/admin/home/carousel/update/all", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {"Content-Type": "application/json"}
+    }).then(resp => {
         if (resp.ok) {
-          console.log(200);
+          window.location.href = "/admin/home/items/carousel";
         } else {
-          console.log(400);
+          console.error("error");
         }
       });
-
   }
 
   const carouselListRequest = () => {
