@@ -130,7 +130,7 @@ const HomeItemCarousel = () => {
             {
               carouselList.length !== 0 ? carouselList.map((carousel, idx) => {
                 return (
-                  <ListGroupItem className={"d-flex justify-content-between align-items-center"}
+                  <ListGroupItem className={"d-flex justify-content-between align-items-center"} key={carousel.id.toString() + carousel.priority.toString()}
                                  active={carousel.id === lastClicked}>
                     <div className={"d-inline-block"}>
                       <img style={{maxHeight: "100px"}} src={"/attachment/" + carousel.attachmentId}

@@ -19,6 +19,7 @@ import ItemAdd from "./admin/item/ItemAdd";
 import ItemEdit from "./admin/item/ItemEdit";
 import HomeItemCarousel from "./admin/item/home/carousel/HomeItemCarousel"
 import HomeItemCarouselAdd from "./admin/item/home/carousel/HomeItemCarouselAdd";
+import HomeItemCarouselDetail from "./admin/item/home/carousel/HomeItemCarouselDetail";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -61,6 +62,8 @@ const App = () => {
 
         <Route path={"/admin/home/items/carousel"} exact component={HomeItemCarousel}/>
         <Route path={"/admin/home/items/carousel/add"} exact component={HomeItemCarouselAdd}/>
+        <Route path={"/admin/home/items/carousel/:carouselId"} exact component={HomeItemCarouselDetail}/>
+
 
         <Route path={"/admin"} exact component={AdminMain}/>
         <Route path={"/admin/categories"} exact component={CategoryManage}/>
