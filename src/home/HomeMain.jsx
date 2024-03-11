@@ -4,20 +4,23 @@ import Header from "../common/Header";
 import WingMenu from "../common/WingMenu";
 import HomeCarousel from "./HomeCarousel";
 import HomeItem from "./HomeItem";
+import {Container} from "reactstrap";
 
 const HomeMain = () => {
 
   return (
     <>
-      <Header/>
+      <Container>
+        <Header/>
+        <Categories/>
+        <div>
+          <HomeCarousel/>
+        </div>
+        <WingMenu/>
+        <HomeItem/>
 
-      <Categories/>
-      <WingMenu/>
-
-      <HomeCarousel/>
-      <HomeItem/>
-
-      <Footer/>
+        <Footer/>
+      </Container>
     </>
   )
 }

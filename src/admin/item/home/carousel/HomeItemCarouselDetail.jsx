@@ -46,6 +46,10 @@ const HomeItemCarouselDetail = () => {
     setSelectedImage(imageId);
   }
 
+  const deleteRequestOnClick = (executableFunction) => {
+    executableFunction();
+  }
+
   //onSubmits
 
   //onChanges
@@ -58,6 +62,7 @@ const HomeItemCarouselDetail = () => {
         console.log(data.data);
         console.log("carouselData", data.data);
         setCarousel(data.data);
+        setSelectedImage(data.data.attachmentId);
       });
   }
 
@@ -76,18 +81,31 @@ const HomeItemCarouselDetail = () => {
         });
         console.log("imageArray", newArray);
         setImageList(newArray);
-        setSelectedImage(data.data[0].fileId);
       });
   };
 
-  //업데이트하기
   const updateCarouselRequest = () => {
+    console.log("JSON.stringify(selectedImage)", JSON.stringify(selectedImage));
     fetch(
-      "/admin/home/carousels/update/" + carouselId,
-      {method: "post", headers: {"Content-Type": "application-json"}, body: JSON.stringify(selectedImage)}
-    ).then(resp => resp.json())
-      .then(data => {
-        console.log(data.data);
+      "/admin/home/carousels/update/attachment/" + carouselId,
+      {method: "post", headers: {"Content-Type": "application/json"}, body: JSON.stringify(selectedImage)}
+    ).then(resp => {
+      if (resp.ok) {
+        window.location.href = "/admin/home/items/carousel/" + carouselId;
+        return;
+      }
+      console.error("has error");
+    });
+  }
+
+  const deleteCarouselRequest = () => {
+    fetch("/admin/home/carousels/delete/" + carouselId, {method: "delete"})
+      .then(resp => {
+        if (resp.ok) {
+          window.history.back();
+          return;
+        }
+        console.log("has error");
       });
   }
 
@@ -96,7 +114,7 @@ const HomeItemCarouselDetail = () => {
       <Container className={"w-50"}>
         <h2 className={"m-4 text-center"}>캐러셀 수정</h2>
         <div className={"d-flex justify-content-end mb-4"}>
-          <Button>캐러셀 삭제</Button>
+          <Button onClick={() => deleteRequestOnClick(deleteCarouselRequest)}>캐러셀 삭제</Button>
         </div>
         <div className={"mb-4"}>
           <InputGroup>

@@ -54,19 +54,20 @@ const Categories = () => {
   //     console.log(data);
   //   });
 
-  return (<Container className={"d-flex justify-content-center"}>
+  return (
+    <Container className={"d-flex justify-content-center mb-5"}>
       {categories !== null ? categories.map((element, index) => {
           return (
             <Dropdown isOpen={dropdownOpen(element.id)} toggle={() => toggle(element.id)}
-                      className={"flex-grow-1 pe-1"} key={element + index}>
+                      className={"flex-grow-1 pe-1"} key={element.toString() + index.toString()}>
               <DropdownToggle itemID={element.id} caret size="lg" className={"w-100"}>
                 {element.nameKor}
               </DropdownToggle>
               <DropdownMenu >
                 <DropdownItem header>{element.nameKor + "의관련 항목"}</DropdownItem>
                 {
-                  element.subcategories.map((subElement) => {
-                    return < DropdownItem itemID={subElement.id} tag={"a"} href={"/subcategory/" + subElement.id}> {subElement.name} < /DropdownItem>
+                  element.subcategories.map((subElement, idx) => {
+                    return < DropdownItem itemID={subElement.id} tag={"a"} href={"/subcategory/" + subElement.id} key={subElement.toString() + idx}> {subElement.name} < /DropdownItem>
                   })
                 }
               </DropdownMenu>
