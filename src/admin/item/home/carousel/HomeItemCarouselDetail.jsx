@@ -1,6 +1,6 @@
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {Button, Container, Input, InputGroup, InputGroupText} from "reactstrap";
+import {Badge, Button, Container, Input, InputGroup, InputGroupText, ListGroup, ListGroupItem, Row} from "reactstrap";
 
 const HomeItemCarouselDetail = () => {
 
@@ -12,8 +12,14 @@ const HomeItemCarouselDetail = () => {
   const [imageList, setImageList] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
-
   //hooks
+  const getDateTime = (localDateTimeFormat) => {
+    return localDateTimeFormat.toString().replace("T", " ");
+  }
+
+  const toBackWard = () => {
+    window.history.back();
+  }
 
   //useEffects
   useEffect(() => {
@@ -25,13 +31,20 @@ const HomeItemCarouselDetail = () => {
   }, [loaded]);
 
   useEffect(() => {
-    if (!carousel?.id) {
+    if (!carousel) {
       return;
     }
     itemRequest();
   }, [carousel]);
 
   //onClicks
+  const toggleImageOnClick = (imageId) => {
+    if (imageId === selectedImage) {
+      setSelectedImage(null);
+      return;
+    }
+    setSelectedImage(imageId);
+  }
 
   //onSubmits
 
@@ -43,6 +56,7 @@ const HomeItemCarouselDetail = () => {
       .then(resp => resp.json())
       .then(data => {
         console.log(data.data);
+        console.log("carouselData", data.data);
         setCarousel(data.data);
       });
   }
@@ -51,6 +65,7 @@ const HomeItemCarouselDetail = () => {
     fetch("/admin/items/" + carousel.itemId)
       .then(resp => resp.json())
       .then(data => {
+        console.log("itemData", data.data[0]);
         setItem(data.data[0]);
         const newArray = data.data.map((item, idx) => {
           const newObj = {};
@@ -59,9 +74,22 @@ const HomeItemCarouselDetail = () => {
           newObj.savedFileName = item.savedFileName;
           return newObj;
         });
+        console.log("imageArray", newArray);
         setImageList(newArray);
+        setSelectedImage(data.data[0].fileId);
       });
   };
+
+  //업데이트하기
+  const updateCarouselRequest = () => {
+    fetch(
+      "/admin/home/carousels/update/" + carouselId,
+      {method: "post", headers: {"Content-Type": "application-json"}, body: JSON.stringify(selectedImage)}
+    ).then(resp => resp.json())
+      .then(data => {
+        console.log(data.data);
+      });
+  }
 
   return (
     <>
@@ -73,32 +101,57 @@ const HomeItemCarouselDetail = () => {
         <div className={"mb-4"}>
           <InputGroup>
             <InputGroupText>ITEM ID</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={"아이템 정보"}/>
+            <Input className={"bg-white"} disabled={true} name={"itemId"} value={item ? item.id : ""}/>
           </InputGroup>
           <InputGroup>
             <InputGroupText>한글 이름</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={"아이템 정보"}/>
+            <Input className={"bg-white"} disabled={true} name={"nameKor"} value={item ? item.nameKor : ""}/>
           </InputGroup>
           <InputGroup>
             <InputGroupText>영어 이름</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={"아이템 정보"}/>
+            <Input className={"bg-white"} disabled={true} name={"name"} value={item ? item.name : ""}/>
           </InputGroup>
           <InputGroup>
             <InputGroupText>서브카테고리</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={"아이템 정보"}/>
+            <Input className={"bg-white"} disabled={true} name={"subcategory"}
+                   value={item ? item.subcategory.nameKor + " (" + item.subcategory.name + ")" : ""}/>
+          </InputGroup>
+          <InputGroup>
+            <InputGroupText>생성일</InputGroupText>
+            <Input name={"createdAt"} disabled={true} type={"datetime-local"} value={item ? item.createdAt : ""}/>
+            <InputGroupText>수정일</InputGroupText>
+            <Input name={"updatedAt"} disabled={true} type={"datetime-local"} value={item ? item.updatedAt : ""}/>
           </InputGroup>
         </div>
 
-        <div>
+        <div className={"pb-3"}>
           <h4 className={"text-center m-4"}>사진 변경</h4>
-          <div>
-            <img src="" alt=""/>
-          </div>
+          <ListGroup horizontal={true}>
+            {
+              imageList.map((image, idx) => {
+                return (
+                  <ListGroupItem className={"d-flex justify-content-between align-items-center"}
+                                 key={image.fileId.toString() + image.requestName.toString()}
+                                 active={image.fileId === selectedImage}
+                                 onClick={() => toggleImageOnClick(image.fileId)}>
+                    <div>
+                      <div>
+                        <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
+                      </div>
+                      <div>
+                        <span>{image.requestName}</span>
+                      </div>
+                    </div>
+                  </ListGroupItem>
+                )
+              })
+            }
+          </ListGroup>
         </div>
 
         <div className={"d-flex justify-content-end"}>
-          <Button className={"me-2"}>취소</Button>
-          <Button className={"bg-primary"}>확인</Button>
+          <Button className={"me-2"} onClick={() => toBackWard()}>취소</Button>
+          <Button className={"bg-primary"} onClick={() => updateCarouselRequest()}>확인</Button>
         </div>
       </Container>
     </>
