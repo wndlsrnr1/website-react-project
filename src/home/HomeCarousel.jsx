@@ -12,7 +12,6 @@ const HomeCarousel = (args) => {
   const [items, setItems] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [homeCarousels, setHomeCarousels] = useState([]);
-
   //hooks
 
   const getItems = (itemsData) => {

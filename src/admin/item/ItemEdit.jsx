@@ -1,4 +1,16 @@
-import {Button, Col, Container, Form, Input, InputGroup, InputGroupText, Label, Row} from "reactstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Input,
+  InputGroup,
+  InputGroupText,
+  Label,
+  ListGroup,
+  ListGroupItem,
+  Row
+} from "reactstrap";
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 
@@ -48,6 +60,15 @@ const ItemEdit = () => {
   const [itemDescription, setItemDescription] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [imageFilesForUpdate, setImageFilesForUpdate] = useState([]);
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+
+  //hooks
+  const isSelected = (imageId) => {
+    if (!imageId) {
+      return false;
+    }
+    return imageId === selectedThumbnail;
+  }
 
   //requests
   const requestItem = () => {
@@ -65,7 +86,8 @@ const ItemEdit = () => {
           createdAt,
           price,
           status,
-          description
+          description,
+          attachmentIdOfThumbnail
         } = data.data[0];
         setItem(data.data[0]);
         setItemName(name);
@@ -88,6 +110,7 @@ const ItemEdit = () => {
           imagesUpdated.push(imageObj);
         }
         setImages(imagesUpdated);
+        setSelectedThumbnail(attachmentIdOfThumbnail);
       });
   };
 
@@ -142,6 +165,7 @@ const ItemEdit = () => {
     // }
     const imageIdsForDelete = imagesForDelete.map((images, idx) => images.fileId);
     formData.append("imagesForDelete[]", imageIdsForDelete);
+    formData.append("thumbnailId", selectedThumbnail);
 
     fetch(url, {method: "post", body: formData})
       .then((resp) => {
@@ -198,6 +222,17 @@ const ItemEdit = () => {
 
     setImagesForDelete([...imagesForDelete, imageForDeleteElem]);
     setImages(imagesUpdate);
+    if (imageId === selectedThumbnail) {
+      setSelectedThumbnail(null);
+    }
+  }
+
+  const selectThumbNail = (imageId) => {
+    if (imageId === selectedThumbnail) {
+      setSelectedThumbnail(null);
+      return;
+    }
+    setSelectedThumbnail(imageId);
   }
 
   //onSubmits
@@ -365,6 +400,7 @@ const ItemEdit = () => {
               </InputGroup>
             </Col>
           </Row>
+          <h3>이미지 삭제</h3>
           <div className={"pb-3"}>
             {
               images ? images.map((image, idx) => {
@@ -398,6 +434,7 @@ const ItemEdit = () => {
               }) : null
             }
           </div>
+          <h3>이미지 추가</h3>
           <Label tag={"label"} for={"file"} className={"w-100"}>
             <InputGroup className={"mb-3"}>
               <InputGroupText>파일 추가</InputGroupText>
@@ -413,6 +450,23 @@ const ItemEdit = () => {
                    id={"file"}/>
           </Label>
 
+          <h3 >썸네일 변경</h3>
+          <ListGroup className={"m-2"} horizontal={true} >
+            {
+              images ? images.map((image, idx) => {
+                return (
+                  <ListGroupItem className={"d-inline-block me-3"} key={image.toString() + idx} onClick={() => selectThumbNail(image.fileId)} active={isSelected(image.fileId)}>
+                    <div className={"border d-flex flex-column"}>
+                      <div className={"d-inline-block"}>
+                        <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
+                      </div>
+                      <span className={"text-center"}>{image.requestName}</span>
+                    </div>
+                  </ListGroupItem>
+                )
+              }) : null
+            }
+          </ListGroup>
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>상태</InputGroupText>
@@ -425,6 +479,7 @@ const ItemEdit = () => {
                    type={"textarea"}/>
           </InputGroup>
         </div>
+
         <div className={"buttons"}>
           <Link className={"w-100 bg-secondary btn text-white mb-3"} to={"/admin/items"}>취소</Link>
           <Button className={"w-100 bg-primary btn text-white"}>확인</Button>

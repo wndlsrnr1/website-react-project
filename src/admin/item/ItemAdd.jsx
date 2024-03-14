@@ -6,7 +6,7 @@ import data from "bootstrap/js/src/dom/data";
 const getFormattedDateTime = (date, time) => {
   console.log(data);
   console.log(time);
-  const datetime1 = date+ " " + time+":00";
+  const datetime1 = date + " " + time + ":00";
   return datetime1;
   // const datetime2 = new Date(datetime1)
   // return datetime2.toISOString();
@@ -39,6 +39,10 @@ const ItemAdd = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
+  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+
+
 
   // const []
 
@@ -60,13 +64,15 @@ const ItemAdd = () => {
     for (const imageFile of imageFiles) {
       formData.append("imageFiles", imageFile);
     }
+
     formData.append("status", status);
     formData.append("description", description);
+    formData.append("thumbnailFile", thumbnailFile);
 
     fetch(url, {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
-          window.location.href = "/admin/items"
+          // window.location.href = "/admin/items"
         } else {
           return resp.json();
         }
@@ -195,6 +201,24 @@ const ItemAdd = () => {
     setImages(imagesList);
   }
 
+  const thumbnailOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    const files = event.target.files;
+    const maxSize = event.target.getAttribute("max-size");
+    const thumbnailObj = event.target.files[0].name;
+    console.log("event.target", event.target);
+    console.log("event.target.files", event.target.files);
+    console.log("event.target.files[0].name", event.target.files[0].name);
+    if (files[0].size > maxSize) {
+      setThumbnail(null);
+      setThumbnailFile(null);
+      return;
+    }
+    setThumbnail(thumbnailObj);
+    setThumbnailFile(files[0]);
+  }
+
   const statusOnChangeInput = (event) => {
     event.preventDefault();
     const value = event.currentTarget.value;
@@ -310,7 +334,12 @@ const ItemAdd = () => {
               <Input style={{border: "1px solid #ced4da border-r"}} className={"rounded-2 form-control"} type={"file"}
                      onChange={imagesOnChangeInput}
                      multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"3"} max-size={"31457280"}/>
+            </InputGroup>
 
+            <InputGroup className={"mb-3"}>
+              <InputGroupText>썸네일 선택</InputGroupText>
+              <Input style={{border: "1px solid #ced4da border-r"}} className={"rounded-2 form-control"} type={"file"}
+                     onChange={thumbnailOnChangeInput} accept={".jpg, .jpeg, .png, .gif"} max-size={"1048576"}/>
             </InputGroup>
 
             <InputGroup className={"mb-3"}>
@@ -330,7 +359,7 @@ const ItemAdd = () => {
 
       </Container>
     </>
-  )
+  );
 }
 
 export default ItemAdd;

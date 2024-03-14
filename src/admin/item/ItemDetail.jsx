@@ -22,6 +22,8 @@ const ItemDetail = (props) => {
   const [images, setImages] = useState([]);
   const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
+  const [thumbnailImage, setThumbnailImage] = useState(null);
+  const [thumbnailId, setThumbnailId] = useState(null);
 
   //requests
   const requestItem = () => {
@@ -30,7 +32,7 @@ const ItemDetail = (props) => {
       .then(resp => resp.json())
       .then(data => {
         console.log(data);
-        const {category, releasedAt, updatedAt, createdAt, price, status, description} = data.data[0];
+        const {category, releasedAt, updatedAt, createdAt, price, status, description, attachmentIdOfThumbnail} = data.data[0];
         setItem(data.data[0]);
         setCategory(category);
         setReleasedAt(releasedAt);
@@ -39,14 +41,21 @@ const ItemDetail = (props) => {
         setPrice(price);
         setStatus(status);
         setDescription(description);
+        setThumbnailId(attachmentIdOfThumbnail);
         const imagesUpdated = [];
         for (const datum of data.data) {
           const imageObj = {};
           imageObj.fileId = datum.fileId;
           imageObj.requestName = datum.requestName;
           imageObj.savedFileName = datum.savedFileName;
+          if (datum.fileId === attachmentIdOfThumbnail) {
+            console.log("equal")
+            setThumbnailImage(imageObj);
+            continue;
+          }
           imagesUpdated.push(imageObj);
         }
+
         setImages(imagesUpdated);
       });
   };
@@ -93,7 +102,6 @@ const ItemDetail = (props) => {
   }, [item])
 
   useEffect(() => {
-
     console.log(images);
     console.log(item);
   }, [images])
@@ -185,6 +193,7 @@ const ItemDetail = (props) => {
               </InputGroup>
             </Col>
           </Row>
+          <h3>이미지</h3>
           <div className={"pb-3"}>
             {
               images ? images.map((image, idx) => {
@@ -202,10 +211,26 @@ const ItemDetail = (props) => {
               }) : null
             }
           </div>
+          <h3>썸네일</h3>
+          {
+            thumbnailImage ? (
+              <div className={"d-inline-block me-3"}>
+                <div className={"border d-flex flex-column"}>
+                  <div className={"d-inline-block"}>
+                    <img style={{maxHeight: "100px"}} src={"/attachment/" + thumbnailImage.fileId}
+                         alt={thumbnailImage.requestName}/>
+                  </div>
+                  <span className={"text-center"}>{thumbnailImage.requestName}</span>
+                  {/*<Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}>삭제</Button>*/}
+                </div>
+              </div>
+            ) : null
+          }
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>ImageFiles</InputGroupText>
-            <Input className={"bg-white"} disabled={true} value={images.map((elem, idx) => elem.requestName).join(", ")}/>
+            <Input className={"bg-white"} disabled={true}
+                   value={images.map((elem, idx) => elem.requestName).join(", ")}/>
           </InputGroup>
 
           <InputGroup className={"mb-3"}>
@@ -219,7 +244,7 @@ const ItemDetail = (props) => {
           </InputGroup>
         </div>
         <div className={"buttons"}>
-          <Button className={"w-100 mb-3"} onClick={deleteOnClick} >삭제</Button>
+          <Button className={"w-100 mb-3"} onClick={deleteOnClick}>삭제</Button>
           <Link className={"w-100 bg-primary btn text-white"} to={"/admin/items/edit/" + itemId}>수정</Link>
         </div>
       </Container>
