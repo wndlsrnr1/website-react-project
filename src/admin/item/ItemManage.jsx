@@ -34,6 +34,8 @@ const ItemManage = () => {
   const [categories, setCategories] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [searchCondObj, setSearchCondObj] = useState({});
+  const [lastItemId, setLastItemId] = useState(0);
+  // Long lastItemId, Integer lastPageNumber, Integer pageChunk
 
   //requests
 
@@ -48,6 +50,7 @@ const ItemManage = () => {
           setPageNumber(number);
           setTotalPages(totalPages);
           setSubmitted(true);
+          setLastItemId(content[content.length - 1]["id"]);
           console.log(content);
         }
       });
@@ -114,8 +117,10 @@ const ItemManage = () => {
   //onSubmits
   const searchFormOnSubmit = (event) => {
     event.preventDefault();
+    // Long lastItemId, Integer lastPageNumber, Integer pageChunk
     let path = `/admin/items?size=${pageSize}`;
     const obj = {};
+
     if (priceMin !== null && priceMin) {
       obj["priceMin"] = priceMin
     }
@@ -248,7 +253,7 @@ const ItemManage = () => {
             }
           </ListGroup>
         </div>
-        <Paging pageGroupSize={pageGroupSize} pageSize={pageSize} pageNumber={pageNumber} totalPages={totalPages}
+        <Paging pageGroupSize={pageGroupSize} pageSize={pageSize} pageNumber={pageNumber} totalPages={totalPages} lastItemId={lastItemId} lastPageNumber={pageNumber}
                 requestDomain={"/admin/items"} requestMethod={itemsRequest} parameterOption={searchCondObj}/>
       </Container>
     </>

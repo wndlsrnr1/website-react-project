@@ -53,7 +53,7 @@ const entry = (key, value, isFirst) => {
  * @constructor
  */
 const Paging = (props) => {
-  const {pageGroupSize, pageSize, pageNumber, totalPages, requestDomain, requestMethod, parameterOption} = props;
+  const {pageGroupSize, pageSize, pageNumber, totalPages, requestDomain, requestMethod, parameterOption, lastItemId, lastPageNumber} = props;
   //variables
 
   //requests
@@ -61,9 +61,22 @@ const Paging = (props) => {
   //useEffects
 
   //onClicks
+// &lastItemId=${pageNumber}&lastPageNumber=${pageNumber}&pageChunk=${pageGroupSize}
   const move = (targetPage) => {
     console.log(parameterOption);
-    let path = requestDomain + entry("page", targetPage, true) + entry("size", pageSize);
+    let path = requestDomain + entry("page", targetPage, true) + entry("size", pageSize) + entry("lastItemId", lastItemId) + entry("lastPageNumber", lastPageNumber) + entry("pageChunk", pageGroupSize);
+    Object.keys(parameterOption).forEach((key, idx) => {
+      const value = parameterOption[key];
+      if (parameterOption[key]) {
+        path += entry(key, value);
+      }
+    });
+    requestMethod(path);
+  }
+
+  const moveLast = () => {
+    console.log(parameterOption);
+    let path = requestDomain + `?isLastPage=${true}&size=${pageSize}`;
     Object.keys(parameterOption).forEach((key, idx) => {
       const value = parameterOption[key];
       if (parameterOption[key]) {
@@ -107,7 +120,7 @@ const Paging = (props) => {
         </PaginationItem>
         <PaginationItem disabled={!isNextPage(pageGroupSize, pageNumber, totalPages)}>
           <PaginationLink tag={"button"} href="#"
-                          onClick={() => move(totalPages - 1)}>>></PaginationLink>
+                          onClick={() => moveLast()}>>></PaginationLink>
         </PaginationItem>
       </Pagination>
     </div>
