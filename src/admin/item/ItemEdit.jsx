@@ -110,9 +110,21 @@ const ItemEdit = () => {
           imagesUpdated.push(imageObj);
         }
         setImages(imagesUpdated);
-        setSelectedThumbnail(attachmentIdOfThumbnail);
       });
   };
+
+  const requestThumbNail = () => {
+    fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
+      .then(resp => {
+        if (!resp.ok) {
+          return;
+        }
+        return resp.json();
+      })
+      .then(data => {
+        setSelectedThumbnail(data.data.attachmentId);
+      });
+  }
 
   const requestCategories = () => {
     fetch("/admin/categories", {method: "get"})
@@ -165,7 +177,7 @@ const ItemEdit = () => {
     // }
     const imageIdsForDelete = imagesForDelete.map((images, idx) => images.fileId);
     formData.append("imagesForDelete[]", imageIdsForDelete);
-    formData.append("thumbnailId", selectedThumbnail);
+    formData.append("carouselAttachmentId", selectedThumbnail);
 
     fetch(url, {method: "post", body: formData})
       .then((resp) => {
@@ -186,6 +198,7 @@ const ItemEdit = () => {
     if (loaded) {
       return;
     }
+    requestThumbNail();
     requestItem();
     requestCategories();
     setLoaded(true);

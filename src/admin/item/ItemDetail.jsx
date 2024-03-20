@@ -23,7 +23,7 @@ const ItemDetail = (props) => {
   const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
   const [thumbnailImage, setThumbnailImage] = useState(null);
-  const [thumbnailId, setThumbnailId] = useState(null);
+  const [selectedThumbNail, setSelectedThumbNail] = useState(null);
 
   //requests
   const requestItem = () => {
@@ -31,8 +31,16 @@ const ItemDetail = (props) => {
     fetch(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
-        console.log(data);
-        const {category, releasedAt, updatedAt, createdAt, price, status, description, attachmentIdOfThumbnail} = data.data[0];
+        const {
+          category,
+          releasedAt,
+          updatedAt,
+          createdAt,
+          price,
+          status,
+          description,
+          attachmentIdOfThumbnail
+        } = data.data[0];
         setItem(data.data[0]);
         setCategory(category);
         setReleasedAt(releasedAt);
@@ -41,18 +49,13 @@ const ItemDetail = (props) => {
         setPrice(price);
         setStatus(status);
         setDescription(description);
-        setThumbnailId(attachmentIdOfThumbnail);
+
         const imagesUpdated = [];
         for (const datum of data.data) {
           const imageObj = {};
           imageObj.fileId = datum.fileId;
           imageObj.requestName = datum.requestName;
           imageObj.savedFileName = datum.savedFileName;
-          if (datum.fileId === attachmentIdOfThumbnail) {
-            console.log("equal")
-            setThumbnailImage(imageObj);
-            continue;
-          }
           imagesUpdated.push(imageObj);
         }
 
@@ -69,6 +72,18 @@ const ItemDetail = (props) => {
       });
   };
 
+  const requestThumbNail = () => {
+    fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
+      .then(resp => {
+        if (!resp.ok) {
+          return;
+        }
+        return resp.json();
+      })
+      .then(data => {
+        setSelectedThumbNail(data.data.attachmentId);
+      });
+  }
 
   const deleteRequest = (url) => {
     fetch(url, {method: "delete"})
@@ -86,6 +101,7 @@ const ItemDetail = (props) => {
     if (loaded) {
       return;
     }
+    requestThumbNail();
     requestItem();
     setLoaded(true);
   }, [loaded]);
@@ -102,9 +118,17 @@ const ItemDetail = (props) => {
   }, [item])
 
   useEffect(() => {
-    console.log(images);
-    console.log(item);
-  }, [images])
+    const thumbNailImageObj = images.filter((img, idx) => {
+      return img.fileId === selectedThumbNail
+    })[0];
+    setThumbnailImage(thumbNailImageObj);
+  }, [images, selectedThumbNail]);
+
+  useEffect(() => {
+  }, [images]);
+
+  useEffect(() => {
+  }, [thumbnailImage])
 
   //onClicks
   const deleteOnClick = (event) => {
@@ -198,7 +222,7 @@ const ItemDetail = (props) => {
             {
               images ? images.map((image, idx) => {
                 return (
-                  <div className={"d-inline-block me-3"}>
+                  <div className={"d-inline-block me-3"} key={image.requestName.toString() + idx.toString()}>
                     <div className={"border d-flex flex-column"}>
                       <div className={"d-inline-block"}>
                         <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>

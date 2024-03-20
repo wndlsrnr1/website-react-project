@@ -50,8 +50,7 @@ const ItemManage = () => {
           setPageNumber(number);
           setTotalPages(totalPages);
           setSubmitted(true);
-          setLastItemId(content[content.length - 1]["id"]);
-          console.log(content);
+          content[content.length - 1]?.id ? setLastItemId(content[content.length - 1]["id"]) : setLastItemId(0);
         }
       });
   }
