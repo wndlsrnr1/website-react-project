@@ -51,12 +51,15 @@ const ItemDetail = (props) => {
         setDescription(description);
 
         const imagesUpdated = [];
+
         for (const datum of data.data) {
           const imageObj = {};
-          imageObj.fileId = datum.fileId;
-          imageObj.requestName = datum.requestName;
-          imageObj.savedFileName = datum.savedFileName;
-          imagesUpdated.push(imageObj);
+          if (datum?.fileId && datum?.requestName && datum?.savedFileName) {
+            imageObj.fileId = datum.fileId;
+            imageObj.requestName = datum.requestName;
+            imageObj.savedFileName = datum.savedFileName;
+            imagesUpdated.push(imageObj);
+          }
         }
 
         setImages(imagesUpdated);
@@ -81,6 +84,9 @@ const ItemDetail = (props) => {
         return resp.json();
       })
       .then(data => {
+        if (!data) {
+          return;
+        }
         setSelectedThumbNail(data.data.attachmentId);
       });
   }
@@ -220,7 +226,7 @@ const ItemDetail = (props) => {
           <h3>이미지</h3>
           <div className={"pb-3"}>
             {
-              images ? images.map((image, idx) => {
+              images && images.length !== 0 ? images.map((image, idx) => {
                 return (
                   <div className={"d-inline-block me-3"} key={image.requestName.toString() + idx.toString()}>
                     <div className={"border d-flex flex-column"}>
@@ -228,7 +234,6 @@ const ItemDetail = (props) => {
                         <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
                       </div>
                       <span className={"text-center"}>{image.requestName}</span>
-                      {/*<Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}>삭제</Button>*/}
                     </div>
                   </div>
                 )
@@ -245,7 +250,6 @@ const ItemDetail = (props) => {
                          alt={thumbnailImage.requestName}/>
                   </div>
                   <span className={"text-center"}>{thumbnailImage.requestName}</span>
-                  {/*<Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}>삭제</Button>*/}
                 </div>
               </div>
             ) : null

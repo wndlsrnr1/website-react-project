@@ -75,6 +75,7 @@ const HomeItemCarouselAdd = () => {
       setImages([]);
       return;
     }
+
     const path = "/admin/items/" + itemId;
     fetch(path, {method: "get"})
       .then(resp => resp.json())
@@ -158,6 +159,10 @@ const HomeItemCarouselAdd = () => {
   useEffect(() => {
     itemRequest(selectedItemId);
   }, [selectedItemId]);
+
+  useEffect(() => {
+    console.log("images", images.length);
+  }, [images]);
 
   //onClicks
 
@@ -340,6 +345,7 @@ const HomeItemCarouselAdd = () => {
             }
           </ListGroup>
         </div>
+
         <div className={"mb-3"}>
           <Paging pageGroupSize={pageGroupSize} pageSize={pageSize} pageNumber={pageNumber} totalPages={totalPages}
                   requestDomain={"/admin/items"} requestMethod={itemsRequest} parameterOption={searchCondObj}/>
@@ -350,6 +356,10 @@ const HomeItemCarouselAdd = () => {
           <ListGroup horizontal={true} style={{overflowX: "auto"}}>
             {
               images ? images.map((image, idx) => {
+                if (!images?.requestName) {
+                  return;
+                }
+                console.log(image);
                 return (
                   <ListGroupItem tag={"button"} className={"d-inline-block me-3"} key={image.toString() + idx} active={selectedImageId === parseInt(image.fileId)} onClick={() => toggleSelectedImageOnclick(image.fileId)}>
                     <div className={"border d-flex flex-column"}>
