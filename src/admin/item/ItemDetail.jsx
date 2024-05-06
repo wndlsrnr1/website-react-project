@@ -50,19 +50,19 @@ const ItemDetail = (props) => {
         setStatus(status);
         setDescription(description);
 
-        const imagesUpdated = [];
 
-        for (const datum of data.data) {
-          const imageObj = {};
-          if (datum?.fileId && datum?.requestName && datum?.savedFileName) {
+        if (data?.data) {
+          const imagesUpdated = [];
+          for (const datum of data.data) {
+            const imageObj = {};
             imageObj.fileId = datum.fileId;
             imageObj.requestName = datum.requestName;
             imageObj.savedFileName = datum.savedFileName;
             imagesUpdated.push(imageObj);
           }
+          setImages(imagesUpdated);
         }
 
-        setImages(imagesUpdated);
       });
   };
 
@@ -84,7 +84,7 @@ const ItemDetail = (props) => {
         return resp.json();
       })
       .then(data => {
-        if (!data) {
+        if (!data?.data) {
           return;
         }
         setSelectedThumbNail(data.data.attachmentId);
@@ -234,6 +234,7 @@ const ItemDetail = (props) => {
                         <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
                       </div>
                       <span className={"text-center"}>{image.requestName}</span>
+                      {/*<Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}>삭제</Button>*/}
                     </div>
                   </div>
                 )
@@ -250,6 +251,7 @@ const ItemDetail = (props) => {
                          alt={thumbnailImage.requestName}/>
                   </div>
                   <span className={"text-center"}>{thumbnailImage.requestName}</span>
+                  {/*<Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}>삭제</Button>*/}
                 </div>
               </div>
             ) : null

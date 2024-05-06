@@ -101,19 +101,27 @@ const ItemEdit = () => {
         setSelectedSubcategory(subcategory);
         setItemQuantity(quantity);
         console.log(subcategory);
-        const imagesUpdated = [];
-        for (const datum of data.data) {
-          const imageObj = {};
-          if (datum?.fileId && datum?.requestName && datum?.savedFileName) {
+        if (data?.data) {
+          const imagesUpdated = [];
+          for (const datum of data.data) {
+            const imageObj = {};
             imageObj.fileId = datum.fileId;
             imageObj.requestName = datum.requestName;
             imageObj.savedFileName = datum.savedFileName;
             imagesUpdated.push(imageObj);
           }
+          setImages(imagesUpdated);
         }
-        setImages(imagesUpdated);
       });
   };
+
+  const itemThumbnailEditRequest = (url) => {
+    fetch(url, {method: "post"})
+      .then(resp => resp.json())
+      .then(data => {
+        console.log("data", data);
+      });
+  }
 
   const requestThumbNail = () => {
     fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
@@ -124,7 +132,7 @@ const ItemEdit = () => {
         return resp.json();
       })
       .then(data => {
-        if (data == null) {
+        if (!data?.data?.attachmentId) {
           return;
         }
         setSelectedThumbnail(data.data.attachmentId);
@@ -257,6 +265,7 @@ const ItemEdit = () => {
   const editOnSubmit = (event) => {
     event.preventDefault();
     itemEditRequest("/admin/items/edit/" + itemId);
+    itemThumbnailRequest("/admin/items/thumbnail" + itemId)
     // fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
   }
 
@@ -421,7 +430,7 @@ const ItemEdit = () => {
           <h3>이미지 삭제</h3>
           <div className={"pb-3"}>
             {
-              images ? images.map((image, idx) => {
+              images && images.length !== 0 ? images.map((image, idx) => {
                 return (
                   <div className={"d-inline-block me-3"} key={image.toString() + idx}>
                     <div className={"border d-flex flex-column"}>
@@ -468,13 +477,12 @@ const ItemEdit = () => {
                    id={"file"}/>
           </Label>
 
-          <h3>썸네일 변경</h3>
-          <ListGroup className={"m-2"} horizontal={true}>
+          <h3 >썸네일 변경</h3>
+          <ListGroup className={"m-2"} horizontal={true} >
             {
               images ? images.map((image, idx) => {
                 return (
-                  <ListGroupItem className={"d-inline-block me-3"} key={image.toString() + idx}
-                                 onClick={() => selectThumbNail(image.fileId)} active={isSelected(image.fileId)}>
+                  <ListGroupItem className={"d-inline-block me-3"} key={image.toString() + idx} onClick={() => selectThumbNail(image.fileId)} active={isSelected(image.fileId)}>
                     <div className={"border d-flex flex-column"}>
                       <div className={"d-inline-block"}>
                         <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
