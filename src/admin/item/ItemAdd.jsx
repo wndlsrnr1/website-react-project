@@ -68,11 +68,14 @@ const ItemAdd = () => {
     formData.append("status", status);
     formData.append("description", description);
     formData.append("thumbnailFile", thumbnailFile);
+    formData.append("thumbnailImage", thumbnail);
+
+
 
     fetch(url, {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
-          // window.location.href = "/admin/items"
+          window.location.href = "/admin/items"
         } else {
           return resp.json();
         }

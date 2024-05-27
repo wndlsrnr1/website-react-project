@@ -116,7 +116,9 @@ const ItemEdit = () => {
   };
 
   const itemThumbnailEditRequest = (url) => {
-    fetch(url, {method: "post"})
+    const formData = new FormData();
+    formData.append("imageId", selectedThumbnail);
+    fetch(url, {method: "post", body: formData})
       .then(resp => resp.json())
       .then(data => {
         console.log("data", data);
@@ -265,7 +267,7 @@ const ItemEdit = () => {
   const editOnSubmit = (event) => {
     event.preventDefault();
     itemEditRequest("/admin/items/edit/" + itemId);
-    itemThumbnailRequest("/admin/items/thumbnail" + itemId)
+    itemThumbnailEditRequest("/admin/items/thumbnail/edit/" + itemId);
     // fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
   }
 
