@@ -61,6 +61,7 @@ const ItemEdit = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [imageFilesForUpdate, setImageFilesForUpdate] = useState([]);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+  const [thumbnailImageIdBefore, setThumbnailImageIdBefore] = useState(null);
 
   //hooks
   const isSelected = (imageId) => {
@@ -125,6 +126,16 @@ const ItemEdit = () => {
       });
   }
 
+  const itemThumbnailAddRequest = (url) => {
+    const formData = new FormData();
+    formData.append("imageId", selectedThumbnail);
+    fetch(url, {method: "post", body: formData})
+      .then(resp => resp.json())
+      .then(data => {
+        console.log("data", data);
+      });
+  }
+
   const requestThumbNail = () => {
     fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
       .then(resp => {
@@ -134,10 +145,11 @@ const ItemEdit = () => {
         return resp.json();
       })
       .then(data => {
-        if (!data?.data?.attachmentId) {
+        if (!data?.data) {
           return;
         }
-        setSelectedThumbnail(data.data.attachmentId);
+        setSelectedThumbnail(data.data.fileId);
+        setThumbnailImageIdBefore(data.data.fileId);
       });
   }
 
@@ -180,7 +192,6 @@ const ItemEdit = () => {
     for (const file of imageFilesForUpdate) {
       formData.append("imageFiles", file);
     }
-
     formData.append("status", itemStatus);
     formData.append("description", itemDescription);
     // formData.append("itemId", itemId)
@@ -267,7 +278,12 @@ const ItemEdit = () => {
   const editOnSubmit = (event) => {
     event.preventDefault();
     itemEditRequest("/admin/items/edit/" + itemId);
-    itemThumbnailEditRequest("/admin/items/thumbnail/edit/" + itemId);
+    if (thumbnailImageIdBefore) {
+      itemThumbnailEditRequest("/admin/items/thumbnail/edit/" + itemId);
+    } else {
+      itemThumbnailAddRequest("/admin/items/thumbnail/add/" + itemId);
+    }
+
     // fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
   }
 

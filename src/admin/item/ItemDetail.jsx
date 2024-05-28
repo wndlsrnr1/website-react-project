@@ -87,7 +87,8 @@ const ItemDetail = (props) => {
         if (!data?.data) {
           return;
         }
-        setSelectedThumbNail(data.data.attachmentId);
+        console.log("data.data.fileId", data.data.fileId);
+        setSelectedThumbNail(parseInt(data.data.fileId));
       });
   }
 
@@ -107,8 +108,8 @@ const ItemDetail = (props) => {
     if (loaded) {
       return;
     }
-    requestThumbNail();
     requestItem();
+    requestThumbNail();
     setLoaded(true);
   }, [loaded]);
 
@@ -124,9 +125,13 @@ const ItemDetail = (props) => {
   }, [item])
 
   useEffect(() => {
+
     const thumbNailImageObj = images.filter((img, idx) => {
-      return img.fileId === selectedThumbNail
+      console.log(img.fileId);
+      console.log(selectedThumbNail);
+      return parseInt(img.fileId) === selectedThumbNail
     })[0];
+    console.log(thumbNailImageObj);
     setThumbnailImage(thumbNailImageObj);
   }, [images, selectedThumbNail]);
 
