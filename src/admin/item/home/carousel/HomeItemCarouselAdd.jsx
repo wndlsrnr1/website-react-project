@@ -67,7 +67,7 @@ const HomeItemCarouselAdd = () => {
       .then(data => {
         console.log(data);
         setCategories(data.data.content);
-      })
+      });
   }
 
   const itemRequest = (itemId) => {
@@ -88,6 +88,7 @@ const HomeItemCarouselAdd = () => {
           imageObj.savedFileName = datum.savedFileName;
           imagesUpdated.push(imageObj);
         }
+        console.log("imageObj", imagesUpdated);
         setImages(imagesUpdated);
       });
   }
@@ -356,10 +357,9 @@ const HomeItemCarouselAdd = () => {
           <ListGroup horizontal={true} style={{overflowX: "auto"}}>
             {
               images ? images.map((image, idx) => {
-                if (!images?.requestName) {
+                if (!image.requestName) {
                   return;
                 }
-                console.log(image);
                 return (
                   <ListGroupItem tag={"button"} className={"d-inline-block me-3"} key={image.toString() + idx} active={selectedImageId === parseInt(image.fileId)} onClick={() => toggleSelectedImageOnclick(image.fileId)}>
                     <div className={"border d-flex flex-column"}>

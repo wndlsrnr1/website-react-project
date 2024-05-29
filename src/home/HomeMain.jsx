@@ -16,7 +16,7 @@ const HomeMain = () => {
         <div>
           <HomeCarousel/>
         </div>
-        <WingMenu/>
+        {/*<WingMenu/>*/}
         <HomeItem/>
 
         <Footer/>

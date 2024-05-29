@@ -1,8 +1,16 @@
+import HomeItemDiscount from "./main/HomeItemDiscount";
+import HomeItemRecent from "./main/HomeItemRecent";
+import HomeItemPopular from "./main/HomeItemPopular";
+
 const HomeItem = () => {
   return (
-    <>
-      HomeItem
-    </>
+    <div className={"pt-4"}>
+      <HomeItemPopular/>
+      <hr/>
+      <HomeItemRecent/>
+      <hr/>
+      <HomeItemDiscount/>
+    </div>
   )
 }
 
