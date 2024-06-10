@@ -2,7 +2,6 @@ import {Container, Row} from "reactstrap";
 import {useEffect, useState} from "react";
 
 const HomeItemRecent = () => {
-  //아이템 상세로 넘어가는 링크 만들기, 할인 가격 적용되게 만들기
 
   //variables
   const [itemsRecent, setItemsRecent] = useState([]);
@@ -12,6 +11,29 @@ const HomeItemRecent = () => {
   const parseDate = (date) => new Date(date).toLocaleDateString('ko-KR', {
     year: 'numeric', month: 'numeric', day: 'numeric'
   });
+
+  const isDiscountRatio = (itemObject) => {
+
+    const discountRatio = itemObject?.discountRatio;
+    console.log("discountRatio", discountRatio)
+    if (!discountRatio) {
+      return false;
+    }
+
+    const discountRatioPared = parseInt(discountRatio);
+
+    if (discountRatioPared <= 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  const getDiscountedPrice = (priceParam, discountRatioParam) => {
+    const discountRatio = parseInt(discountRatioParam);
+    const price = parseInt(priceParam);
+    return price - Math.ceil(discountRatio * price / 100);
+  }
 
   //useEffects
   useEffect(() => {
@@ -46,57 +68,43 @@ const HomeItemRecent = () => {
       <Row xs={5}>
         {
           itemsRecent.length !== 0 ? itemsRecent.map((itemRecent, idx) => {
-            return (
-              <div className={"d-flex flex-column align-items-center border pt-3 pb-3"} key={itemRecent.toString() + idx}>
-                <img src={"/attachment/" + itemRecent.fileId} style={{height: "200px"}}/>
-                <div>
-                  <span>이름: </span>
-                  <span>{itemRecent.name}</span>
+              return (
+                <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}
+                     key={itemRecent.toString() + idx}>
+                  <a href={"/item/detail/" + itemRecent.id}>
+                    <img src={"/attachment/" + itemRecent.fileId} style={{height: "200px"}}/>
+                  </a>
+                  <div>
+                    <span>이름: </span>
+                    <span>{itemRecent.name}</span>
+                  </div>
+                  {
+                    isDiscountRatio(itemRecent) ?
+                      (
+                        <div>
+                          <span>가격: </span>
+                          <span
+                            className={"text-decoration-line-through"}>{itemRecent.price}</span>
+                          <span>  -> </span>
+                          <span>{getDiscountedPrice(itemRecent.price, itemRecent.discountRatio)}</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <span>가격: </span>
+                          <span>{itemRecent.price}</span>
+                        </div>
+                      )
+                  }
+                  <div>
+                    <span>출시일: </span>
+                    <span>{parseDate(itemRecent.releasedAt)}</span>
+                  </div>
                 </div>
-                <div>
-                  <span>가격: </span>
-                  <span>{itemRecent.price}</span>
-                </div>
-                <div>
-                  <span>출시일: </span>
-                  <span>{parseDate(itemRecent.releasedAt)}</span>
-                </div>
-              </div>
               )
             })
             :
             null
         }
-        <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}>
-          <img src={"/attachment/175"} style={{height: "200px"}}/>
-          <div><span>이름</span></div>
-          <div><span>가격</span></div>
-          <div><span>출시일</span></div>
-        </div>
-        <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}>
-          <img src={"/attachment/175"} style={{height: "200px"}}/>
-          <div><span>이름</span></div>
-          <div><span>가격</span></div>
-          <div><span>출시일</span></div>
-        </div>
-        <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}>
-          <img src={"/attachment/175"} style={{height: "200px"}}/>
-          <div><span>이름</span></div>
-          <div><span>가격</span></div>
-          <div><span>출시일</span></div>
-        </div>
-        <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}>
-          <img src={"/attachment/175"} style={{height: "200px"}}/>
-          <div><span>이름</span></div>
-          <div><span>가격</span></div>
-          <div><span>출시일</span></div>
-        </div>
-        <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}>
-          <img src={"/attachment/175"} style={{height: "200px"}}/>
-          <div><span>이름</span></div>
-          <div><span>가격</span></div>
-          <div><span>출시일</span></div>
-        </div>
       </Row>
     </Container>
 
