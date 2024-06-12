@@ -67,7 +67,7 @@ const Categories = () => {
                 <DropdownItem header>{element.nameKor + "의관련 항목"}</DropdownItem>
                 {
                   element.subcategories.map((subElement, idx) => {
-                    return < DropdownItem itemID={subElement.id} tag={"a"} href={"/subcategory/" + subElement.id} key={subElement.toString() + idx}> {subElement.name} < /DropdownItem>
+                    return < DropdownItem itemID={subElement.id} tag={"a"} href={"/item_list?subcategoryId=" + subElement.id} key={subElement.toString() + idx}> {subElement.name} < /DropdownItem>
                   })
                 }
               </DropdownMenu>
