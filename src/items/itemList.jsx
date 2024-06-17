@@ -5,6 +5,8 @@ import {useEffect, useState} from "react";
 
 const ItemList = () => {
 
+  const pageSize = 20;
+  const pageChunk = 5;
   //subcategory, category 정보 받기
   //App.js에 url등록하기
   // 등등
@@ -12,6 +14,11 @@ const ItemList = () => {
   //variables
   const [loaded, setLoaded] = useState(false);
   const [subcategoryId, setSubcategoryId] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [sortedBy, setSortedBy] = useState("name");
+  const [lastItemId, setLastItemId] = useState(-1);
+  const [isLastPage, setIsLastPage] = useState(false);
 
   //hooks
 
@@ -22,6 +29,7 @@ const ItemList = () => {
     }
     const subcategoryIdOnUrl = parseInt(new URLSearchParams(window.location.search).get("subcategoryId"));
     setSubcategoryId(subcategoryIdOnUrl);
+    itemListForCustomerRequest(subcategoryIdOnUrl);
     setLoaded(true);
   }, [loaded]);
 
@@ -32,6 +40,20 @@ const ItemList = () => {
   //onChanges
 
   //requests
+  const itemListForCustomerRequest = (subcategoryId) => {
+    let url = "/home/item_list?subcategoryId=" + subcategoryId;
+    url += "&pageNumber=" + pageNumber;
+    url += "&sortedBy=" + sortedBy;
+    url += "&pageSize=" + pageSize;
+    url += "&pageChunk=" + pageChunk;
+    url += "&isLastPage=" + isLastPage;
+    url += "&lastItemId=" + lastItemId;
+    fetch(url)
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data);
+      });
+  }
 
   return (
     <Container>
