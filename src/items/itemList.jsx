@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 const ItemList = () => {
 
   const pageSize = 20;
-  const pageChunk = 5;
+  const pageChunk = 5; //마지막으로 바로 옮길때 OffSet에 빠르게 접근하기 위해서 필요함.
   //subcategory, category 정보 받기
   //App.js에 url등록하기
   // 등등
@@ -14,11 +14,12 @@ const ItemList = () => {
   //variables
   const [loaded, setLoaded] = useState(false);
   const [subcategoryId, setSubcategoryId] = useState(null);
-  const [totalPages, setTotalPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
   const [sortedBy, setSortedBy] = useState("name");
+  //sorted 검색 값이 달라 질 경우 초기화
+  const [totalItems, setTotalItems] = useState(-1);
+  //sortedBy에서 검색 값이 달라 질 경우 -1로 초기화 시켜주어야 함.
   const [lastItemId, setLastItemId] = useState(-1);
-  const [isLastPage, setIsLastPage] = useState(false);
 
   //hooks
 
@@ -45,9 +46,9 @@ const ItemList = () => {
     url += "&pageNumber=" + pageNumber;
     url += "&sortedBy=" + sortedBy;
     url += "&pageSize=" + pageSize;
-    url += "&pageChunk=" + pageChunk;
-    url += "&isLastPage=" + isLastPage;
     url += "&lastItemId=" + lastItemId;
+    url += "&totalItems=" + totalItems;
+
     fetch(url)
       .then(resp => resp.json())
       .then(data => {
