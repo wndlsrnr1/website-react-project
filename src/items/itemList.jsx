@@ -14,12 +14,14 @@ const ItemList = () => {
   //variables
   const [loaded, setLoaded] = useState(false);
   const [subcategoryId, setSubcategoryId] = useState(null);
-  const [pageNumber, setPageNumber] = useState(0);
+  const [page, setPage] = useState(0);
   const [sortedBy, setSortedBy] = useState("name");
   //sorted 검색 값이 달라 질 경우 초기화
   const [totalItems, setTotalItems] = useState(-1);
   //sortedBy에서 검색 값이 달라 질 경우 -1로 초기화 시켜주어야 함.
   const [lastItemId, setLastItemId] = useState(-1);
+  const [category, setCategory] = useState(null);
+  const [subcategory, setSubcategory] = useState(null);
 
   //hooks
 
@@ -31,6 +33,7 @@ const ItemList = () => {
     const subcategoryIdOnUrl = parseInt(new URLSearchParams(window.location.search).get("subcategoryId"));
     setSubcategoryId(subcategoryIdOnUrl);
     itemListForCustomerRequest(subcategoryIdOnUrl);
+    categoryAndSubcategoryRequestBySubcategoryId(subcategoryIdOnUrl);
     setLoaded(true);
   }, [loaded]);
 
@@ -43,7 +46,7 @@ const ItemList = () => {
   //requests
   const itemListForCustomerRequest = (subcategoryId) => {
     let url = "/home/item_list?subcategoryId=" + subcategoryId;
-    url += "&pageNumber=" + pageNumber;
+    url += "&page=" + page;
     url += "&sortedBy=" + sortedBy;
     url += "&pageSize=" + pageSize;
     url += "&lastItemId=" + lastItemId;
@@ -53,6 +56,33 @@ const ItemList = () => {
       .then(resp => resp.json())
       .then(data => {
         console.log(data);
+        setPage(data.data.number);
+        // setLastItemId();
+        setTotalItems(data.data.totalElements);
+        console.log("page", data.data.number);
+        console.log("totalElements", data.data.totalElements);
+      });
+  }
+
+  const categoryAndSubcategoryRequestBySubcategoryId = (subcategoryId) => {
+    const url = "/home/info/item/category/subcategory/" + subcategoryId
+    fetch(url, {method: "get"})
+      .then(resp => {
+        if (resp.status === 404) {
+          console.error("404");
+          return;
+        }
+        if (resp.status !== 200) {
+          console.error("error");
+          return;
+        }
+        return resp.json();
+      })
+      .then(data => {
+        if (data === undefined || !data || !data?.data) {
+          return;
+        }
+        setSubcategory(data?.data)
       });
   }
 
@@ -62,18 +92,38 @@ const ItemList = () => {
       <Categories/>
       <div className={"bg-light ms-3 me-3 mb-3"}>
         <div>
-          <span className={"text-secondary"}>홈</span>
-          <span className={"text-secondary"}> > </span>
-          <span className={"text-secondary"}>카테고리1</span>
-          <span className={"text-secondary"}> > </span>
-          <span className={"text-secondary"}>subcategory1</span>
+          {
+            subcategory ? (
+                <>
+                  <span className={"text-secondary"}>홈</span>
+                  <span className={"text-secondary"}> > </span>
+                  <span className={"text-secondary"}>{subcategory.categoryNameKor}</span>
+                  <span className={"text-secondary"}> > </span>
+                  <span className={"text-secondary"}>{subcategory.subcategoryNameKor}</span>
+                </>
+              )
+              :
+              (
+                <>
+                  <span className={"text-secondary"}>홈</span>
+                </>
+              )
+          }
+
         </div>
       </div>
 
       <Container>
         <div className={"d-flex justify-content-between"}>
-          <div>
-            <h4>subcategory1</h4>
+          <div className={"d-flex justify-content-start align-items-center mb-2"}>
+            <h4 className={"me-1 mb-0"}>{subcategory ? subcategory.subcategoryNameKor : null}</h4>
+
+            {
+              totalItems ? (
+                <div>({ totalItems} )</div>
+              ) :
+                <div>( {0} )</div>
+            }
           </div>
           <div>
             <InputGroup>
