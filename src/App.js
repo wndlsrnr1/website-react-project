@@ -21,6 +21,7 @@ import HomeItemCarousel from "./admin/item/home/carousel/HomeItemCarousel"
 import HomeItemCarouselAdd from "./admin/item/home/carousel/HomeItemCarouselAdd";
 import HomeItemCarouselDetail from "./admin/item/home/carousel/HomeItemCarouselDetail";
 import ItemList from "./items/itemList";
+import ItemCustomerDetail from "./items/ItemCustomerDetail";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -74,7 +75,9 @@ const App = () => {
         <Route path={"/admin/items/add"} exact component={ItemAdd}/>
         <Route path={"/admin/items/:itemId"} exact component={ItemDetail}/>
         <Route path={"/admin/items/edit/:itemId"} exact component={ItemEdit}/>
+
         <Route path={"/item_list"} exact component={ItemList}/>
+        <Route path={"/item/detail/:itemId"} exact component={ItemCustomerDetail}/>
       </Switch>
     </BrowserRouter>
   );
