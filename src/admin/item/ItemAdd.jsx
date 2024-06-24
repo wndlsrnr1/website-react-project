@@ -1,4 +1,16 @@
-import {Button, Col, Container, Form, FormGroup, Input, InputGroup, InputGroupText, Label, Row} from "reactstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupText,
+  Label,
+  ListGroupItem,
+  Row
+} from "reactstrap";
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import data from "bootstrap/js/src/dom/data";
@@ -10,6 +22,13 @@ const getFormattedDateTime = (date, time) => {
   return datetime1;
   // const datetime2 = new Date(datetime1)
   // return datetime2.toISOString();
+}
+
+const getImageFromFileObj = (fileObj) => {
+  if (!fileObj) {
+    return null;
+  }
+  return URL.createObjectURL(fileObj);
 }
 
 const ItemAdd = () => {
@@ -35,13 +54,16 @@ const ItemAdd = () => {
   const [updatedAt, setUpdatedAt] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [images, setImages] = useState([]);
-  const [imageFiles, setImageFiles] = useState([]);
+
   const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
-  const [thumbnail, setThumbnail] = useState(null);
-  const [thumbnailFile, setThumbnailFile] = useState(null);
 
+
+  const [imageNames, setImageNames] = useState([]);
+  //FileList객체임
+  const [imageFiles, setImageFiles] = useState([]);
+  const [thumbnailName, setThumbnailName] = useState(null);
+  const [thumbnailFile, setThumbnailFile] = useState(null);
 
 
   // const []
@@ -59,7 +81,7 @@ const ItemAdd = () => {
     formData.append("releasedAt", updatedReleasedAt);
     formData.append("price", price);
     formData.append("quantity", quantity);
-    formData.append("images", images);
+    formData.append("images", imageNames);
     // formData.append("imageFiles", imageFiles);
     for (const imageFile of imageFiles) {
       formData.append("imageFiles", imageFile);
@@ -68,8 +90,7 @@ const ItemAdd = () => {
     formData.append("status", status);
     formData.append("description", description);
     formData.append("thumbnailFile", thumbnailFile);
-    formData.append("thumbnailImage", thumbnail);
-
+    formData.append("thumbnailImage", thumbnailName);
 
 
     fetch(url, {method: "post", body: formData})
@@ -116,6 +137,18 @@ const ItemAdd = () => {
   }, [categoryId]);
 
   //onClicks
+  const deleteImageOnClick = (fileSequence) => {
+    const imageFileListNew = [];
+    for (let i = 0; i < imageFiles.length; i++) {
+      if (i === fileSequence) {
+        continue;
+      }
+      imageFileListNew.push(imageFiles[i]);
+    }
+
+    setImageFiles(imageFileListNew);
+    console.log(imageFileListNew);
+  }
 
   //onSubmits
   const addItemOnSubmit = (event) => {
@@ -178,15 +211,15 @@ const ItemAdd = () => {
     const value = event.currentTarget.value;
     const files = event.target.files;
     const maxFiles = event.target.getAttribute("max-files");
-    const imagesList = [];
+    const imageNameList = [];
     for (const file of event.target.files) {
-      imagesList.push(file.name);
+      imageNameList.push(file.name);
     }
 
     if (maxFiles && (files.length <= parseInt(maxFiles))) {
-      setImages(imagesList);
+      setImageNames(imageNameList);
     } else {
-      setImages([]);
+      setImageNames([]);
       return;
     }
 
@@ -195,13 +228,13 @@ const ItemAdd = () => {
       let fileSize = 0;
       Array.from(files).forEach(file => fileSize += file.size);
       if (fileSize > maxSize) {
-        setImages([]);
+        setImageNames([]);
         return;
       }
     }
     console.log("files = ", files);
-    setImageFiles(files);
-    setImages(imagesList);
+    setImageFiles(Array.from(files));
+    setImageNames(imageNameList);
   }
 
   const thumbnailOnChangeInput = (event) => {
@@ -214,11 +247,11 @@ const ItemAdd = () => {
     console.log("event.target.files", event.target.files);
     console.log("event.target.files[0].name", event.target.files[0].name);
     if (files[0].size > maxSize) {
-      setThumbnail(null);
+      setThumbnailName(null);
       setThumbnailFile(null);
       return;
     }
-    setThumbnail(thumbnailObj);
+    setThumbnailName(thumbnailObj);
     setThumbnailFile(files[0]);
   }
 
@@ -332,12 +365,48 @@ const ItemAdd = () => {
               </Col>
             </Row>
 
-            <InputGroup className={"mb-3"}>
-              <InputGroupText>ImageFiles</InputGroupText>
-              <Input style={{border: "1px solid #ced4da border-r"}} className={"rounded-2 form-control"} type={"file"}
-                     onChange={imagesOnChangeInput}
-                     multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"3"} max-size={"31457280"}/>
-            </InputGroup>
+            <div>
+              <Row xs={6} className={"mb-3"}>
+                {
+                  imageFiles && imageFiles.length !== 0 ? Array.from(imageFiles).map((file, idx) => {
+                    return (
+                      <Col className={"mb-3"} key={file.toString() + idx}>
+                        <Button className={"btn-sm bg-secondary w-100"} type="button"
+                                onClick={() => deleteImageOnClick(idx)}>삭제</Button>
+                        <div className={"border"}>
+                          <div className={"d-block d-flex justify-content-center"}>
+                            <img style={{maxHeight: "100px", maxWidth: "100px"}} src={getImageFromFileObj(file)}
+                                 alt={file.name}/>
+                          </div>
+                          <div className={"text-truncate"}>
+                            <span className={"text-center"}>{file.name}</span>
+                          </div>
+                        </div>
+
+                        <div className={"d-flex"}>
+                          <Button className={"btn-sm bg-primary w-100"} type="button">←</Button>
+                          <Button className={"btn-sm bg-primary w-100"} type="button">→</Button>
+                        </div>
+
+                      </Col>
+                    )
+                  }) : null
+                }
+              </Row>
+            </div>
+
+            <Label tag={"label"} for={"file"} className={"w-100"}>
+              <InputGroup className={"mb-3"}>
+                <InputGroupText>이미지 추가</InputGroupText>
+                <div className={"form-control"}>
+                  {imageFiles.length !== 0 ? imageFiles.map((elem, idx) => elem.name).join(", ") : null}
+                </div>
+              </InputGroup>
+              <Input id={"file"} style={{border: "1px solid #ced4da border-r d-none"}} className={"rounded-2 form-control d-none"} type={"file"}
+                     onChange={imagesOnChangeInput} value={null}
+                     multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"15"} max-size={"3145728000"}/>
+            </Label>
+
 
             <InputGroup className={"mb-3"}>
               <InputGroupText>썸네일 선택</InputGroupText>

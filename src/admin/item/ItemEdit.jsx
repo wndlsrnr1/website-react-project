@@ -313,6 +313,7 @@ const ItemEdit = () => {
         return;
       }
     }
+
     setImageFilesForUpdate(files);
     setImagesForUpdate(imagesList);
   }
