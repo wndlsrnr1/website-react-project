@@ -34,6 +34,10 @@ const getImageFromFileObj = (fileObj) => {
 const ItemAdd = () => {
 
   //variables
+  const [saleRate, setSaleRate] = useState(0);
+  const [brand, setBrand] = useState("");
+  const [manufacturer, setManufacturer] = useState("");
+  const [madeIn, setMadeIn] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
 
@@ -66,7 +70,56 @@ const ItemAdd = () => {
   const [thumbnailFile, setThumbnailFile] = useState(null);
 
 
-  // const []
+  //hooks
+  const onClickRight = (imageFileList, idx) => {
+    if (imageFileList.length - 1 === idx) {
+      return;
+    }
+
+    const imgFileNew = [];
+
+
+    for (let i = 0; i < imageFileList.length; i++) {
+      const imageFile = imageFileList[i];
+      if (i === idx) {
+        const imageFileAfter = imageFileList[i + 1];
+        imgFileNew.push(imageFileAfter);
+        imgFileNew.push(imageFile);
+        continue;
+      }
+      if (i === idx + 1) {
+        continue;
+      }
+      imgFileNew.push(imageFile);
+    }
+
+    setImageFiles(imgFileNew);
+  }
+
+  const onClickLeft = (imageFileList, idx) => {
+    if (idx === 0) {
+      return;
+    }
+
+    const imgFileNew = [];
+
+    for (let i = 0; i < imageFileList.length; i++) {
+      const imgFile = imageFileList[i];
+      if (i === idx - 1) {
+        continue;
+      }
+      if (i === idx) {
+        imgFileNew.push(imgFile);
+        imgFileNew.push(imageFileList[i - 1]);
+        continue;
+      }
+
+      imgFileNew.push(imgFile);
+    }
+
+    setImageFiles(imgFileNew);
+  }
+
 
   //requests
   const submitRequest = (url) => {
@@ -92,11 +145,16 @@ const ItemAdd = () => {
     formData.append("thumbnailFile", thumbnailFile);
     formData.append("thumbnailImage", thumbnailName);
 
+    formData.append("saleRate", saleRate);
+    formData.append("brand", brand);
+    formData.append("manufacturer", manufacturer);
+    formData.append("madeIn", madeIn);
+
 
     fetch(url, {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
-          window.location.href = "/admin/items"
+          window.location.href = "/admin/items";
         } else {
           return resp.json();
         }
@@ -157,6 +215,29 @@ const ItemAdd = () => {
   }
 
   //onChanges
+  const saleRateOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setSaleRate(value);
+  }
+
+  const brandOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setBrand(value);
+  }
+
+  const manufacturerOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setManufacturer(value);
+  }
+
+  const madeInOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setMadeIn(value);
+  }
 
   const categoryOnChangeInput = (event) => {
     event.preventDefault();
@@ -271,7 +352,7 @@ const ItemAdd = () => {
     <>
       <Container className={"w-75"}>
         <Form onSubmit={addItemOnSubmit}>
-          <h2 className={"text-center p-4"}>아이템 상세</h2>
+          <h2 className={"text-center p-4"}>아이템 추가</h2>
           <div className={"box"}>
             <Row className={"mb-3"}>
               <Col>
@@ -384,8 +465,8 @@ const ItemAdd = () => {
                         </div>
 
                         <div className={"d-flex"}>
-                          <Button className={"btn-sm bg-primary w-100"} type="button">←</Button>
-                          <Button className={"btn-sm bg-primary w-100"} type="button">→</Button>
+                          <Button className={"btn-sm bg-primary w-100"} type="button" onClick={() => onClickLeft(imageFiles, idx)}>←</Button>
+                          <Button className={"btn-sm bg-primary w-100"} type="button" onClick={() => onClickRight(imageFiles, idx)}>→</Button>
                         </div>
 
                       </Col>
@@ -404,14 +485,14 @@ const ItemAdd = () => {
               </InputGroup>
               <Input id={"file"} style={{border: "1px solid #ced4da border-r d-none"}} className={"rounded-2 form-control d-none"} type={"file"}
                      onChange={imagesOnChangeInput} value={null}
-                     multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"15"} max-size={"3145728000"}/>
+                     multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"15"} max-size={90 * 1024 * 1024}/>
             </Label>
 
 
             <InputGroup className={"mb-3"}>
               <InputGroupText>썸네일 선택</InputGroupText>
               <Input style={{border: "1px solid #ced4da border-r"}} className={"rounded-2 form-control"} type={"file"}
-                     onChange={thumbnailOnChangeInput} accept={".jpg, .jpeg, .png, .gif"} max-size={"1048576"}/>
+                     onChange={thumbnailOnChangeInput} accept={".jpg, .jpeg, .png, .gif"} max-size={10 * 1024 * 1024}/>
             </InputGroup>
 
             <InputGroup className={"mb-3"}>
@@ -422,6 +503,24 @@ const ItemAdd = () => {
             <InputGroup className={"mb-3"}>
               <InputGroupText>설명</InputGroupText>
               <Input className={"bg-white"} type={"textarea"} onChange={descriptionOnChangeInput} value={description}/>
+            </InputGroup>
+
+            <InputGroup className={"mb-3"}>
+              <InputGroupText>할인율</InputGroupText>
+              <Input type={"number"} className={"bg-white"} onChange={saleRateOnChangeInput} value={saleRate}/>
+            </InputGroup>
+
+            <InputGroup className={"mb-3"}>
+              <InputGroupText>브랜드</InputGroupText>
+              <Input className={"bg-white"} onChange={brandOnChangeInput} value={brand}/>
+            </InputGroup>
+            <InputGroup className={"mb-3"}>
+              <InputGroupText>생산자</InputGroupText>
+              <Input className={"bg-white"} onChange={manufacturerOnChangeInput} value={manufacturer}/>
+            </InputGroup>
+            <InputGroup className={"mb-3"}>
+              <InputGroupText>제조국</InputGroupText>
+              <Input className={"bg-white"} onChange={madeInOnChangeInput} value={madeIn}/>
             </InputGroup>
           </div>
           <div className={"buttons"}>

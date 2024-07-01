@@ -63,6 +63,14 @@ const ItemEdit = () => {
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [thumbnailImageIdBefore, setThumbnailImageIdBefore] = useState(null);
 
+  const [updateImgIdList, setUpdateImgIdList] = useState([]);
+  const [seqForImgList, setSeqForImgList] = useState([]);
+  //imageId(index), order = value
+  const [seqForAddedImgList, setSeqForAddedImgList] = useState([]);
+
+  //element: {type: ... , content: ...};
+  const [totalImage, setTotalImage] = useState([]);
+
   //hooks
   const isSelected = (imageId) => {
     if (!imageId) {
@@ -452,13 +460,14 @@ const ItemEdit = () => {
               images && images.length !== 0 ? images.map((image, idx) => {
                 return (
                   <div className={"d-inline-block me-3"} key={image.toString() + idx}>
+                    <Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}
+                            onClick={() => deleteImagesOnClick(image.fileId)}>삭제</Button>
                     <div className={"border d-flex flex-column"}>
                       <div className={"d-inline-block"}>
                         <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
                       </div>
                       <span className={"text-center"}>{image.requestName}</span>
-                      <Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}
-                              onClick={() => deleteImagesOnClick(image.fileId)}>삭제</Button>
+
                     </div>
                   </div>
                 )
@@ -492,7 +501,7 @@ const ItemEdit = () => {
             </InputGroup>
             <Input className={"d-none"} type={"file"} style={{width: "0px"}}
                    onChange={imagesOnChangeInput}
-                   multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"3"} max-size={"31457280"}
+                   multiple={true} accept={".jpg, .jpeg, .png, .gif"} max-files={"10"} max-size={90 * 1024 * 1024}
                    id={"file"}/>
           </Label>
 
