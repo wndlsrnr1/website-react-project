@@ -79,6 +79,55 @@ const ItemEdit = () => {
     return imageId === selectedThumbnail;
   }
 
+  const onClickRight = (imageFileList, idx) => {
+    if (imageFileList.length - 1 === idx) {
+      return;
+    }
+
+    const imgFileNew = [];
+
+
+    for (let i = 0; i < imageFileList.length; i++) {
+      const imageFile = imageFileList[i];
+      if (i === idx) {
+        const imageFileAfter = imageFileList[i + 1];
+        imgFileNew.push(imageFileAfter);
+        imgFileNew.push(imageFile);
+        continue;
+      }
+      if (i === idx + 1) {
+        continue;
+      }
+      imgFileNew.push(imageFile);
+    }
+
+    setImageFiles(imgFileNew);
+  }
+
+  const onClickLeft = (imageFileList, idx) => {
+    if (idx === 0) {
+      return;
+    }
+
+    const imgFileNew = [];
+
+    for (let i = 0; i < imageFileList.length; i++) {
+      const imgFile = imageFileList[i];
+      if (i === idx - 1) {
+        continue;
+      }
+      if (i === idx) {
+        imgFileNew.push(imgFile);
+        imgFileNew.push(imageFileList[i - 1]);
+        continue;
+      }
+
+      imgFileNew.push(imgFile);
+    }
+
+    setImageFiles(imgFileNew);
+  }
+
   //requests
   const requestItem = () => {
     const path = "/admin/items/" + itemId;
@@ -454,22 +503,28 @@ const ItemEdit = () => {
               </InputGroup>
             </Col>
           </Row>
-          <h3>이미지 삭제</h3>
-          <div className={"pb-3"}>
+          <h3>이미지 추가 / 삭제</h3>
+          <Row xs={6} className={"pb-3"}>
             {
               images && images.length !== 0 ? images.map((image, idx) => {
                 return (
-                  <div className={"d-inline-block me-3"} key={image.toString() + idx}>
-                    <Button className={"btn-sm bg-primary w-100"} type="button" fileId={image.fileId}
+                  <Col className={"mb-3"} key={image.toString() + idx}>
+                    <Button className={"btn-sm bg-secondary w-100"} type="button" fileId={image.fileId}
                             onClick={() => deleteImagesOnClick(image.fileId)}>삭제</Button>
-                    <div className={"border d-flex flex-column"}>
-                      <div className={"d-inline-block"}>
-                        <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
+                    <div className={"border"}>
+                      <div className={"d-block d-flex justify-content-center"}>
+                        <img style={{maxHeight: "100px", maxWidth: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
                       </div>
-                      <span className={"text-center"}>{image.requestName}</span>
-
+                      <div className={"text-truncate"}>
+                        <span className={"text-center"}>{image.requestName}</span>
+                      </div>
                     </div>
-                  </div>
+
+                    <div className={"d-flex"}>
+                      <Button className={"btn-sm bg-primary w-100"} type="button" onClick={() => onClickLeft(imageFiles, idx)}>←</Button>
+                      <Button className={"btn-sm bg-primary w-100"} type="button" onClick={() => onClickRight(imageFiles, idx)}>→</Button>
+                    </div>
+                  </Col>
                 )
               }) : null
             }
@@ -488,8 +543,7 @@ const ItemEdit = () => {
                 )
               }) : null
             }
-          </div>
-          <h3>이미지 추가</h3>
+          </Row>
           <Label tag={"label"} for={"file"} className={"w-100"}>
             <InputGroup className={"mb-3"}>
               <InputGroupText>파일 추가</InputGroupText>
