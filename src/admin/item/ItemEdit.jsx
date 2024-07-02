@@ -260,6 +260,49 @@ const ItemEdit = () => {
     formData.append("status", itemStatus);
     formData.append("description", itemDescription);
 
+    formData.append("saleRate", saleRate);
+    formData.append("brand", brand);
+    formData.append("manufacturer", manufacturer);
+    formData.append("madeIn", madeIn);
+    const imageIdsForDelete = imageList
+      .filter((img, idx) => (img.type === "delete"))
+      .map((img, idx) => img.content.fileId);
+    const imageIdsForUpdate = imageList
+      .filter((img, idx) => (img.type === "update"))
+      .map((img, idx) => img.content.fileId);
+    const imageFilesForUpload = imageList
+      .filter((img, idx) => (img.type === "upload"))
+      .map((img, idx) => img.content);
+
+    const seqListForUpload = imageList
+      .map((img, idx) => {
+        if (img.type === "upload") {
+          return idx + 1;
+        }
+        return -1;
+      })
+      .filter((seq, idx) => seq !== -1);
+
+    const seqListForUpdate = imageList
+      .map((img, idx) => {
+        if (img.type === "update") {
+          return idx + 1;
+        }
+        return -1;
+      })
+      .filter((seq, idx) => seq !== -1);
+
+
+    formData.append("imageIdsForDelete", imageIdsForDelete);
+    formData.append("imageIdsForUpdate", imageIdsForUpdate);
+    formData.append("seqListForUpdate", seqListForUpdate);
+    formData.append("seqListForUpload", seqListForUpload);
+
+    for (let i = 0; i < imageFilesForUpload.length; i++) {
+      const imageFile = imageFilesForUpload[i];
+      formData.append("imageFilesForUpload", imageFile);
+    }
+
 
     // formData.append("itemId", itemId)
     // for (let i = 0; i < imagesForDelete.length; i++) {
@@ -334,8 +377,9 @@ const ItemEdit = () => {
       setImageList(newImageList);
       console.log(newImageList);
     } else if (type === "upload") {
-      const newImageList = imageList.filter((img, idx) => !(img.type === "upload" && idx === idxParam));
-      setImageList(newImageList)
+      const newImageList = imageList.filter((img, idx) => idx !== idxParam);
+      console.log("newImageList", newImageList);
+      setImageList(newImageList);
     }
   }
 
@@ -466,7 +510,7 @@ const ItemEdit = () => {
                     subcategories.length !== 0 ? subcategories.map((subcategory, idx) => {
                       return (
                         <option key={subcategory.toString() + idx}
-                                value={subcategory.subcategoryId}>{subcategory.nameKor} ({subcategory.name})</option>
+                                value={subcategory.subcategorgyId}>{subcategory.nameKor} ({subcategory.name})</option>
                       )
                     }) : null
                   }
