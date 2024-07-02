@@ -51,7 +51,7 @@ const ItemEdit = () => {
   const [itemName, setItemName] = useState("");
   const [releasedAt, setReleasedAt] = useState("");
   const [itemPrice, setItemPrice] = useState("");
-  const [saleRate, setSaleRate] = useState(null);
+  const [saleRate, setSaleRate] = useState("");
   const [brand, setBrand] = useState("");
   const [manufacturer, setManufacturer] = useState("");
   const [madeIn, setMadeIn] = useState("");
@@ -528,13 +528,15 @@ const ItemEdit = () => {
             {
               imageList && imageList.length !== 0 && imageList.filter((elem) => elem.type !== "delete").length !== 0 ?
                 imageList.map((image, idx) => {
-                  if (image.type === "update" || image.type === "delete") {
+                  if (image.type === "update") {
                     const img = image.content;
                     return (
-                      <Col className={image.type === "update" ? "mb-3" : "mb-3 opacity-25"} key={image.toString() + idx}>
-                        <Button className={"btn-sm bg-secondary w-100"} type="button" fileId={img.fileId}
+                      <Col className={image.type === "update" ? "mb-3" : "mb-3 opacity-25"}
+                           key={image.toString() + idx}>
+                        <Button className={"btn-sm bg-secondary w-100"} type="button"
                                 onClick={() => deleteImagesOnClick(image.type, idx)}>삭제</Button>
-                        <div className={"border"}>
+                        <div className={isSelected(image.thumbnail) ? "mb-3 bg-primary" : "mb-3"}
+                             onClick={() => selectThumbnail(imageList, image.type, idx)}>
                           <div className={"d-block d-flex justify-content-center"}>
                             <img style={{maxHeight: "100px", maxWidth: "100px"}} src={"/attachment/" + img.fileId}
                                  alt={img.requestName}/>
@@ -543,7 +545,6 @@ const ItemEdit = () => {
                             <span className={"text-center"}>{img.requestName}</span>
                           </div>
                         </div>
-
                         <div className={"d-flex"}>
                           <Button className={"btn-sm bg-primary w-100"} type="button"
                                   onClick={() => onClickLeft(imageList, idx)}>←</Button>
@@ -576,6 +577,27 @@ const ItemEdit = () => {
                         </div>
                       </Col>
                     );
+                  } else if (image.type === "delete") {
+                    const img = image.content;
+                    return (
+                      <Col className={image.type === "update" ? "mb-3" : "mb-3 opacity-25"}
+                           key={image.toString() + idx}>
+                        <Button className={"btn-sm bg-secondary w-100"} type="button">삭제</Button>
+                        <div className={isSelected(image.thumbnail) ? "mb-3 bg-primary" : "mb-3"}>
+                          <div className={"d-block d-flex justify-content-center"}>
+                            <img style={{maxHeight: "100px", maxWidth: "100px"}} src={"/attachment/" + img.fileId}
+                                 alt={img.requestName}/>
+                          </div>
+                          <div className={"text-truncate"}>
+                            <span className={"text-center"}>{img.requestName}</span>
+                          </div>
+                        </div>
+                        <div className={"d-flex"}>
+                          <Button className={"btn-sm bg-primary w-100"} type="button" active={false}>←</Button>
+                          <Button className={"btn-sm bg-primary w-100"} type="button" active={false}>→</Button>
+                        </div>
+                      </Col>
+                    );
                   }
                 }) : null
             }
@@ -584,11 +606,6 @@ const ItemEdit = () => {
           <Label tag={"label"} for={"file"} className={"w-100"}>
             <InputGroup className={"mb-3"}>
               <InputGroupText>파일 추가</InputGroupText>
-              <div className={"form-control"}>
-                {/*{images.map((elem, idx) => elem.requestName).join(", ")}*/}
-                {/*{imagesForUpdate.length !== 0 ? ", " : null}*/}
-                {/*{imagesForUpdate.map((elem, idx) => elem).join(", ")}*/}
-              </div>
             </InputGroup>
             <Input className={"d-none"} type={"file"} style={{width: "0px"}}
                    onChange={imagesOnChangeInput}
@@ -609,31 +626,33 @@ const ItemEdit = () => {
           </InputGroup>
         </div>
 
+
+        <InputGroup className={"mb-3"}>
+          <InputGroupText>할인율</InputGroupText>
+          <Input type={"number"} className={"bg-white"} value={saleRate} onChange={saleRateOnChangeInput}/>
+        </InputGroup>
+
+        <InputGroup className={"mb-3"}>
+          <InputGroupText>브랜드</InputGroupText>
+          <Input className={"bg-white"} value={brand} onChange={brandOnChangeInput}/>
+        </InputGroup>
+
+        <InputGroup className={"mb-3"}>
+          <InputGroupText>생산자</InputGroupText>
+          <Input className={"bg-white"} value={manufacturer} onChange={manufacturerOnChangeInput}/>
+        </InputGroup>
+
+        <InputGroup className={"mb-3"}>
+          <InputGroupText>제조국</InputGroupText>
+          <Input className={"bg-white"} value={madeIn} onChange={madeInOnChangeInput}/>
+        </InputGroup>
+
         <div className={"buttons"}>
           <Link className={"w-100 bg-secondary btn text-white mb-3"} to={"/admin/items"}>취소</Link>
           <Button className={"w-100 bg-primary btn text-white"}>확인</Button>
         </div>
       </Form>
 
-      <InputGroup className={"mb-3"}>
-        <InputGroupText>할인율</InputGroupText>
-        <Input type={"number"} className={"bg-white"} value={saleRate} onChange={saleRateOnChangeInput}/>
-      </InputGroup>
-
-      <InputGroup className={"mb-3"}>
-        <InputGroupText>브랜드</InputGroupText>
-        <Input className={"bg-white"} value={brand} onChange={brandOnChangeInput}/>
-      </InputGroup>
-
-      <InputGroup className={"mb-3"}>
-        <InputGroupText>생산자</InputGroupText>
-        <Input className={"bg-white"} value={manufacturer} onChange={manufacturerOnChangeInput}/>
-      </InputGroup>
-
-      <InputGroup className={"mb-3"}>
-        <InputGroupText>제조국</InputGroupText>
-        <Input className={"bg-white"} value={madeIn} onChange={madeInOnChangeInput}/>
-      </InputGroup>
 
     </Container>
   );
