@@ -62,10 +62,13 @@ const ItemEdit = () => {
   const [updatedAt, setUpdatedAt] = useState("");
   const [itemStatus, setItemStatus] = useState("");
   const [itemDescription, setItemDescription] = useState("");
+
+  const [sequenceList, setSequenceList] = useState([]);
   //img
 
   //element: {type: ... , content: ... seq...., };
   const [imageList, setImageList] = useState([]);
+  const [defaultThumbnail, setDefaultThumbnail] = useState(false);
 
   //hooks
 
@@ -130,6 +133,27 @@ const ItemEdit = () => {
   };
 
   //requests
+  const requestItemInfo = () => {
+    const path = "/admin/items/info?itemId=" + itemId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setBrand(data.data.brand);
+        setSaleRate(data.data.saleRate);
+        setManufacturer(data.data.manufacturer);
+        setMadeIn(data.data.madeIn);
+      });
+  }
+
+  const requestFileSequence = () => {
+    const path = "/admin/items/sequence/" + itemId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setSequenceList(data.data);
+      });
+  }
+
   const requestItem = () => {
     const path = "/admin/items/" + itemId;
     fetch(path, {method: "get"})
@@ -176,9 +200,13 @@ const ItemEdit = () => {
           });
           setImageList(mappedArray);
         }
+
+
       });
-    requestThumbNail();
+
   };
+
+
 
   // const itemThumbnailEditRequest = (url) => {
   //   const formData = new FormData();
@@ -218,7 +246,7 @@ const ItemEdit = () => {
           }
           return img;
         });
-
+        console.log("newArr", newArr);
         setImageList(newArr);
       });
   }
@@ -292,16 +320,42 @@ const ItemEdit = () => {
       })
       .filter((seq, idx) => seq !== -1);
 
-
     formData.append("imageIdsForDelete", imageIdsForDelete);
+
+
     formData.append("imageIdsForUpdate", imageIdsForUpdate);
     formData.append("seqListForUpdate", seqListForUpdate);
     formData.append("seqListForUpload", seqListForUpload);
-
     for (let i = 0; i < imageFilesForUpload.length; i++) {
+
       const imageFile = imageFilesForUpload[i];
       formData.append("imageFilesForUpload", imageFile);
     }
+
+    const imageForThumbnail = imageList.filter((img, idx) => img.thumbnail)[0];
+    /*
+    private Long imageIdForThumbnail;
+    private Integer imageSeqForThumbnail;
+     */
+    if (imageForThumbnail) {
+      if (imageForThumbnail.type === "update") {
+        formData.append("imageIdForThumbnail", imageForThumbnail.content.fileId);
+      } else if (imageForThumbnail.type === "upload") {
+        const uploadList = imageList.filter((img) => img.type === "upload");
+        let findIndex = -1;
+        for (let i = 0; i < uploadList.length; i++) {
+          const uploadFile = uploadList[i];
+          if (uploadFile.thumbnail) {
+            findIndex = i;
+            break;
+          }
+        }
+        formData.append("imageIndexForThumbnail", findIndex);
+      }
+    }
+
+
+
 
 
     // formData.append("itemId", itemId)
@@ -336,12 +390,16 @@ const ItemEdit = () => {
   };
 
   //useEffects 1차 로드
+
+
   useEffect(() => {
     if (loaded) {
       return;
     }
     requestItem();
     requestCategories();
+    requestItemInfo();
+    requestFileSequence();
     setLoaded(true);
   }, [loaded]);
 
@@ -353,6 +411,18 @@ const ItemEdit = () => {
     console.log(selectedSubcategory);
     requestCategory(selectedSubcategory.id);
   }, [selectedSubcategory]);
+
+  useEffect(() => {
+    if (imageList.length !== 0 && !defaultThumbnail && sequenceList.length !== 0) {
+      let sort = imageList.sort((img1, img2) => {
+        return sequenceList[img1.content.fileId] - sequenceList[img2.content.fileId];
+      });
+      console.log("sorted", sort);
+      setImageList(sort);
+      requestThumbNail();
+      setDefaultThumbnail(true);
+    }
+  }, [imageList, defaultThumbnail, sequenceList])
 
   //category 따라서 바꾸기
   useEffect(() => {
