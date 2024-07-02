@@ -41,6 +41,7 @@ const ItemEdit = () => {
   //variables
   const {itemId} = useParams();
   const [item, setItem] = useState(null);
+  // const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [loaded, setLoaded] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -50,47 +51,35 @@ const ItemEdit = () => {
   const [itemName, setItemName] = useState("");
   const [releasedAt, setReleasedAt] = useState("");
   const [itemPrice, setItemPrice] = useState("");
+  const [saleRate, setSaleRate] = useState(null);
+  const [brand, setBrand] = useState("");
+  const [manufacturer, setManufacturer] = useState("");
+  const [madeIn, setMadeIn] = useState("");
+
+
   const [itemQuantity, setItemQuantity] = useState("");
-  const [images, setImages] = useState([]);
-  const [imagesForUpdate, setImagesForUpdate] = useState([]);
-  const [imagesForDelete, setImagesForDelete] = useState([]);
   const [createdAt, setCreatedAt] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
   const [itemStatus, setItemStatus] = useState("");
   const [itemDescription, setItemDescription] = useState("");
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imageFilesForUpdate, setImageFilesForUpdate] = useState([]);
-  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
-  const [thumbnailImageIdBefore, setThumbnailImageIdBefore] = useState(null);
+  //img
 
-  const [updateImgIdList, setUpdateImgIdList] = useState([]);
-  const [seqForImgList, setSeqForImgList] = useState([]);
-  //imageId(index), order = value
-  const [seqForAddedImgList, setSeqForAddedImgList] = useState([]);
-
-  //element: {type: ... , content: ...};
-  const [totalImage, setTotalImage] = useState([]);
+  //element: {type: ... , content: ... seq...., };
+  const [imageList, setImageList] = useState([]);
 
   //hooks
-  const isSelected = (imageId) => {
-    if (!imageId) {
-      return false;
-    }
-    return imageId === selectedThumbnail;
-  }
 
-  const onClickRight = (imageFileList, idx) => {
-    if (imageFileList.length - 1 === idx) {
+  const onClickRight = (imageTotalFileList, idx) => {
+    if (imageTotalFileList.length - 1 === idx) {
       return;
     }
 
     const imgFileNew = [];
 
-
-    for (let i = 0; i < imageFileList.length; i++) {
-      const imageFile = imageFileList[i];
+    for (let i = 0; i < imageTotalFileList.length; i++) {
+      const imageFile = imageTotalFileList[i];
       if (i === idx) {
-        const imageFileAfter = imageFileList[i + 1];
+        const imageFileAfter = imageTotalFileList[i + 1];
         imgFileNew.push(imageFileAfter);
         imgFileNew.push(imageFile);
         continue;
@@ -101,32 +90,44 @@ const ItemEdit = () => {
       imgFileNew.push(imageFile);
     }
 
-    setImageFiles(imgFileNew);
+    setImageList(imgFileNew);
   }
 
-  const onClickLeft = (imageFileList, idx) => {
+  const onClickLeft = (imageTotalFileList, idx) => {
     if (idx === 0) {
       return;
     }
 
     const imgFileNew = [];
 
-    for (let i = 0; i < imageFileList.length; i++) {
-      const imgFile = imageFileList[i];
+    for (let i = 0; i < imageTotalFileList.length; i++) {
+      const imgFile = imageTotalFileList[i];
       if (i === idx - 1) {
         continue;
       }
       if (i === idx) {
         imgFileNew.push(imgFile);
-        imgFileNew.push(imageFileList[i - 1]);
+        imgFileNew.push(imageTotalFileList[i - 1]);
         continue;
       }
 
       imgFileNew.push(imgFile);
     }
 
-    setImageFiles(imgFileNew);
+    setImageList(imgFileNew);
   }
+
+  const selectThumbnail = (imgList, type, imageIdx) => {
+    const newArr = imgList.map((img, idx) => {
+      img["thumbnail"] = (imageIdx === idx);
+      return img;
+    });
+    setImageList(newArr);
+  };
+
+  const isSelected = (thumbnail) => {
+    return thumbnail;
+  };
 
   //requests
   const requestItem = () => {
@@ -160,38 +161,44 @@ const ItemEdit = () => {
         setItemQuantity(quantity);
         console.log(subcategory);
         if (data?.data) {
-          const imagesUpdated = [];
-          for (const datum of data.data) {
-            const imageObj = {};
-            imageObj.fileId = datum.fileId;
-            imageObj.requestName = datum.requestName;
-            imageObj.savedFileName = datum.savedFileName;
-            imagesUpdated.push(imageObj);
-          }
-          setImages(imagesUpdated);
+          //이 형태로 다 바꾸어서 넣기ㅎㅎ
+          const mappedArray = data.data.map((datum, idx) => {
+            const img = {};
+            img["type"] = "update";
+            img["thumbnail"] = false;
+            const content = {};
+            content.fileId = datum.fileId;
+            content.requestName = datum.requestName;
+            content.savedFileName = datum.savedFileName;
+
+            img["content"] = content;
+            return img;
+          });
+          setImageList(mappedArray);
         }
       });
+    requestThumbNail();
   };
 
-  const itemThumbnailEditRequest = (url) => {
-    const formData = new FormData();
-    formData.append("imageId", selectedThumbnail);
-    fetch(url, {method: "post", body: formData})
-      .then(resp => resp.json())
-      .then(data => {
-        console.log("data", data);
-      });
-  }
+  // const itemThumbnailEditRequest = (url) => {
+  //   const formData = new FormData();
+  //   formData.append("imageId", selectedThumbnail);
+  //   fetch(url, {method: "post", body: formData})
+  //     .then(resp => resp.json())
+  //     .then(data => {
+  //       console.log("data", data);
+  //     });
+  // }
 
-  const itemThumbnailAddRequest = (url) => {
-    const formData = new FormData();
-    formData.append("imageId", selectedThumbnail);
-    fetch(url, {method: "post", body: formData})
-      .then(resp => resp.json())
-      .then(data => {
-        console.log("data", data);
-      });
-  }
+  // const itemThumbnailAddRequest = (url) => {
+  //   const formData = new FormData();
+  //   formData.append("imageId", selectedThumbnail);
+  //   fetch(url, {method: "post", body: formData})
+  //     .then(resp => resp.json())
+  //     .then(data => {
+  //       console.log("data", data);
+  //     });
+  // }
 
   const requestThumbNail = () => {
     fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
@@ -205,8 +212,14 @@ const ItemEdit = () => {
         if (!data?.data) {
           return;
         }
-        setSelectedThumbnail(data.data.fileId);
-        setThumbnailImageIdBefore(data.data.fileId);
+        let newArr = imageList.map((img, idx) => {
+          if (img.type === "update" && img.content.fileId === data.data.fileId) {
+            img["thumbnail"] = true;
+          }
+          return img;
+        });
+
+        setImageList(newArr);
       });
   }
 
@@ -244,13 +257,10 @@ const ItemEdit = () => {
     // formData.append("releasedAt", releasedAt);
     formData.append("price", itemPrice);
     formData.append("quantity", itemQuantity);
-    formData.append("images", imagesForUpdate);
-    // formData.append("imageFiles", imageFiles);
-    for (const file of imageFilesForUpdate) {
-      formData.append("imageFiles", file);
-    }
     formData.append("status", itemStatus);
     formData.append("description", itemDescription);
+
+
     // formData.append("itemId", itemId)
     // for (let i = 0; i < imagesForDelete.length; i++) {
     //   const imagesForDeleteElement = imagesForDelete[i];
@@ -258,9 +268,15 @@ const ItemEdit = () => {
     //   formData.append("imagesForDelete["+i+"].requestName", imagesForDeleteElement.requestName)
     //   formData.append("imagesForDelete["+i+"].savedFileName", imagesForDeleteElement.savedFileName)
     // }
-    const imageIdsForDelete = imagesForDelete.map((images, idx) => images.fileId);
-    formData.append("imagesForDelete[]", imageIdsForDelete);
-    formData.append("carouselAttachmentId", selectedThumbnail);
+    // const imageIdsForDelete = imagesForDelete.map((images, idx) => images.fileId);
+
+
+    // formData.append("images", imagesForUpdate);
+    // for (const file of imageFilesAdded) {
+    //   formData.append("imageFiles", file);
+    // }
+    // formData.append("imagesForDelete[]", imageIdsForDelete);
+    // formData.append("carouselAttachmentId", selectedThumbnail);
 
     fetch(url, {method: "post", body: formData})
       .then((resp) => {
@@ -281,7 +297,6 @@ const ItemEdit = () => {
     if (loaded) {
       return;
     }
-    requestThumbNail();
     requestItem();
     requestCategories();
     setLoaded(true);
@@ -304,43 +319,36 @@ const ItemEdit = () => {
     requestSubcategoriesByCategoryId(selectedCategory.id);
   }, [selectedCategory])
 
-  useEffect(() => {
-    console.log("sad", imagesForUpdate);
-    console.dir(imageFilesForUpdate);
-    console.log(imagesForDelete)
-  }, [imagesForUpdate, imagesForDelete])
-
 
   //onClicks
-  const deleteImagesOnClick = (imageId) => {
-    let imagesUpdate = images.filter((image, idx) => parseInt(image.fileId) !== parseInt(imageId));
-    let imageForDeleteElem = images.filter((image) => parseInt(image.fileId) === parseInt(imageId))[0];
-
-    setImagesForDelete([...imagesForDelete, imageForDeleteElem]);
-    setImages(imagesUpdate);
-    if (imageId === selectedThumbnail) {
-      setSelectedThumbnail(null);
+  const deleteImagesOnClick = (type, idxParam) => {
+    console.log("type", type);
+    if (type === "update") {
+      const newImageList = imageList.map((img, idx) => {
+        if (img.type === "update" && idx === idxParam) {
+          img["type"] = "delete";
+          img["thumbnail"] = false;
+        }
+        return img;
+      });
+      setImageList(newImageList);
+      console.log(newImageList);
+    } else if (type === "upload") {
+      const newImageList = imageList.filter((img, idx) => !(img.type === "upload" && idx === idxParam));
+      setImageList(newImageList)
     }
   }
 
-  const selectThumbNail = (imageId) => {
-    if (imageId === selectedThumbnail) {
-      setSelectedThumbnail(null);
-      return;
-    }
-    setSelectedThumbnail(imageId);
-  }
-
-  //onSubmits
+  //onSubmits -> edit request에 합치기
   const editOnSubmit = (event) => {
     event.preventDefault();
     itemEditRequest("/admin/items/edit/" + itemId);
-    if (thumbnailImageIdBefore) {
-      itemThumbnailEditRequest("/admin/items/thumbnail/edit/" + itemId);
-    } else {
-      itemThumbnailAddRequest("/admin/items/thumbnail/add/" + itemId);
-    }
 
+    // if (thumbnailImageIdBefore) {
+    //   itemThumbnailEditRequest("/admin/items/thumbnail/edit/" + itemId);
+    // } else {
+    //   itemThumbnailAddRequest("/admin/items/thumbnail/add/" + itemId);
+    // }
     // fileOnItemRemoveRequest("/admin/items/image/remove", imagesForDelete);
   }
 
@@ -350,29 +358,17 @@ const ItemEdit = () => {
     const value = event.currentTarget.value;
     const files = event.target.files;
     const maxFiles = event.target.getAttribute("max-files");
-    const imagesList = [];
-    for (const file of event.target.files) {
-      imagesList.push(file.name);
-    }
-    if (maxFiles && (files.length <= parseInt(maxFiles))) {
-      setImagesForUpdate(imagesList);
-    } else {
-      setImagesForUpdate([]);
-      return;
-    }
-
     const maxSize = event.target.getAttribute("max-size");
-    if (maxSize) {
-      let fileSize = 0;
-      Array.from(files).forEach(file => fileSize += file.size);
-      if (fileSize > maxSize) {
-        setImagesForUpdate([]);
-        return;
-      }
+    let fileSize = 0;
+    Array.from(files).forEach(file => fileSize += file.size);
+    if (maxFiles && (files.length <= parseInt(maxFiles)) && maxSize >= fileSize) {
+      let newArr1 = imageList.filter((img, idx) => img.type !== "upload");
+      let newArr2 = Array.from(files).map((file, idx) => {
+        return {type: "upload", content: file};
+      });
+      console.log("asdf", newArr2);
+      setImageList(newArr1.concat(newArr2));
     }
-
-    setImageFilesForUpdate(files);
-    setImagesForUpdate(imagesList);
   }
 
   const categoryOnChangeInput = (event) => {
@@ -414,6 +410,30 @@ const ItemEdit = () => {
 
   const itemDescriptionOnChange = (event) => {
     setItemDescription(event.target.value);
+  }
+
+  const saleRateOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setSaleRate(value);
+  }
+
+  const brandOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setBrand(value);
+  }
+
+  const manufacturerOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setManufacturer(value);
+  }
+
+  const madeInOnChangeInput = (event) => {
+    event.preventDefault();
+    const value = event.currentTarget.value;
+    setMadeIn(value);
   }
 
   return (
@@ -503,54 +523,71 @@ const ItemEdit = () => {
               </InputGroup>
             </Col>
           </Row>
-          <h3>이미지 추가 / 삭제</h3>
+          <h3>이미지 추가 / 삭제 / 썸네일 변경</h3>
           <Row xs={6} className={"pb-3"}>
             {
-              images && images.length !== 0 ? images.map((image, idx) => {
-                return (
-                  <Col className={"mb-3"} key={image.toString() + idx}>
-                    <Button className={"btn-sm bg-secondary w-100"} type="button" fileId={image.fileId}
-                            onClick={() => deleteImagesOnClick(image.fileId)}>삭제</Button>
-                    <div className={"border"}>
-                      <div className={"d-block d-flex justify-content-center"}>
-                        <img style={{maxHeight: "100px", maxWidth: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
-                      </div>
-                      <div className={"text-truncate"}>
-                        <span className={"text-center"}>{image.requestName}</span>
-                      </div>
-                    </div>
+              imageList && imageList.length !== 0 && imageList.filter((elem) => elem.type !== "delete").length !== 0 ?
+                imageList.map((image, idx) => {
+                  if (image.type === "update" || image.type === "delete") {
+                    const img = image.content;
+                    return (
+                      <Col className={image.type === "update" ? "mb-3" : "mb-3 opacity-25"} key={image.toString() + idx}>
+                        <Button className={"btn-sm bg-secondary w-100"} type="button" fileId={img.fileId}
+                                onClick={() => deleteImagesOnClick(image.type, idx)}>삭제</Button>
+                        <div className={"border"}>
+                          <div className={"d-block d-flex justify-content-center"}>
+                            <img style={{maxHeight: "100px", maxWidth: "100px"}} src={"/attachment/" + img.fileId}
+                                 alt={img.requestName}/>
+                          </div>
+                          <div className={"text-truncate"}>
+                            <span className={"text-center"}>{img.requestName}</span>
+                          </div>
+                        </div>
 
-                    <div className={"d-flex"}>
-                      <Button className={"btn-sm bg-primary w-100"} type="button" onClick={() => onClickLeft(imageFiles, idx)}>←</Button>
-                      <Button className={"btn-sm bg-primary w-100"} type="button" onClick={() => onClickRight(imageFiles, idx)}>→</Button>
-                    </div>
-                  </Col>
-                )
-              }) : null
+                        <div className={"d-flex"}>
+                          <Button className={"btn-sm bg-primary w-100"} type="button"
+                                  onClick={() => onClickLeft(imageList, idx)}>←</Button>
+                          <Button className={"btn-sm bg-primary w-100"} type="button"
+                                  onClick={() => onClickRight(imageList, idx)}>→</Button>
+                        </div>
+                      </Col>
+                    );
+                  } else if (image.type === "upload") {
+                    const file = image.content;
+                    return (
+                      <Col className={"mb-3"} key={image.toString() + idx}>
+                        <Button className={"btn-sm bg-secondary w-100"} type="button"
+                                onClick={() => deleteImagesOnClick(image.type, idx)}>삭제</Button>
+                        <div className={"border"}>
+                          <div className={"d-block d-flex justify-content-center"}>
+                            <img style={{maxHeight: "100px", maxWidth: "100px"}} src={getImageFromFileObj(file)}
+                                 alt={file.name}/>
+                          </div>
+                          <div className={"text-truncate"}>
+                            <span className={"text-center"}>{file.name}</span>
+                          </div>
+                        </div>
+
+                        <div className={"d-flex"}>
+                          <Button className={"btn-sm bg-primary w-100"} type="button"
+                                  onClick={() => onClickLeft(imageList, idx)}>←</Button>
+                          <Button className={"btn-sm bg-primary w-100"} type="button"
+                                  onClick={() => onClickRight(imageList, idx)}>→</Button>
+                        </div>
+                      </Col>
+                    );
+                  }
+                }) : null
             }
             <hr/>
-            {
-              imageFilesForUpdate ? Array.from(imageFilesForUpdate).map((file, idx) => {
-                return (
-                  <div className={"d-inline-block me-3"} key={file.toString() + idx}>
-                    <div className={"border d-flex flex-column"}>
-                      <div className={"d-inline-block"}>
-                        <img style={{maxHeight: "100px"}} src={getImageFromFileObj(file)} alt={file.name}/>
-                      </div>
-                      <span className={"text-center"}>{file.name}</span>
-                    </div>
-                  </div>
-                )
-              }) : null
-            }
           </Row>
           <Label tag={"label"} for={"file"} className={"w-100"}>
             <InputGroup className={"mb-3"}>
               <InputGroupText>파일 추가</InputGroupText>
               <div className={"form-control"}>
-                {images.map((elem, idx) => elem.requestName).join(", ")}
-                {imagesForUpdate.length !== 0 ? ", " : null}
-                {imagesForUpdate.map((elem, idx) => elem).join(", ")}
+                {/*{images.map((elem, idx) => elem.requestName).join(", ")}*/}
+                {/*{imagesForUpdate.length !== 0 ? ", " : null}*/}
+                {/*{imagesForUpdate.map((elem, idx) => elem).join(", ")}*/}
               </div>
             </InputGroup>
             <Input className={"d-none"} type={"file"} style={{width: "0px"}}
@@ -559,23 +596,6 @@ const ItemEdit = () => {
                    id={"file"}/>
           </Label>
 
-          <h3 >썸네일 변경</h3>
-          <ListGroup className={"m-2"} horizontal={true} >
-            {
-              images ? images.map((image, idx) => {
-                return (
-                  <ListGroupItem className={"d-inline-block me-3"} key={image.toString() + idx} onClick={() => selectThumbNail(image.fileId)} active={isSelected(image.fileId)}>
-                    <div className={"border d-flex flex-column"}>
-                      <div className={"d-inline-block"}>
-                        <img style={{maxHeight: "100px"}} src={"/attachment/" + image.fileId} alt={image.requestName}/>
-                      </div>
-                      <span className={"text-center"}>{image.requestName}</span>
-                    </div>
-                  </ListGroupItem>
-                )
-              }) : null
-            }
-          </ListGroup>
 
           <InputGroup className={"mb-3"}>
             <InputGroupText>상태</InputGroupText>
@@ -594,6 +614,26 @@ const ItemEdit = () => {
           <Button className={"w-100 bg-primary btn text-white"}>확인</Button>
         </div>
       </Form>
+
+      <InputGroup className={"mb-3"}>
+        <InputGroupText>할인율</InputGroupText>
+        <Input type={"number"} className={"bg-white"} value={saleRate} onChange={saleRateOnChangeInput}/>
+      </InputGroup>
+
+      <InputGroup className={"mb-3"}>
+        <InputGroupText>브랜드</InputGroupText>
+        <Input className={"bg-white"} value={brand} onChange={brandOnChangeInput}/>
+      </InputGroup>
+
+      <InputGroup className={"mb-3"}>
+        <InputGroupText>생산자</InputGroupText>
+        <Input className={"bg-white"} value={manufacturer} onChange={manufacturerOnChangeInput}/>
+      </InputGroup>
+
+      <InputGroup className={"mb-3"}>
+        <InputGroupText>제조국</InputGroupText>
+        <Input className={"bg-white"} value={madeIn} onChange={madeInOnChangeInput}/>
+      </InputGroup>
 
     </Container>
   );
