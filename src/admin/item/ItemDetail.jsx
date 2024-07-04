@@ -24,6 +24,11 @@ const ItemDetail = (props) => {
   const [description, setDescription] = useState("");
   const [thumbnailImage, setThumbnailImage] = useState(null);
   const [selectedThumbNail, setSelectedThumbNail] = useState(null);
+  const [brand, setBrand] = useState("");
+  const [saleRate, setSaleRate] = useState("");
+  const [manufacturer, setManufacturer] = useState("");
+  const [madeIn, setMadeIn] = useState("");
+  const [sequenceList, setSequenceList] = useState([]);
 
   //requests
   const requestItem = () => {
@@ -65,6 +70,27 @@ const ItemDetail = (props) => {
 
       });
   };
+
+  const requestItemInfo = () => {
+    const path = "/admin/items/info?itemId=" + itemId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setBrand(data.data.brand);
+        setSaleRate(data.data.saleRate);
+        setManufacturer(data.data.manufacturer);
+        setMadeIn(data.data.madeIn);
+      });
+  }
+
+  const requestFileSequence = () => {
+    const path = "/admin/items/sequence/" + itemId;
+    fetch(path, {method: "get"})
+      .then(resp => resp.json())
+      .then(data => {
+        setSequenceList(data.data);
+      });
+  }
 
   const requestCategory = (subcategoryId) => {
     const path = "/admin/category?" + "subcategoryId" + "=" + subcategoryId;
@@ -110,8 +136,20 @@ const ItemDetail = (props) => {
     }
     requestItem();
     requestThumbNail();
+    requestItemInfo();
+    requestFileSequence();
+
     setLoaded(true);
   }, [loaded]);
+
+
+  //fileList와 sequence가 준비됐을때 실행하기
+  useEffect(() => {
+    if (images.length !== 0 && sequenceList.length !== 0) {
+      const sortedImageList = images.sort((img1, img2) => sequenceList[img1.fileId] - sequenceList[img2.fileId]);
+      setImages(sortedImageList);
+    }
+  }, [sequenceList, images]);
 
   useEffect(() => {
     if (!item || item.length === 0) {
@@ -131,7 +169,6 @@ const ItemDetail = (props) => {
       console.log(selectedThumbNail);
       return parseInt(img.fileId) === selectedThumbNail
     })[0];
-    console.log(thumbNailImageObj);
     setThumbnailImage(thumbNailImageObj);
   }, [images, selectedThumbNail]);
 
@@ -276,6 +313,26 @@ const ItemDetail = (props) => {
           <InputGroup className={"mb-3"}>
             <InputGroupText>설명</InputGroupText>
             <Input className={"bg-white"} disabled={true} value={item ? item.description : null} type={"textarea"}/>
+          </InputGroup>
+
+          <InputGroup className={"mb-3"}>
+            <InputGroupText>할인율</InputGroupText>
+            <Input type={"number"} className={"bg-white"} disabled={true} value={saleRate}/>
+          </InputGroup>
+
+          <InputGroup className={"mb-3"}>
+            <InputGroupText>브랜드</InputGroupText>
+            <Input className={"bg-white"} disabled={true} value={brand}/>
+          </InputGroup>
+
+          <InputGroup className={"mb-3"}>
+            <InputGroupText>생산자</InputGroupText>
+            <Input className={"bg-white"} disabled={true} value={manufacturer}/>
+          </InputGroup>
+
+          <InputGroup className={"mb-3"}>
+            <InputGroupText>제조국</InputGroupText>
+            <Input className={"bg-white"} disabled={true} value={brand}/>
           </InputGroup>
         </div>
         <div className={"buttons"}>
