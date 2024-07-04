@@ -94,7 +94,7 @@ const HomeCarousel = (args) => {
         key={item.src}
         className={"d-flex justify-content-center"}
       >
-        <a href={"/item/" + item.itemId} className={displayNone(idx)}>
+        <a href={"/item/detail/" + item.itemId} className={displayNone(idx)}>
           <img src={item.src} alt={item.altText} style={{height: "400px"}}/>
         </a>
         <CarouselCaption

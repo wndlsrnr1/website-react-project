@@ -21,7 +21,7 @@ import HomeItemCarousel from "./admin/item/home/carousel/HomeItemCarousel"
 import HomeItemCarouselAdd from "./admin/item/home/carousel/HomeItemCarouselAdd";
 import HomeItemCarouselDetail from "./admin/item/home/carousel/HomeItemCarouselDetail";
 import ItemList from "./items/itemList";
-import ItemCustomerDetail from "./items/ItemCustomerDetail";
+import ItemCustomerDetail from "./items/customer/ItemCustomerDetail";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
