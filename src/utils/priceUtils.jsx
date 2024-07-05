@@ -1,8 +1,12 @@
 import React from 'react';
 
 export const getDiscountedPrice = (priceParam, discountRatioParam) => {
-  if (!priceParam || !discountRatioParam) {
-    return 0;
+  if (!priceParam) {
+    return null;
+  }
+
+  if (!discountRatioParam) {
+    return priceParam;
   }
 
   const discountRatio = parseInt(discountRatioParam);

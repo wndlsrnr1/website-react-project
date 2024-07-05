@@ -37,22 +37,19 @@ const ItemImagesForItemInfo = (props) => {
   }
 
   return (
-    <div >
-      <Row>
+    <div className={"d-flex flex-column align-items-center"}>
         {
           itemImages.map((img, idx) => {
             if (img.isThumbnail) {
               return;
             }
             return (
-              <Col className={"w-75"}>
-                <img className={"img-fluid"} src={"/attachment/" + img.imageId} alt={img.savedName}/>
-              </Col>
+              <div className={"w-50"}>
+                <img className={"w-100"} src={"/attachment/" + img.imageId} alt={img.savedName}/>
+              </div>
             );
           })
         }
-      </Row>
-
     </div>
   );
 }

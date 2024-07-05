@@ -8,6 +8,7 @@ import Categories from "../../common/Categories";
 import ItemImagesForItemInfo from "./ItemImagesForItemInfo";
 import {useParams} from "react-router-dom";
 import {getDiscountedPrice} from "../../utils/priceUtils";
+import {parseDate} from "../../utils/timeUtils";
 
 const ItemCustomerDetail = () => {
 
@@ -95,7 +96,7 @@ const ItemCustomerDetail = () => {
         setQuantity(parseInt(data.data.quantity));
         setState(data.data.state);
         setDescription(data.data.description);
-        setReleasedAt(data.data.releasedAt);
+        setReleasedAt(parseDate(data.data.releasedAt));
         setSaleRate(parseInt(data.data.salesRate));
         setBrand(data.data.brand);
         setManufacturer(data.data.manufacturer);
@@ -104,17 +105,15 @@ const ItemCustomerDetail = () => {
   }
 
 
-
-
   //hooks for html
   const getAddedPage = (pageValue) => {
     switch (pageValue) {
       case pageValueConst.detailInfo:
         return <ItemImagesForItemInfo itemId={itemId}/>;
       case pageValueConst.basicInfo:
-        return <ItemBasicInfo/>;
+        return <ItemBasicInfo name={name} nameKor={nameKor} price={price} state={state} description={description} relatedAt={releasedAt} saleRate={saleRate} brand={brand} manufacturer={manufacturer} madeIn={madeIn}/>;
       case pageValueConst.reviews:
-        return <ProductReviews/>;
+        return <ProductReviews itemId={itemId}/>;
       case pageValueConst.inquiry:
         return <ProductInquiry/>;
       default:
@@ -130,7 +129,10 @@ const ItemCustomerDetail = () => {
         <div><h4 className={"text-center"}>상품상세</h4></div>
         <hr/>
         <div className={"d-flex justify-content-center mb-3"}>
-          <img src={thumbnailImage ? ("/attachment/" + thumbnailImage.fileId) : null} alt={"아이템 사진"}/>
+          <div className={"w-50"}>
+            <img className={"w-100"} src={thumbnailImage ? ("/attachment/" + thumbnailImage.fileId) : null} alt={"아이템 사진"}/>
+          </div>
+
         </div>
 
         <div>
@@ -162,14 +164,21 @@ const ItemCustomerDetail = () => {
           </ButtonGroup>
           <hr/>
           <ButtonGroup className={"d-flex mb-4"}>
-            <Button className={"me-2"} page-value={pageValueConst.detailInfo} onClick={() => onclickPageButton(pageValueConst.detailInfo)}>상세정보</Button>
-            <Button className={"me-2"} page-value={pageValueConst.basicInfo} onClick={() => onclickPageButton(pageValueConst.basicInfo)}>기본정보</Button>
-            <Button className={"me-2"} page-value={pageValueConst.reviews} onClick={() => onclickPageButton(pageValueConst.reviews)}>상품후기</Button>
-            <Button page-value={pageValueConst.inquiry} onClick={() => onclickPageButton(pageValueConst.inquiry)}>상품문의</Button>
+            <Button className={"me-2"} page-value={pageValueConst.detailInfo}
+                    onClick={() => onclickPageButton(pageValueConst.detailInfo)}>상세정보</Button>
+            <Button className={"me-2"} page-value={pageValueConst.basicInfo}
+                    onClick={() => onclickPageButton(pageValueConst.basicInfo)}>기본정보</Button>
+            <Button className={"me-2"} page-value={pageValueConst.reviews}
+                    onClick={() => onclickPageButton(pageValueConst.reviews)}>상품후기</Button>
+            <Button page-value={pageValueConst.inquiry}
+                    onClick={() => onclickPageButton(pageValueConst.inquiry)}>상품문의</Button>
           </ButtonGroup>
         </div>
         {
-          getAddedPage(pageValue)
+          <div className={"mb-5"}>
+            { getAddedPage(pageValue) }
+          </div>
+
         }
         <ButtonGroup className={"d-flex justify-content-center"}>
           <Button className={"me-2 bg-primary"}>장바구니</Button>
