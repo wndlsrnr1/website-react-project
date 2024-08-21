@@ -33,6 +33,7 @@ const Login = () => {
     let form = new FormData();
     form.append("email", email);
     form.append("password", password);
+
     fetch("/login/user", {method: "post", body: form})
       .then((resp) => {
           if (resp.status === 200) {
