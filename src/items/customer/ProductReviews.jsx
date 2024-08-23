@@ -12,6 +12,7 @@ const ProductReviews = (props) => {
   const [content, setContent] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [star, setStar] = useState(5);
+  const [reviewList, setReviewList] = useState([]);
 
   //searching
   const [nextSearchAfter, setNextSearchAfter] = useState(null);
@@ -19,15 +20,7 @@ const ProductReviews = (props) => {
   const [withTotalCount, setWithTotalCount] = useState(false);
 
 
-  /**
-   * review: {
-   *   user: {}
-   *    content:
-   *    star:
-   *    updatedDate:
-   * }
-   */
-  const [reviewList, setReviewList] = useState([]);
+
 
   //hooks
   const getStarImage = (idx, star) => {

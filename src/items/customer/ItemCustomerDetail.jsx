@@ -115,7 +115,7 @@ const ItemCustomerDetail = () => {
       case pageValueConst.reviews:
         return <ProductReviews itemId={itemId}/>;
       case pageValueConst.inquiry:
-        return <ProductInquiry/>;
+        return <ProductInquiry itemId={itemId}/>;
       default:
         return null;
     }
