@@ -158,11 +158,11 @@ const ItemCustomerDetail = () => {
             </Row>
           </div>
           <hr/>
-          <ButtonGroup className={"d-flex justify-content-center"}>
-            <Button className={"me-2 bg-primary"}>공유하기</Button>
-            <Button className={"bg-primary"}>찜하기</Button>
-          </ButtonGroup>
-          <hr/>
+          {/*<ButtonGroup className={"d-flex justify-content-center"}>*/}
+          {/*  <Button className={"me-2 bg-primary"}>공유하기</Button>*/}
+          {/*  <Button className={"bg-primary"}>찜하기</Button>*/}
+          {/*</ButtonGroup>*/}
+          {/*<hr/>*/}
           <ButtonGroup className={"d-flex mb-4"}>
             <Button className={"me-2"} page-value={pageValueConst.detailInfo}
                     onClick={() => onclickPageButton(pageValueConst.detailInfo)}>상세정보</Button>
