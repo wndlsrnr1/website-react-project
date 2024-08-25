@@ -9,6 +9,7 @@ import ItemImagesForItemInfo from "./ItemImagesForItemInfo";
 import {useParams} from "react-router-dom";
 import {getDiscountedPrice} from "../../utils/priceUtils";
 import {parseDate} from "../../utils/timeUtils";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const ItemCustomerDetail = () => {
 
@@ -79,7 +80,7 @@ const ItemCustomerDetail = () => {
 
   //requests
   const requestThumbnailImage = () => {
-    fetch("/item/thumbnail?itemId=" + itemId, {method: "get"})
+    fetchWithAuth("/item/thumbnail?itemId=" + itemId, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setThumbnailImage(data.data);
@@ -87,7 +88,7 @@ const ItemCustomerDetail = () => {
   }
 
   const requestItemBasic = () => {
-    fetch("/item/basic/" + itemId, {method: "get"})
+    fetchWithAuth("/item/basic/" + itemId, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setName(data.data.name);

@@ -3,12 +3,14 @@ import logo from '../images/logo.jpg'
 import {useContext, useEffect, useReducer, useRef, useState} from "react";
 import {login} from "../store/action";
 import {useDispatch, useSelector} from "react-redux";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 const Login = () => {
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -18,6 +20,14 @@ const Login = () => {
   //     window.location.href = "/";
   //   }
   // }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (loaded) {
+      return;
+    }
+
+    setLoaded(true);
+  }, [loaded]);
 
   const onInputEmail = (event) => {
     setEmail(event.target.value);
@@ -30,27 +40,36 @@ const Login = () => {
 
   const onSubmitForm = (event) => {
     event.preventDefault();
-    let form = new FormData();
-    form.append("email", email);
-    form.append("password", password);
+    const loginBody = {
+      "email": email,
+      "password": password
+    }
 
-    fetch("/login/user", {method: "post", body: form})
+    fetchWithAuth("/auth/login", {
+      method: "post",
+      body: JSON.stringify(loginBody),
+      headers: {"Content-Type": "application/json"}
+    })
       .then((resp) => {
           if (resp.status === 200) {
-            dispatch(login());
-            window.location.href = "/";
-            return resp.json();
+            resp.json().then((data) => {
+              localStorage.setItem("token", data.body);
+              window.location.href = "/";
+            });
+            return;
           }
-          return resp.json();
-        }
-      )
-      .then((data) => {
-          if (data?.error != null) {
-            console.log(data.error);
-            setError(data.error);
-          }
+          return resp.json().then((data) => {
+              setError(true);
+              if (data.body?.email) {
+                setEmailError(data.body.email);
+              } else {
+                setEmailError(null);
+              }
+            }
+          );
         }
       );
+
   };
 
   return (
@@ -71,19 +90,14 @@ const Login = () => {
                 </InputGroupText>
                 <Input placeholder={"이메일을 입력해주세요"} type={"text"} onInput={onInputEmail} value={email}/>
               </InputGroup>
-              {error?.fieldErrors?.email == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error?.fieldErrors?.email}</p></div>}
-              {/*mabe there is some error*/}
+              {emailError ? <div><p className={"alert-danger text-end pe-3"}>{emailError}</p></div> : null}
               <InputGroup className={"mb-3"}>
                 <InputGroupText className={"w-25 text-center"}>
                   비밀번호
                 </InputGroupText>
                 <Input placeholder={"비밀번호를 입력해주세요"} type={"password"} onInput={onInputPassword} value={password}/>
-
               </InputGroup>
-              {error?.globalErrors == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error.globalErrors}</p></div>}
-              {/*mybe there is some error*/}
+              {error ? <div><p className={"alert-danger text-end pe-3"}>로그인 정보가 바르지 않습니다.</p></div> : null}
               <div>
                 <Button type={"submit"} className={"w-100 bg-primary"}>로그인</Button>
                 <hr/>
@@ -92,12 +106,9 @@ const Login = () => {
               <div>
                 <a href={"/member/find"} className={"w-100 d-block text-end"}>비밀번호 찾기</a>
               </div>
-
             </Form>
           </div>
-
         </Col>
-
       </Container>
     </>
   )

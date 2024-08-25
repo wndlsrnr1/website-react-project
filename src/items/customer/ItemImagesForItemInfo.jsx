@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Col, Row} from "reactstrap";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const ItemImagesForItemInfo = (props) => {
   const {itemId} = props;
@@ -29,7 +30,7 @@ const ItemImagesForItemInfo = (props) => {
 
   //requests
   const itemImageRequest = () => {
-    fetch("/attachment/item/" + itemId)
+    fetchWithAuth("/attachment/item/" + itemId)
       .then(resp => resp.json())
       .then(data => {
         setItemImages(data.data);

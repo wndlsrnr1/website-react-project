@@ -14,6 +14,7 @@ import {
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import data from "bootstrap/js/src/dom/data";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const getFormattedDateTime = (date, time) => {
   console.log(data);
@@ -151,7 +152,7 @@ const ItemAdd = () => {
     formData.append("madeIn", madeIn);
 
 
-    fetch(url, {method: "post", body: formData})
+    fetchWithAuth(url, {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
           window.location.href = "/admin/items";
@@ -165,7 +166,7 @@ const ItemAdd = () => {
   };
 
   const categoryRequest = (url) => {
-    fetch(url, {method: "get"})
+    fetchWithAuth(url, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         const {content} = data.data;
@@ -174,7 +175,7 @@ const ItemAdd = () => {
   };
 
   const subcategoryRequest = (url, categoryId) => {
-    fetch(url + categoryId, {method: "get"})
+    fetchWithAuth(url + categoryId, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setSubcategories(data.data.content);

@@ -1,6 +1,7 @@
 import {Link, useParams} from "react-router-dom";
 import {Button, Col, Container, Form, FormGroup, Input, InputGroup, InputGroupText, Label, Row} from "reactstrap";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const getTime = (localDateTimeString) => {
   return localDateTimeString.split("T")[1];
@@ -33,7 +34,7 @@ const ItemDetail = (props) => {
   //requests
   const requestItem = () => {
     const path = "/admin/items/" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         const {
@@ -72,7 +73,7 @@ const ItemDetail = (props) => {
 
   const requestItemInfo = () => {
     const path = "/admin/items/info?itemId=" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setBrand(data.data.brand);
@@ -84,7 +85,7 @@ const ItemDetail = (props) => {
 
   const requestFileSequence = () => {
     const path = "/admin/items/sequence/" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setSequenceList(data.data);
@@ -93,7 +94,7 @@ const ItemDetail = (props) => {
 
   const requestCategory = (subcategoryId) => {
     const path = "/admin/category?" + "subcategoryId" + "=" + subcategoryId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setCategory(data.data);
@@ -101,7 +102,7 @@ const ItemDetail = (props) => {
   };
 
   const requestThumbNail = () => {
-    fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
+    fetchWithAuth("/admin/items/thumbnail/" + itemId, {method: "get"})
       .then(resp => {
         if (!resp.ok) {
           return;
@@ -118,7 +119,7 @@ const ItemDetail = (props) => {
   }
 
   const deleteRequest = (url) => {
-    fetch(url, {method: "delete"})
+    fetchWithAuth(url, {method: "delete"})
       .then((resp) => {
         if (resp.ok) {
           window.location.href = "/admin/items";

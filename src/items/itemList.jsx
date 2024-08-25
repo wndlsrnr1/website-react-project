@@ -4,6 +4,7 @@ import {Button, Container, Input, InputGroup, InputGroupButtonDropdown, InputGro
 import {useEffect, useState} from "react";
 import {getDiscountedPrice} from "../utils/priceUtils";
 import {parseDate} from "../utils/timeUtils";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 const ItemList = () => {
 
@@ -114,7 +115,7 @@ const ItemList = () => {
     url += "&lastItemId=" + lastItemId;
     url += "&totalItems=" + totalItems;
 
-    fetch(url)
+    fetchWithAuth(url)
       .then(resp => resp.json())
       .then(data => {
         console.log(data);
@@ -139,7 +140,7 @@ const ItemList = () => {
     url += "&lastItemId=" + lastItemId;
     url += "&totalItems=" + totalItems;
 
-    fetch(url)
+    fetchWithAuth(url)
       .then(resp => resp.json())
       .then(data => {
         console.log(data);
@@ -154,7 +155,7 @@ const ItemList = () => {
 
   const categoryAndSubcategoryRequestBySubcategoryId = (subcategoryId) => {
     const url = "/home/info/item/category/subcategory/" + subcategoryId
-    fetch(url, {method: "get"})
+    fetchWithAuth(url, {method: "get"})
       .then(resp => {
         if (resp.status === 404) {
           console.error("404");

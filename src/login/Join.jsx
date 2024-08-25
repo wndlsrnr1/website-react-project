@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "reactstrap";
 import logo from "../images/logo.jpg";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 const Join = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ const Join = () => {
 
   const onClickEmailCheck = (event) => {
     //fetch API로 이메일 있는 지 확인
-    fetch("/email/check?email=" + email, {method: "get"})
+    fetchWithAuth("/email/check?email=" + email, {method: "get"})
       .then((resp) => {
         if (resp.status === 200) {
           setEmailCheck(true);
@@ -46,7 +47,7 @@ const Join = () => {
     form.append("address", address);
     form.append("name", name);
 
-    fetch("/user/join", {
+    fetchWithAuth("/user/join", {
       method: "post", body: form
     }).then((resp) => {
       if (resp.status === 201) {

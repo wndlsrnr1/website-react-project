@@ -4,6 +4,7 @@ import Categories from "../../common/Categories";
 import {getDiscountedPrice} from "../../utils/priceUtils";
 import {parseDate} from "../../utils/timeUtils";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const OnDiscountItemList = () => {
   //variables
@@ -81,7 +82,7 @@ const OnDiscountItemList = () => {
     if (!loaded) {
       path += "&withTotalCount=" + true;
     }
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => {
         if (!resp.ok) {
           //todo: handle error

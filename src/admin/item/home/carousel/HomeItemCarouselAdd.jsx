@@ -14,6 +14,7 @@ import {
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import Paging from "../../../../common/Paging";
+import {fetchWithAuth} from "../../../../utils/fetchUtils";
 
 const HomeItemCarouselAdd = () => {
   //constant
@@ -48,7 +49,7 @@ const HomeItemCarouselAdd = () => {
 
   //requests
   const itemsRequest = (path) => {
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         if (data?.data) {
@@ -62,7 +63,7 @@ const HomeItemCarouselAdd = () => {
   }
 
   const categoryRequest = () => {
-    fetch("/admin/categories", {method: "get"})
+    fetchWithAuth("/admin/categories", {method: "get"})
       .then(response => response.json())
       .then(data => {
         console.log(data);
@@ -77,7 +78,7 @@ const HomeItemCarouselAdd = () => {
     }
 
     const path = "/admin/items/" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         const imagesUpdated = [];
@@ -98,7 +99,7 @@ const HomeItemCarouselAdd = () => {
     formData.append("itemId", selectedItemId);
     formData.append("attachmentId", selectedImageId);
 
-    fetch("/admin/home/carousel/add", {method: "post", body: formData})
+    fetchWithAuth("/admin/home/carousel/add", {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
           window.location.href = "/admin/home/items/carousel";

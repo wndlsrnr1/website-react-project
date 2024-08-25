@@ -10,6 +10,7 @@ import {
   Pagination, PaginationItem, PaginationLink
 } from "reactstrap";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const togglePrevPage = (pageNumber, totalPage, pagePerChunk) => {
   const resultNumber = Math.floor(pageNumber / pagePerChunk);
@@ -81,7 +82,7 @@ const CategoryManage = () => {
     if (isLoaded) {
       return;
     }
-    fetch("/admin/categories?size=10&page=" + 0, {method: "get"})
+    fetchWithAuth("/admin/categories?size=10&page=" + 0, {method: "get"})
       .then((response) => {
         if (response.status !== response.ok) {
           console.error("response status is not 200")
@@ -120,7 +121,7 @@ const CategoryManage = () => {
     if (!categorySearchInput && !categorySearchCond) {
       return;
     }
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -139,7 +140,7 @@ const CategoryManage = () => {
   }
 
   const onClickDeleteCategorySelected = () => {
-    fetch(`/admin/category/delete/${selectedCategory}`, {method: "delete"})
+    fetchWithAuth(`/admin/category/delete/${selectedCategory}`, {method: "delete"})
       .then(resp => {
         if (resp.ok) {
           setIsCategoryUpdated(true);
@@ -159,7 +160,7 @@ const CategoryManage = () => {
     } else {
       path += "&categoryId=" + selectedCategory;
     }
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then((response) => {
         if (response.status !== response.ok) {
           console.error("response status is not 200")
@@ -179,7 +180,7 @@ const CategoryManage = () => {
     let formData = new FormData();
     formData.append("name", categoryNameAddInput);
     formData.append("nameKor", categoryNameKorAddInput)
-    fetch(`/admin/category/create`, {method: "put", body: formData})
+    fetchWithAuth(`/admin/category/create`, {method: "put", body: formData})
       .then(resp => {
         if (resp.status === 201) {
           setIsCategoryUpdated(true);
@@ -195,7 +196,7 @@ const CategoryManage = () => {
       requestPath += `&searchName=${categorySearchCond}`;
     }
 
-    fetch(requestPath, {method: "get"})
+    fetchWithAuth(requestPath, {method: "get"})
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -268,7 +269,7 @@ const CategoryManage = () => {
     d.append("nameKor", categoryNameKorUpdateInput);
     d.append("categoryId", selectedCategory);
 
-    fetch("/admin/categories/update", {method: "post", body: d})
+    fetchWithAuth("/admin/categories/update", {method: "post", body: d})
       .then(resp => resp.json())
       .then(data => {
         setIsCategoryUpdated(true);
@@ -292,7 +293,7 @@ const CategoryManage = () => {
       path += `&searchName=${categorySearchCond}`
     }
 
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(json => {
         const {data, error, message} = json;
@@ -322,7 +323,7 @@ const CategoryManage = () => {
     if (selectedCategory) {
       path += `&categoryId=${selectedCategory}`
     }
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(json => {
         const {data, error, message} = json;

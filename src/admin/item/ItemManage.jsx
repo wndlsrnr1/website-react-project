@@ -14,6 +14,7 @@ import {
 import {Link} from "react-router-dom";
 import Paging from "../../common/Paging";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 
 const ItemManage = () => {
@@ -41,7 +42,7 @@ const ItemManage = () => {
 
   const itemsRequest = (path) => {
     console.log("path", path);
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         if (data?.data) {
@@ -56,7 +57,7 @@ const ItemManage = () => {
   }
 
   const categoryRequest = () => {
-    fetch("/admin/categories", {method: "get"})
+    fetchWithAuth("/admin/categories", {method: "get"})
       .then(response => response.json())
       .then(data => {
         console.log(data);

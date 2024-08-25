@@ -1,6 +1,7 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Container, Input, InputGroup, InputGroupText, ListGroup, ListGroupItem, Row} from "reactstrap";
+import {fetchWithAuth} from "../../../../utils/fetchUtils";
 
 const HomeItemCarouselDetail = () => {
 
@@ -56,7 +57,7 @@ const HomeItemCarouselDetail = () => {
 
   //requests
   const carouselRequest = () => {
-    fetch("/admin/home/carousels/" + carouselId)
+    fetchWithAuth("/admin/home/carousels/" + carouselId)
       .then(resp => resp.json())
       .then(data => {
         console.log(data.data);
@@ -67,7 +68,7 @@ const HomeItemCarouselDetail = () => {
   }
 
   const itemRequest = () => {
-    fetch("/admin/items/" + carousel.itemId)
+    fetchWithAuth("/admin/items/" + carousel.itemId)
       .then(resp => resp.json())
       .then(data => {
         console.log("itemData", data.data[0]);
@@ -86,7 +87,7 @@ const HomeItemCarouselDetail = () => {
 
   const updateCarouselRequest = () => {
     console.log("JSON.stringify(selectedImage)", JSON.stringify(selectedImage));
-    fetch(
+    fetchWithAuth(
       "/admin/home/carousels/update/attachment/" + carouselId,
       {method: "post", headers: {"Content-Type": "application/json"}, body: JSON.stringify(selectedImage)}
     ).then(resp => {
@@ -99,7 +100,7 @@ const HomeItemCarouselDetail = () => {
   }
 
   const deleteCarouselRequest = () => {
-    fetch("/admin/home/carousels/delete/" + carouselId, {method: "delete"})
+    fetchWithAuth("/admin/home/carousels/delete/" + carouselId, {method: "delete"})
       .then(resp => {
         if (resp.ok) {
           window.history.back();

@@ -1,6 +1,7 @@
 import {Carousel, CarouselCaption, CarouselControl, CarouselIndicators, CarouselItem, Container} from "reactstrap";
 import {useEffect, useState} from "react";
 import carousel from "bootstrap/js/src/carousel";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 
 const HomeCarousel = (args) => {
@@ -63,7 +64,7 @@ const HomeCarousel = (args) => {
 
   const homeCarouselsRequest = () => {
     const path = "/home/carousels";
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         console.log(data.data);

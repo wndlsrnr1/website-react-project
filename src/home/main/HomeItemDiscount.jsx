@@ -1,5 +1,6 @@
 import {Container, Row} from "reactstrap";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const HomeItemDiscount = () => {
 
@@ -55,7 +56,7 @@ const HomeItemDiscount = () => {
   //requests
 
   const recentItemRequest = () => {
-    fetch("/home/main/item/special-sale", {
+    fetchWithAuth("/home/main/item/special-sale", {
       method: "get"
     })
       .then(resp => resp.json())
