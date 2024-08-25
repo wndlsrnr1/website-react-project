@@ -1,4 +1,3 @@
-import {useDispatch, useSelector} from "react-redux";
 import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "reactstrap";
 import logo from "../images/logo.jpg";
 import {useEffect, useState} from "react";
@@ -15,7 +14,7 @@ const Join = () => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
   // const dispatch = useDispatch();
-  // const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  // const isLogin = useSelector((state) => state.isLogin);
 
 
   //email값 변경시 email 인증 상태값 취소
