@@ -1,9 +1,8 @@
 import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "reactstrap";
 import logo from '../images/logo.jpg'
 import {useContext, useEffect, useReducer, useRef, useState} from "react";
-import {login} from "../store/action";
-import {useDispatch, useSelector} from "react-redux";
 import {fetchWithAuth} from "../utils/fetchUtils";
+import {login} from "../utils/LoginUtils";
 
 const Login = () => {
 
@@ -12,14 +11,6 @@ const Login = () => {
   const [error, setError] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [loaded, setLoaded] = useState(false);
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
-
-  // useEffect(() => {
-  //   if (isLoggedIn === true) {
-  //     window.location.href = "/";
-  //   }
-  // }, [isLoggedIn]);
 
   useEffect(() => {
     if (loaded) {
@@ -53,7 +44,7 @@ const Login = () => {
       .then((resp) => {
           if (resp.status === 200) {
             resp.json().then((data) => {
-              localStorage.setItem("token", data.body);
+              login(localStorage, data.body);
               window.location.href = "/";
             });
             return;

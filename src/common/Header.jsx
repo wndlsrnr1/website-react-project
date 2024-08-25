@@ -1,19 +1,19 @@
 import {Button, Col, Container, Form, Input, ListGroup, ListGroupItem, Nav, NavItem, NavLink, Row} from "reactstrap";
 import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
-import {useSelector} from "react-redux";
 import logo from "../images/logo.jpg"
+import {checkLogin} from "../utils/LoginUtils";
 
 const Header = () => {
   //variables
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const isLogin = checkLogin(localStorage);
   const [searchNameValue, setSearchNameValue] = useState("");
 
   //hooks
 
   //useEffects
   useEffect(() => {
-    console.log("isLoggedIn", isLoggedIn);
+    console.log("isLogin", isLogin);
   });
 
   //onClicks
@@ -43,7 +43,7 @@ const Header = () => {
               {
                 (
                   <>
-                    {isLoggedIn === false ? (
+                    {isLogin === false ? (
                       <>
                         <NavItem className={"small text-dark"}>
                           <NavLink href="/login">로그인</NavLink>
