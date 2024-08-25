@@ -1,5 +1,6 @@
 import {Container, Row} from "reactstrap";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const HomeItemPopular = () => {
 
@@ -52,7 +53,7 @@ const HomeItemPopular = () => {
 
   //requests
   const recentItemRequest = () => {
-    fetch("/home/main/item/popular", {
+    fetchWithAuth("/home/main/item/popular", {
       method: "get"
     })
       .then(resp => resp.json())

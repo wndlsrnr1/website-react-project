@@ -1,11 +1,12 @@
 import {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {logout} from "../store/action";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 const Logout = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    fetch("/logout", {method: "get"})
+    fetchWithAuth("/logout", {method: "get"})
       .then(resp => {
         dispatch(logout());
       });

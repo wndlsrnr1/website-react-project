@@ -1,6 +1,7 @@
 import {Button, ButtonGroup, Input, InputGroup, InputGroupText} from "reactstrap";
 import {useEffect, useState} from "react";
 import {parseDate} from "../../utils/timeUtils";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const ProductInquiry = (props) => {
 
@@ -86,7 +87,7 @@ const ProductInquiry = (props) => {
       "star": star,
       "content": content
     };
-    fetch("/comments", {
+    fetchWithAuth("/comments", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(inquiryBody)
@@ -113,7 +114,7 @@ const ProductInquiry = (props) => {
     path += "&withTotalCount=" + withTotalCount;
     path += "&sortType=" + sortType;
     path += "&itemId=" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => {
         if (!resp.ok) {
           //todo: implement case in error

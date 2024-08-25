@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import redirect from "react-router-dom/es/Redirect";
 import {parseDate} from "../../utils/timeUtils";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const ProductReviews = (props) => {
 
@@ -95,7 +96,7 @@ const ProductReviews = (props) => {
   //requests
   const requestReviews = () => {
     console.log("??");
-    fetch("/reviews?" +
+    fetchWithAuth("/reviews?" +
       "size=5" +
       "&itemId=" + itemId + "" +
       "&withTotalCount=" + false +
@@ -117,7 +118,7 @@ const ProductReviews = (props) => {
   }
 
   const requestFindOrders = () => {
-    fetch("/item/{itemId}/purchases",
+    fetchWithAuth("/item/{itemId}/purchases",
       {method: "get", headers: {"Content-Type": "application/json"}}
     ).then(resp => {
       if (!resp.ok) {

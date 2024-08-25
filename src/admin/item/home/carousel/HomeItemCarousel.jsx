@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import carousel from "bootstrap/js/src/carousel";
 import {type} from "@testing-library/user-event/dist/type";
+import {fetchWithAuth} from "../../../../utils/fetchUtils";
 
 const HomeItemCarousel = () => {
 
@@ -28,7 +29,7 @@ const HomeItemCarousel = () => {
       }
     });
 
-    fetch("/admin/home/carousel/update/all", {
+    fetchWithAuth("/admin/home/carousel/update/all", {
       method: "POST",
       body: JSON.stringify(body),
       headers: {"Content-Type": "application/json"}
@@ -42,7 +43,7 @@ const HomeItemCarousel = () => {
   }
 
   const carouselListRequest = () => {
-    fetch("/admin/home/carousels")
+    fetchWithAuth("/admin/home/carousels")
       .then(resp => resp.json())
       .then(data => {
         console.log(data);

@@ -12,6 +12,7 @@ import {
 } from "reactstrap";
 import {useEffect, useRef, useState} from "react";
 import Paging from "../../common/Paging";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const isActive = (targetId, currentId) => {
   return parseInt(targetId) === parseInt(currentId);
@@ -85,7 +86,7 @@ const SubcategoryManage = () => {
 
   //Request
   const requestSubcategory = (path) => {
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         const datum = data.data;
@@ -100,7 +101,7 @@ const SubcategoryManage = () => {
   }
 
   const requestCategory = (path) => {
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         const datum = data.data;
@@ -118,7 +119,7 @@ const SubcategoryManage = () => {
     if (!categoryId) {
       return;
     }
-    fetch(path + "/" + categoryId)
+    fetchWithAuth(path + "/" + categoryId)
       .then(resp => resp.json())
       .then(data => {
         const {id, name, nameKor} = data.data;
@@ -134,7 +135,7 @@ const SubcategoryManage = () => {
   }
 
   const requestSubcategoryEdit = (formData, path) => {
-    fetch(path, {method: "post", body: formData})
+    fetchWithAuth(path, {method: "post", body: formData})
       .then(resp => resp.json())
       .then(data => {
         setUpdatePage(true);
@@ -142,7 +143,7 @@ const SubcategoryManage = () => {
   }
 
   const requestSubcategoryDelete = (path, subcategoryId) => {
-    fetch(path + "/" + subcategoryId, {method: "delete"})
+    fetchWithAuth(path + "/" + subcategoryId, {method: "delete"})
       .then(resp => resp.json())
       .then((data) => {
         setUpdatePage(true);
@@ -150,7 +151,7 @@ const SubcategoryManage = () => {
   }
 
   const requestSubcategoryAdd = (formData, path) => {
-    fetch(path, {method: "put", body: formData})
+    fetchWithAuth(path, {method: "put", body: formData})
       .then((resp) => setUpdatePage(true));
   }
 

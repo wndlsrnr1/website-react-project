@@ -24,6 +24,7 @@ import ItemList from "./items/itemList";
 import ItemCustomerDetail from "./items/customer/ItemCustomerDetail";
 import OnDiscountItemList from "./items/customer/OnDiscountItemList";
 import Items from "./items/customer/Items";
+import {fetchWithAuth} from "./utils/fetchUtils";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -33,7 +34,7 @@ const App = () => {
 
   // 최상위 트리에서 로그인 검증
   useEffect(() => {
-    fetch("/login/auth")
+    fetchWithAuth("/login/auth")
       .then(
         (resp) => {
           if (resp.status !== 200) {

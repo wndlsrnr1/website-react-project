@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const getTime = (localDateTimeString) => {
   return localDateTimeString.split("T")[1];
@@ -135,7 +136,7 @@ const ItemEdit = () => {
   //requests
   const requestItemInfo = () => {
     const path = "/admin/items/info?itemId=" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setBrand(data.data.brand);
@@ -147,7 +148,7 @@ const ItemEdit = () => {
 
   const requestFileSequence = () => {
     const path = "/admin/items/sequence/" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setSequenceList(data.data);
@@ -156,7 +157,7 @@ const ItemEdit = () => {
 
   const requestItem = () => {
     const path = "/admin/items/" + itemId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         const {
@@ -229,7 +230,7 @@ const ItemEdit = () => {
   // }
 
   const requestThumbNail = () => {
-    fetch("/admin/items/thumbnail/" + itemId, {method: "get"})
+    fetchWithAuth("/admin/items/thumbnail/" + itemId, {method: "get"})
       .then(resp => {
         if (!resp.ok) {
           return;
@@ -252,7 +253,7 @@ const ItemEdit = () => {
   }
 
   const requestCategories = () => {
-    fetch("/admin/categories", {method: "get"})
+    fetchWithAuth("/admin/categories", {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setCategories(data.data.content);
@@ -260,7 +261,7 @@ const ItemEdit = () => {
   }
 
   const requestSubcategoriesByCategoryId = (categoryId) => {
-    fetch(`/admin/subcategories?categoryId=${categoryId}`, {method: "get"})
+    fetchWithAuth(`/admin/subcategories?categoryId=${categoryId}`, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setSubcategories(data.data.content);
@@ -269,7 +270,7 @@ const ItemEdit = () => {
 
   const requestCategory = (subcategoryId) => {
     const path = "/admin/category?" + "subcategoryId" + "=" + subcategoryId;
-    fetch(path, {method: "get"})
+    fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setSelectedCategory(data.data);
@@ -375,7 +376,7 @@ const ItemEdit = () => {
     // formData.append("imagesForDelete[]", imageIdsForDelete);
     // formData.append("carouselAttachmentId", selectedThumbnail);
 
-    fetch(url, {method: "post", body: formData})
+    fetchWithAuth(url, {method: "post", body: formData})
       .then((resp) => {
         if (!resp.ok) {
           console.error("파일 수정 실패");

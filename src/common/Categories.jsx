@@ -1,5 +1,6 @@
 import {Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
 import {useEffect, useState} from "react";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 const Categories = () => {
 
@@ -34,7 +35,7 @@ const Categories = () => {
     if (loaded) {
       return;
     }
-    fetch("/categories", {method: "get"}).then((resp) => {
+    fetchWithAuth("/categories", {method: "get"}).then((resp) => {
       return resp.json()
     }).then((data) => {
       console.log(data);
