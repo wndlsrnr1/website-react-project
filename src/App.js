@@ -22,6 +22,8 @@ import HomeItemCarouselAdd from "./admin/item/home/carousel/HomeItemCarouselAdd"
 import HomeItemCarouselDetail from "./admin/item/home/carousel/HomeItemCarouselDetail";
 import ItemList from "./items/itemList";
 import ItemCustomerDetail from "./items/customer/ItemCustomerDetail";
+import OnDiscountItemList from "./items/customer/OnDiscountItemList";
+import Items from "./items/customer/Items";
 
 const App = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -78,6 +80,9 @@ const App = () => {
 
         <Route path={"/item_list"} exact component={ItemList}/>
         <Route path={"/item/detail/:itemId"} exact component={ItemCustomerDetail}/>
+
+        <Route path={"/items"} exact component={Items}/>
+        <Route path={"/items/on_discount"} exact component={OnDiscountItemList}/>
       </Switch>
     </BrowserRouter>
   );

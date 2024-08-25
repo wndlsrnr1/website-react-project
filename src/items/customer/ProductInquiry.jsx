@@ -112,6 +112,7 @@ const ProductInquiry = (props) => {
     }
     path += "&withTotalCount=" + withTotalCount;
     path += "&sortType=" + sortType;
+    path += "&itemId=" + itemId;
     fetch(path, {method: "get"})
       .then(resp => {
         if (!resp.ok) {
