@@ -55,7 +55,6 @@ const ItemDetail = (props) => {
         setStatus(status);
         setDescription(description);
 
-
         if (data?.data) {
           const imagesUpdated = [];
           for (const datum of data.data) {
