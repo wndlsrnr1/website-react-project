@@ -13,10 +13,10 @@ import ItemEdit from "../../admin/item/ItemEdit";
 const AdminRoutes = (props) => {
 
   return (<>
+    <Route path={"/admin"} exact component={AdminMain}/>
     <Route path={"/admin/home/items/carousel"} exact component={HomeItemCarousel}/>
     <Route path={"/admin/home/items/carousel/add"} exact component={HomeItemCarouselAdd}/>
     <Route path={"/admin/home/items/carousel/:carouselId"} exact component={HomeItemCarouselDetail}/>
-    <Route path={"/admin"} exact component={AdminMain}/>
     <Route path={"/admin/categories"} exact component={CategoryManage}/>
     <Route path={"/admin/subcategories"} exact component={SubcategoryManage}/>
     <Route path={"/admin/items"} exact component={ItemManage}/>

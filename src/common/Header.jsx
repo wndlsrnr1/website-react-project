@@ -12,9 +12,6 @@ const Header = () => {
   //hooks
 
   //useEffects
-  useEffect(() => {
-    console.log("isLogin", isLogin);
-  });
 
   //onClicks
 
