@@ -3,6 +3,7 @@ import ItemList from "../../items/itemList";
 import ItemCustomerDetail from "../../items/customer/ItemCustomerDetail";
 import Items from "../../items/customer/Items";
 import OnDiscountItemList from "../../items/customer/OnDiscountItemList";
+import CustomerItemReviewList from "../../items/customer/CustomerItemReviewList";
 
 const ItemRoutes = (props) => {
 
@@ -11,6 +12,7 @@ const ItemRoutes = (props) => {
     <Route path={"/item/detail/:itemId"} exact component={ItemCustomerDetail}/>
     <Route path={"/items"} exact component={Items}/>
     <Route path={"/items/on_discount"} exact component={OnDiscountItemList}/>
+    <Route path={"/items/reviews"} exact component={CustomerItemReviewList}/>
   </>)
 }
 
