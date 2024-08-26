@@ -1,7 +1,9 @@
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import {Container} from "reactstrap";
 
+
 const AdminMain = () => {
+
 
   return (
     <>
@@ -21,7 +23,6 @@ const AdminMain = () => {
           </li>
         </ul>
       </Container>
-
     </>
   )
 }
