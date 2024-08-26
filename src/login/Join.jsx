@@ -32,6 +32,7 @@ const Join = () => {
 
   const onClickEmailCheck = (event) => {
     //fetch API로 이메일 있는 지 확인
+
     event.preventDefault();
 
     fetchWithAuth("/users/check/email",
@@ -57,6 +58,7 @@ const Join = () => {
 
   const onSubmitForm = (event) => {
     event.preventDefault();
+
     if (password2 === password) {
       if (error?.password2) {
         const updatedError = {...error};
@@ -77,6 +79,7 @@ const Join = () => {
 
     fetchWithAuth("/auth/register", {
       method: "post", body: jsonBody, headers: {"Content-Type": "application/json"}
+
     }).then((resp) => {
       if (resp.status === 200) {
         window.location.href = "/";
