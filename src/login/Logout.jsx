@@ -5,7 +5,6 @@ import {logout} from "../utils/LoginUtils";
 const Logout = () => {
   useEffect(() => {
     logout(localStorage);
-
     window.location.href = "/";
   }, []);
 
