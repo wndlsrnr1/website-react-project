@@ -90,7 +90,7 @@ const Header = () => {
               <div className={"d-flex justify-content-around"}>
                 {/*<span><a href="" className={"text-decoration-none text-warning"}>카톡상담</a></span>*/}
                 <span><a href="/items/on_discount" className={"text-decoration-none text-black"}>세일상품</a></span>
-                <span><a href="" className={"text-decoration-none text-black"}>상품후기</a></span>
+                <span><a href="/items/reviews" className={"text-decoration-none text-black"}>상품후기</a></span>
               </div>
             </Col>
           </Row>

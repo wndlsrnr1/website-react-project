@@ -37,10 +37,6 @@ const AdminRoutes = (props) => {
       })
         .then(resp => {
           if (resp.status === 200) {
-            console.log("setIsAdmin = ", isAdmin);
-            console.log("setIsAdmin = ", isAdmin);
-            console.log("setIsAdmin = ", isAdmin);
-            console.log("setIsAdmin = ", isAdmin);
 
             setIsAdmin(true);
           } else {
