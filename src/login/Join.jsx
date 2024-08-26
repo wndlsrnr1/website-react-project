@@ -9,56 +9,83 @@ const Join = () => {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [address, setAddress] = useState("");
-  const [emailCheck, setEmailCheck] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
   const [passwordEquals, setPasswordEquals] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({});
   // const dispatch = useDispatch();
   // const isLogin = useSelector((state) => state.isLogin);
 
 
   //email값 변경시 email 인증 상태값 취소
   useEffect(() => {
-    if (emailCheck === true) {
-      setEmailCheck(false);
+    console.log("errors: ", error);
+    console.log("emailExists: ", emailExists);
+    if (emailExists === true) {
+      setEmailExists(false);
     }
   }, [email]);
+
+  useEffect(() => {
+  }, []);
 
 
   const onClickEmailCheck = (event) => {
     //fetch API로 이메일 있는 지 확인
-    fetchWithAuth("/email/check?email=" + email, {method: "get"})
+    event.preventDefault();
+
+    fetchWithAuth("/users/check/email",
+      {method: "post", headers: {"Content-Type": "application/json"}, body: JSON.stringify({"email": email})}
+    )
       .then((resp) => {
-        if (resp.status === 200) {
-          setEmailCheck(true);
+        if (resp.status !== 200) {
+          resp.json().then(data => {
+            setEmailExists(false);
+            setError({...error, "email": data.body.email});
+          });
         } else {
-          setEmailCheck(false);
+          resp.json().then(data => {
+              setEmailExists(data.body.emailExists);
+            const updatedObject = {...error};
+            delete updatedObject.email;
+            setError(updatedObject);
+            }
+          );
         }
       });
   }
 
   const onSubmitForm = (event) => {
     event.preventDefault();
-    let form = new FormData();
-    form.append("email", email);
-    form.append("password", password);
-    form.append("password2", password2);
-    form.append("address", address);
-    form.append("name", name);
-
-    fetchWithAuth("/user/join", {
-      method: "post", body: form
-    }).then((resp) => {
-      if (resp.status === 201) {
-        window.location.href = "/";
-        return {error: null};
+    if (password2 === password) {
+      if (error?.password2) {
+        const updatedError = {...error};
+        delete error.password2;
+        setError(updatedError);
       }
-      return resp.json();
-    })
-      .then((data) => {
-        setError(data.error);
-        console.log("/user/join data", data)
+    } else {
+      setError({password2: "비밀번호가 서로 일치해야합니다"});
+      return;
+    }
+
+    const jsonBody = JSON.stringify({
+      "email": email,
+      "password": password,
+      "address": address,
+      "name": name,
+    });
+
+    fetchWithAuth("/auth/register", {
+      method: "post", body: jsonBody, headers: {"Content-Type": "application/json"}
+    }).then((resp) => {
+      if (resp.status === 200) {
+        window.location.href = "/";
+        return;
+      }
+      return resp.json().then((data) => {
+        setError(data.body);
       });
+    });
   };
 
   const checkPasswordEquals = (password, password2) => {
@@ -107,13 +134,13 @@ const Join = () => {
                 </InputGroupText>
                 <Input placeholder={"이메일을 입력해주세요"} type={"text"} name={"email"} onInput={onInputEmail} value={email}/>
                 {
-                  emailCheck === false ?
-                    <Button type={"button"} onClick={onClickEmailCheck}>확인</Button>:
-                    <InputGroupText className={"bg-success text-white"}>✔</InputGroupText>
+                  emailExists ?
+                    <InputGroupText className={"bg-success text-white"}>✔</InputGroupText> :
+                    <Button type={"button"} onClick={onClickEmailCheck}>확인</Button>
                 }
               </InputGroup>
-              {error?.fieldErrors?.email == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error?.fieldErrors?.email}</p></div>}
+              {!error?.email == null ? null :
+                <div><p className={"alert-danger text-end pe-3"}>{error?.email}</p></div>}
               {/*mabe there is some error*/}
               <InputGroup className={"mb-3"}>
                 <InputGroupText className={"w-25 text-center"}>
@@ -121,8 +148,8 @@ const Join = () => {
                 </InputGroupText>
                 <Input placeholder={"이름을 입력해주세요"} type={"text"} name={"name"} onInput={onInputName} value={name}/>
               </InputGroup>
-              {error?.fieldErrors?.name == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error?.fieldErrors?.email}</p></div>}
+              {!error?.name ? null :
+                <div><p className={"alert-danger text-end pe-3"}>{error?.name}</p></div>}
               {/*mabe there is some error*/}
               <InputGroup className={"mb-3"}>
                 <InputGroupText className={"w-25 text-center"}>
@@ -131,8 +158,8 @@ const Join = () => {
                 <Input placeholder={"비밀번호를 입력해주세요"} type={"password"} name={"password"} onInput={onInputPassword}
                        value={password}/>
               </InputGroup>
-              {error?.fieldErrors?.password == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error?.fieldErrors?.password}</p></div>}
+              {!error?.password ? null :
+                <div><p className={"alert-danger text-end pe-3"}>{error?.password}</p></div>}
               {/*mabe there is some error*/}
               <InputGroup className={"mb-3"}>
                 <InputGroupText className={"w-25 text-center"}>
@@ -141,8 +168,8 @@ const Join = () => {
                 <Input placeholder={"비밀번호를 입력해주세요"} type={"password"} name={"password2"} onInput={onInputPassword2}
                        value={password2}/>
               </InputGroup>
-              {error?.fieldErrors?.password2 == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error?.fieldErrors?.password2}</p></div>}
+              {!error?.password2 ? null :
+                <div><p className={"alert-danger text-end pe-3"}>{error?.password2}</p></div>}
               {/*mabe there is some error*/}
               <InputGroup className={"mb-3"}>
                 <InputGroupText className={"w-25 text-center"}>
@@ -151,20 +178,14 @@ const Join = () => {
                 <Input placeholder={"주소를 입력해주세요"} type={"text"} name={"address"} onInput={onInputAddress}
                        value={address}/>
               </InputGroup>
-              {error?.fieldErrors?.address == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error?.fieldErrors?.address}</p></div>}
-              {/*mabe there is some error*/}
-              {error?.globalErrors == null ? null :
-                <div><p className={"alert-danger text-end pe-3"}>{error.globalErrors}</p></div>}
-              {/*mybe there is some error*/}
+              {!error?.address == null ? null :
+                <div><p className={"alert-danger text-end pe-3"}>{error?.address}</p></div>}
               <div>
                 <Button type={"submit"} className={"w-100 bg-primary"}>회원가입</Button>
               </div>
             </Form>
           </div>
-
         </Col>
-
       </Container>
     </>
   )
