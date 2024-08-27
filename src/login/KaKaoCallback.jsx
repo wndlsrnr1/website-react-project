@@ -1,20 +1,17 @@
 import {useEffect} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
+import {useParams} from "react-router-dom";
+import {login} from "../utils/LoginUtils";
 
 const KaKaoCallback = () => {
-  //variables
-
-  //hooks
-
+  const {method} = useParams();
   //useEffects
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get("code");
     const error = new URL(window.location.href).searchParams.get("error");
     const errorDescription = new URL(window.location.href).searchParams.get("error_description");
     const state = new URL(window.location.href).searchParams.get("state");
-    const method = new URL(window.location.href).searchParams.get("method");
 
-    // return;
     const body = {};
     if (code) {
       body["code"] = code;
@@ -28,25 +25,14 @@ const KaKaoCallback = () => {
     if (state) {
       body["state"] = state;
     }
-
-    if (method === "login") {
-      requestLogin(body);
-    } else if (method === "delete") {
-      requestDelete(body);
-    } else if (method === "register") {
+    if (method === "register") {
       requestRegister(body);
-    } else {
-      window.location.href = "/";
+    } else if ("login") {
+      requestLogin(body);
     }
 
 
   }, [])
-  //onClicks
-
-  //onSubmits
-
-  //onChanges
-
   //requests
   const requestRegister = (body) => {
     fetchWithAuth("/auth/register/kakao", {
@@ -58,10 +44,12 @@ const KaKaoCallback = () => {
         if (resp.ok) {
           window.location.href = "/";
         } else {
+          alert("에러처리하기");
           window.location.href = "/";
         }
       });
   }
+
   const requestLogin = (body) => {
     fetchWithAuth("/auth/login/kakao", {
       method: "POST",
@@ -70,26 +58,16 @@ const KaKaoCallback = () => {
     })
       .then((resp) => {
         if (resp.ok) {
+          resp.json().then(data => login(localStorage, data.body));
           window.location.href = "/";
         } else {
+          alert("에러처리하기");
           window.location.href = "/";
         }
       });
   }
-  const requestDelete = (body) => {
-    fetchWithAuth("/auth/users/kakao", {
-      method: "DELETE",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(body)
-    })
-      .then((resp) => {
-        if (resp.ok) {
-          window.location.href = "/";
-        } else {
-          window.location.href = "/";
-        }
-      });
-  }
+
+
   return <>
     <div>Loading</div>
   </>

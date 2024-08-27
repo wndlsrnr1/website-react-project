@@ -2,7 +2,7 @@ import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "r
 import logo from '../images/logo.jpg'
 import {useContext, useEffect, useReducer, useRef, useState} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
-import {login} from "../utils/LoginUtils";
+import {handleLogin, login} from "../utils/LoginUtils";
 
 const Login = () => {
 
@@ -90,7 +90,7 @@ const Login = () => {
               </InputGroup>
               {error ? <div><p className={"alert-danger text-end pe-3"}>로그인 정보가 바르지 않습니다.</p></div> : null}
               <div>
-                <Button type={"button"} className={"w-100 mb-3 bg-warning text-black"}>카카오 로그인</Button>
+                <Button className={"btn w-100 mb-3 bg-warning text-black"} onClick={handleLogin}>카카오 로그인</Button>
                 <Button type={"submit"} className={"w-100 bg-primary"}>로그인</Button>
                 <hr/>
                 <Button tag={"a"} className={"w-100 mb-3 bg-gradient"} href={"/join"}>회원가입</Button>
