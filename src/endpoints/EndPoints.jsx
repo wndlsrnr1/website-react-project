@@ -8,11 +8,6 @@ import MyPage from "../user/MyPage";
 import ItemRoutes from "./item/ItemRoutes";
 import AdminRoutes from "./admin/AdminRoutes";
 
-import {checkLogin} from "../utils/LoginUtils";
-import {fetchWithAuth} from "../utils/fetchUtils";
-import {useEffect, useState} from "react";
-import KaKaoCallback from "../login/KaKaoCallback";
-import KaKaoRegister from "../login/KaKaoLogin";
 import AuthRoutes from "./auth/AuthRoutes";
 
 const EndPoints = () => {
@@ -27,8 +22,9 @@ const EndPoints = () => {
         <Route path={"/logout"} exact component={Logout}/>
         <Route path={"/user/find"} exact component={FindPassword}/>
         <Route path={"/user/mypage"} component={MyPage}/>
-        <AuthRoutes/>
         <ItemRoutes/>
+        <AuthRoutes/>
+
         <Switch>
           <AdminRoutes/>
         </Switch>

@@ -2,6 +2,7 @@ import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "r
 import logo from "../images/logo.jpg";
 import {useEffect, useState} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
+import {handleRegister} from "../utils/LoginUtils";
 
 const Join = () => {
   const [email, setEmail] = useState("");
@@ -184,7 +185,8 @@ const Join = () => {
               {!error?.address == null ? null :
                 <div><p className={"alert-danger text-end pe-3"}>{error?.address}</p></div>}
               <div>
-                <Button type={"submit"} className={"w-100 bg-primary"}>회원가입</Button>
+                <Button type={"submit"} className={"w-100 bg-primary mb-2"}>회원가입</Button>
+                <Button type={"button"} className={"w-100 bg-warning text-black"} onClick={handleRegister}>카카오 회원가입</Button>
               </div>
             </Form>
           </div>
