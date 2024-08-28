@@ -1,10 +1,12 @@
 import {useContext, useEffect} from "react";
+import {Button} from "reactstrap";
+import {handleDelete} from "../utils/LoginUtils";
 
 const MyPage = () => {
 
   return (
     <>
-      <div>MY-Page</div>
+      <Button onClick={handleDelete}>카카오 회원 탈퇴하기</Button>
     </>
   )
 }
