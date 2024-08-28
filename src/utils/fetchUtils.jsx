@@ -1,3 +1,5 @@
+import {logout} from "./LoginUtils";
+
 export const fetchWithAuth = async (url, options = {}) => {
 
   const token = localStorage.getItem("token");
@@ -12,7 +14,6 @@ export const fetchWithAuth = async (url, options = {}) => {
   const response = await fetch(url, options);
 
   if (response.status === 403) {
-    localStorage.removeItem("token");
   }
 
   return response;

@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
 import {useParams} from "react-router-dom";
-import {login} from "../utils/LoginUtils";
+import {login, logout} from "../utils/LoginUtils";
 
 const KaKaoCallback = () => {
   const {method} = useParams();
@@ -25,10 +25,15 @@ const KaKaoCallback = () => {
     if (state) {
       body["state"] = state;
     }
+    alert(method);
     if (method === "register") {
       requestRegister(body);
-    } else if ("login") {
+    } else if (method === "login") {
       requestLogin(body);
+    } else if (method === "logout") {
+      requestLogout(body);
+    } else if (method === "delete") {
+      requestDelete(body);
     }
 
 
@@ -44,7 +49,7 @@ const KaKaoCallback = () => {
         if (resp.ok) {
           window.location.href = "/";
         } else {
-          alert("에러처리하기");
+          alert("register call");
           window.location.href = "/";
         }
       });
@@ -61,12 +66,49 @@ const KaKaoCallback = () => {
           resp.json().then(data => login(localStorage, data.body));
           window.location.href = "/";
         } else {
-          alert("에러처리하기");
+          alert("login call");
           window.location.href = "/";
         }
       });
   }
 
+  const requestLogout = (body) => {
+
+    fetchWithAuth("/auth/logout/kakao", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body)
+    })
+      .then((resp) => {
+        if (resp.ok) {
+          logout(localStorage);
+          window.location.href = "/";
+        } else {
+          logout(localStorage);
+          alert("handle error");
+          window.location.href = "/";
+        }
+      });
+  }
+
+  const requestDelete = (body) => {
+    alert("delete call");
+    fetchWithAuth("/auth/users/kakao", {
+      method: "DELETE",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body)
+    })
+      .then((resp) => {
+        if (resp.ok) {
+          alert("ok");
+          logout(localStorage);
+          window.location.href = "/";
+        } else {
+          alert("fail");
+          window.location.href = "/";
+        }
+      });
+  }
 
   return <>
     <div>Loading</div>

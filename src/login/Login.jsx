@@ -12,6 +12,23 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [loaded, setLoaded] = useState(false);
 
+  //hooks
+  const buttonStyle = {
+    width: '100%', // Set to the desired width of the button
+    height: '50px', // Set to the desired height of the button
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0,
+  };
+  const kakaoImageStyle = {
+    ...buttonStyle,
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain', // Ensures the image fits inside the button without stretching
+
+  };
+
   useEffect(() => {
     if (loaded) {
       return;
@@ -90,8 +107,17 @@ const Login = () => {
               </InputGroup>
               {error ? <div><p className={"alert-danger text-end pe-3"}>로그인 정보가 바르지 않습니다.</p></div> : null}
               <div>
-                <Button className={"btn w-100 mb-3 bg-warning text-black"} onClick={handleLogin}>카카오 로그인</Button>
-                <Button type={"submit"} className={"w-100 bg-primary"}>로그인</Button>
+                <Button onClick={handleLogin} type={"button"} style={{...buttonStyle, backgroundColor: "rgb(254, 229, 0)"}} className={"mb-3"}>
+                  <img
+                    src={"/images/kakao_login_medium_wide.png"}
+                    alt={"카카오 로그인"}
+                    style={kakaoImageStyle}
+                  />
+                </Button>
+
+                <Button style={buttonStyle} color="primary">
+                  로그인
+                </Button>
                 <hr/>
                 <Button tag={"a"} className={"w-100 mb-3 bg-gradient"} href={"/join"}>회원가입</Button>
               </div>

@@ -2,7 +2,7 @@ import {Button, Col, Container, Form, Input, ListGroup, ListGroupItem, Nav, NavI
 import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import logo from "../images/logo.jpg"
-import {checkLogin} from "../utils/LoginUtils";
+import {checkLogin, handleLogout} from "../utils/LoginUtils";
 
 const Header = () => {
   //variables
@@ -52,7 +52,7 @@ const Header = () => {
                     ) : (
                       <>
                         <NavItem className={"small"}>
-                          <NavLink href="/logout">로그아웃</NavLink>
+                          <NavLink onClick={handleLogout} >로그아웃</NavLink>
                         </NavItem>
                       </>
                     )
