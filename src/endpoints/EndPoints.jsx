@@ -4,11 +4,11 @@ import Login from "../login/Login";
 import Join from "../login/Join";
 import Logout from "../login/Logout";
 import FindPassword from "../login/FindPassword";
-import MyPage from "../user/MyPage";
 import ItemRoutes from "./item/ItemRoutes";
 import AdminRoutes from "./admin/AdminRoutes";
 
 import AuthRoutes from "./auth/AuthRoutes";
+import UserProfile from "../user/UserProfile";
 
 const EndPoints = () => {
 
@@ -21,7 +21,7 @@ const EndPoints = () => {
         <Route path={"/join"} exact component={Join}/>
         <Route path={"/logout"} exact component={Logout}/>
         <Route path={"/user/find"} exact component={FindPassword}/>
-        <Route path={"/user/mypage"} component={MyPage}/>
+        <Route path={"/user/profile"} component={UserProfile}/>
         <ItemRoutes/>
         <AuthRoutes/>
 

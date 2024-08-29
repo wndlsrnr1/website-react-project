@@ -25,7 +25,8 @@ const KaKaoCallback = () => {
     if (state) {
       body["state"] = state;
     }
-    alert(method);
+
+    alert(JSON.stringify(body))
     if (method === "register") {
       requestRegister(body);
     } else if (method === "login") {
@@ -38,6 +39,7 @@ const KaKaoCallback = () => {
 
 
   }, [])
+
   //requests
   const requestRegister = (body) => {
     fetchWithAuth("/auth/register/kakao", {
@@ -66,7 +68,7 @@ const KaKaoCallback = () => {
           resp.json().then(data => login(localStorage, data.body));
           window.location.href = "/";
         } else {
-          alert("login call");
+          alert("로그인 실패");
           window.location.href = "/";
         }
       });
@@ -85,7 +87,7 @@ const KaKaoCallback = () => {
           window.location.href = "/";
         } else {
           logout(localStorage);
-          alert("handle error");
+          alert("logout 실패");
           window.location.href = "/";
         }
       });
@@ -100,18 +102,17 @@ const KaKaoCallback = () => {
     })
       .then((resp) => {
         if (resp.ok) {
-          alert("ok");
           logout(localStorage);
           window.location.href = "/";
         } else {
-          alert("fail");
+          alert("회원 탈퇴 실패");
           window.location.href = "/";
         }
       });
   }
 
   return <>
-    <div>Loading</div>
+    <h1>Loading</h1>
   </>
 }
 
