@@ -36,8 +36,10 @@ const PasswordManagement = (props) => {
     if (loaded) {
       return;
     }
+
     setLoaded(true);
   }, []);
+
 
   //onClicks
   const updatePasswordOnClick = (event) => {
@@ -82,7 +84,7 @@ const PasswordManagement = (props) => {
   const updatePasswordRequest = () => {
     fetchWithAuth("/users/me/password",
       {
-        method: "POST",
+        method: "PATCH",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           "currentPassword": currentPassword,
