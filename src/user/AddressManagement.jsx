@@ -93,7 +93,7 @@ const AddressManagement = (props) => {
             {errors!== null && errors?.address ? <div><p className={"alert-danger text-end pe-3"}>{errors.address}</p></div> :
               null}
           </FormGroup>
-          <Button color="primary">Update Address</Button>
+          <Button color="primary">주소지 변경</Button>
         </Form>
       </CardBody>
       <Modal isOpen={confirmModal}>
