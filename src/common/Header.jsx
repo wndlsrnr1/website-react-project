@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import logo from "../images/logo.jpg"
 import {checkLogin, handleLogout} from "../utils/LoginUtils";
+import {fetchWithAuth} from "../utils/fetchUtils";
 
 const Header = () => {
   //variables
@@ -52,7 +53,7 @@ const Header = () => {
                     ) : (
                       <>
                         <NavItem className={"small"}>
-                          <NavLink onClick={handleLogout} >로그아웃</NavLink>
+                          <NavLink onClick={handleLogout}>로그아웃</NavLink>
                         </NavItem>
                       </>
                     )
@@ -62,7 +63,7 @@ const Header = () => {
               }
 
               <NavItem className={"small"}>
-                <NavLink href="/user/profile">마이페이지</NavLink>
+                <NavLink href={"/users/profile"}>마이페이지</NavLink>
               </NavItem>
               <NavItem className={"small"}>
                 <NavLink href="">장바구니</NavLink>
@@ -80,9 +81,10 @@ const Header = () => {
                 <img src={logo} className={"w-100 h-100"} alt={"logo"}/>
               </a>
             </Col>
-            <Col style={{height: "100px"}} className={"d-flex justify-content-center flex-column"} >
+            <Col style={{height: "100px"}} className={"d-flex justify-content-center flex-column"}>
               <Form action="" className={"d-flex justify-content-center"} onSubmit={searchOnsubmit}>
-                <Input type="text" className={"me-2"} name={"search"} placeholder={"검색어를 입력해주세요 :)"} value={searchNameValue} onChange={searchNameOnchange}/>
+                <Input type="text" className={"me-2"} name={"search"} placeholder={"검색어를 입력해주세요 :)"}
+                       value={searchNameValue} onChange={searchNameOnchange}/>
                 <Button className={"p-1 bg-primary"} style={{width: "50px"}}>검색</Button>
               </Form>
             </Col>

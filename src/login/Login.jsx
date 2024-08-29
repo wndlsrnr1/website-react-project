@@ -6,8 +6,8 @@ import {handleLogin, login} from "../utils/LoginUtils";
 
 const Login = () => {
 
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("anyPassword!@ASD213");
+  const [email, setEmail] = useState("example3@naver.com");
   const [error, setError] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [loaded, setLoaded] = useState(false);
