@@ -21,7 +21,7 @@ const EndPoints = () => {
         <Route path={"/join"} exact component={Join}/>
         <Route path={"/logout"} exact component={Logout}/>
         <Route path={"/user/find"} exact component={FindPassword}/>
-        <Route path={"/user/profile"} component={UserProfile}/>
+        <Route path={"/users/profile"} exact component={UserProfile}/>
         <ItemRoutes/>
         <AuthRoutes/>
 
