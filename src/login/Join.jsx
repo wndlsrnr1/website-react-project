@@ -2,7 +2,7 @@ import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "r
 import logo from "../images/logo.jpg";
 import {useEffect, useState} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
-import {handleLogin, handleRegister} from "../utils/LoginUtils";
+import {handleLogin} from "../utils/LoginUtils";
 
 const Join = () => {
   const [email, setEmail] = useState("");
@@ -48,9 +48,9 @@ const Join = () => {
         } else {
           resp.json().then(data => {
               setEmailExists(data.body.emailExists);
-            const updatedObject = {...error};
-            delete updatedObject.email;
-            setError(updatedObject);
+              const updatedObject = {...error};
+              delete updatedObject.email;
+              setError(updatedObject);
             }
           );
         }

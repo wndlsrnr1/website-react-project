@@ -50,7 +50,7 @@ const ProductReviews = (props) => {
   }
 
   const moveMyPage = () => {
-    window.location.href = "/mypage/orders"
+    window.location.href = "/user/profile/orders"
   }
 
   //useEffects

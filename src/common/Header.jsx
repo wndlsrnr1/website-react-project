@@ -62,7 +62,7 @@ const Header = () => {
               }
 
               <NavItem className={"small"}>
-                <NavLink href="/user/mypage">마이페이지</NavLink>
+                <NavLink href="/user/profile">마이페이지</NavLink>
               </NavItem>
               <NavItem className={"small"}>
                 <NavLink href="">장바구니</NavLink>
