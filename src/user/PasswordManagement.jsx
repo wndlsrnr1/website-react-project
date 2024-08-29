@@ -149,7 +149,7 @@ const PasswordManagement = (props) => {
             {!errors?.confirmPassword? null :
               <div><p className={"alert-danger text-end pe-3"}>{errors?.confirmPassword}</p></div>}
           </FormGroup>
-          <Button color="primary">Change Password</Button>
+          <Button color="primary">비밀번호 변경</Button>
         </Form>
       </CardBody>
       <Modal isOpen={modal} toggle={toggleModal}>
