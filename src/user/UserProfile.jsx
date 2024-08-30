@@ -82,7 +82,7 @@ const UserProfile = () => {
           {userInfo !== null  ? <AddressManagement userInfo={userInfo}/> : null}
 
           {/* Order History Section */}
-          <OrderHistory/>
+          {userInfo !== null  ? <OrderHistory userInfo={userInfo}/> : null}
 
           {/* Wishlist or Saved List Section */}
           <CartList/>

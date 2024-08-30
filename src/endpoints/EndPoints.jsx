@@ -12,6 +12,7 @@ import UserProfile from "../user/UserProfile";
 
 const EndPoints = () => {
 
+  //상품명,
 
   return (
     <>
