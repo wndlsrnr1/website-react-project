@@ -19,7 +19,7 @@ import UserInfo from "./UserInfo";
 import PasswordManagement from "./PasswordManagement";
 import AddressManagement from "./AddressManagement";
 import OrderHistory from "./OrderHistory";
-import CartList from "./CarList";
+import CartList from "./CartList";
 import ReviewAndCommentManagement from "./ReviewAndCommentManagement";
 import {checkLogin, handleDelete} from "../utils/LoginUtils";
 import {fetchWithAuth} from "../utils/fetchUtils";
@@ -85,7 +85,7 @@ const UserProfile = () => {
           {userInfo !== null  ? <OrderHistory userInfo={userInfo}/> : null}
 
           {/* Wishlist or Saved List Section */}
-          <CartList/>
+          {userInfo !== null  ? <CartList userInfo={userInfo}/> : null}
 
           {/* Review and Question Management Section */}
           <ReviewAndCommentManagement/>

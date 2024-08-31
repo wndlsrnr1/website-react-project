@@ -211,7 +211,7 @@ const OrderHistory = (props) => {
             purchasesList.length !== 0 ?
               purchasesList.map((purchases, idx) => {
                 return (
-                  <tr key={purchases.orderNumber}>
+                  <tr key={purchases.orderNumber + idx}>
                     <th scope="row">{idx + 1}</th>
                     <td>{purchases.orderNumber}</td>
                     <td><a href={"/item/detail/" + purchases.itemId}>{purchases.itemNameKor}</a></td>
@@ -229,7 +229,7 @@ const OrderHistory = (props) => {
               }) :
               (
                 <tr>
-                  주문목록이 없습니다.
+                  <td>주문목록이 없습니다.</td>
                 </tr>
               )
           }
@@ -245,7 +245,7 @@ const OrderHistory = (props) => {
               {
                 new Array(5).fill(0).map((elem, idx) => {
                   return (
-                    <a type={"button"} style={{
+                    <a key={"star" + idx} type={"button"} style={{
                       background: getStarImage(idx, star), backgroundSize: "30px 30px",
                       width: "35px",
                       height: "35px",
@@ -260,7 +260,7 @@ const OrderHistory = (props) => {
             </div>
 
             <Label for="review">리뷰</Label>
-            <Input id={"star"} className={"d-none"} value={star}/>
+            <Input id={"star"} className={"d-none"} value={star} readOnly={true}/>
             <Input id={"review"} type={"textarea"} placeholder={"후기를 입력해주세요"} value={review}
                    onChange={reviewOnChangeInput}/>
             <div>
