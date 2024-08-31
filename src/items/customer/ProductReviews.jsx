@@ -4,6 +4,7 @@ import {useParams} from "react-router-dom";
 import redirect from "react-router-dom/es/Redirect";
 import {parseDate} from "../../utils/timeUtils";
 import {fetchWithAuth} from "../../utils/fetchUtils";
+import {checkLogin} from "../../utils/LoginUtils";
 
 const ProductReviews = (props) => {
 
@@ -50,7 +51,11 @@ const ProductReviews = (props) => {
   }
 
   const moveMyPage = () => {
-    window.location.href = "/user/profile/orders"
+    if (!checkLogin(localStorage)) {
+      window.location.href = "/login";
+      return;
+    }
+    window.location.href = "/users/profile";
   }
 
   //useEffects

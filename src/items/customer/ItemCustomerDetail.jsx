@@ -1,4 +1,4 @@
-import {Button, ButtonGroup, Col, Container, Row} from "reactstrap";
+import {Button, ButtonGroup, Col, Container, Modal, ModalBody, ModalFooter, Row} from "reactstrap";
 import {useEffect, useState} from "react";
 import ItemBasicInfo from "./ItemBasicInfo";
 import ProductReviews from "./ProductReviews";
@@ -50,6 +50,10 @@ const ItemCustomerDetail = () => {
   const [manufacturer, setManufacturer] = useState(null);
   const [madeIn, setMadeIn] = useState(null);
 
+  //modal
+  const [resultModal, setResultModal] = useState(false);
+  const [resultMessage, setResultMessage] = useState("");
+
 
   //hooks
 
@@ -74,11 +78,35 @@ const ItemCustomerDetail = () => {
     setPageValue(pageValueParam);
   }
 
+  const addBookmarkOnClick = (event) => {
+    event.preventDefault();
+    addBookmarkRequest();
+  }
+
+  const closeResultModalOnClick = (event) => {
+    event.preventDefault();
+    setResultModal(false);
+    setResultMessage("")
+  };
+
   //onSubmits
 
   //onChanges
 
   //requests
+  const addBookmarkRequest = () => {
+    fetchWithAuth("/items/" + itemId + "/bookmarks", {method: "POST"})
+      .then(resp => {
+        if (resp.ok) {
+          setResultModal(true);
+          setResultMessage("장바구니에 추가되었습니다");
+
+        } else {
+          setResultModal(true);
+          setResultMessage("장바구니에 추가하지 못 했습니다");
+        }
+      });
+  }
   const requestThumbnailImage = () => {
     fetchWithAuth("/item/thumbnail?itemId=" + itemId, {method: "get"})
       .then(resp => resp.json())
@@ -112,7 +140,9 @@ const ItemCustomerDetail = () => {
       case pageValueConst.detailInfo:
         return <ItemImagesForItemInfo itemId={itemId}/>;
       case pageValueConst.basicInfo:
-        return <ItemBasicInfo name={name} nameKor={nameKor} price={price} state={state} description={description} relatedAt={releasedAt} saleRate={saleRate} brand={brand} manufacturer={manufacturer} madeIn={madeIn}/>;
+        return <ItemBasicInfo name={name} nameKor={nameKor} price={price} state={state} description={description}
+                              relatedAt={releasedAt} saleRate={saleRate} brand={brand} manufacturer={manufacturer}
+                              madeIn={madeIn}/>;
       case pageValueConst.reviews:
         return <ProductReviews itemId={itemId}/>;
       case pageValueConst.inquiry:
@@ -131,7 +161,8 @@ const ItemCustomerDetail = () => {
         <hr/>
         <div className={"d-flex justify-content-center mb-3"}>
           <div className={"w-50"}>
-            <img className={"w-100"} src={thumbnailImage ? ("/attachment/" + thumbnailImage.fileId) : null} alt={"아이템 사진"}/>
+            <img className={"w-100"} src={thumbnailImage ? ("/attachment/" + thumbnailImage.fileId) : null}
+                 alt={"아이템 사진"}/>
           </div>
 
         </div>
@@ -161,7 +192,6 @@ const ItemCustomerDetail = () => {
           <hr/>
           {/*<ButtonGroup className={"d-flex justify-content-center"}>*/}
           {/*  <Button className={"me-2 bg-primary"}>공유하기</Button>*/}
-          {/*  <Button className={"bg-primary"}>찜하기</Button>*/}
           {/*</ButtonGroup>*/}
           {/*<hr/>*/}
           <ButtonGroup className={"d-flex mb-4"}>
@@ -171,13 +201,14 @@ const ItemCustomerDetail = () => {
                     onClick={() => onclickPageButton(pageValueConst.basicInfo)}>기본정보</Button>
             <Button className={"me-2"} page-value={pageValueConst.reviews}
                     onClick={() => onclickPageButton(pageValueConst.reviews)}>상품후기</Button>
-            <Button page-value={pageValueConst.inquiry}
+            <Button className={"me-2"} page-value={pageValueConst.inquiry}
                     onClick={() => onclickPageButton(pageValueConst.inquiry)}>상품문의</Button>
+            <Button onClick={addBookmarkOnClick}>장바구니</Button>
           </ButtonGroup>
         </div>
         {
           <div className={"mb-5"}>
-            { getAddedPage(pageValue) }
+            {getAddedPage(pageValue)}
           </div>
 
         }
@@ -185,7 +216,18 @@ const ItemCustomerDetail = () => {
           <Button className={"me-2 bg-primary"}>장바구니</Button>
           <Button className={"bg-primary"}>바로구매</Button>
         </ButtonGroup>
+
       </Container>
+      <Modal isOpen={resultModal}>
+        <ModalBody>
+          {resultMessage}
+        </ModalBody>
+        <ModalFooter>
+          <ButtonGroup>
+            <Button onClick={closeResultModalOnClick}>확인</Button>
+          </ButtonGroup>
+        </ModalFooter>
+      </Modal>
     </>
   );
 }

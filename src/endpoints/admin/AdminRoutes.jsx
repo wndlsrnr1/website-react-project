@@ -36,8 +36,7 @@ const AdminRoutes = (props) => {
         method: "get"
       })
         .then(resp => {
-          if (resp.status === 200) {
-
+          if (resp.ok) {
             setIsAdmin(true);
           } else {
             setIsAdmin(false);
