@@ -108,7 +108,7 @@ const ItemList = () => {
 
   //requests
   const itemListForCustomerRequest = (subcategoryId) => {
-    let url = "/home/item_list?subcategoryId=" + subcategoryId;
+    let url = "/home/items/list?subcategoryId=" + subcategoryId;
     url += "&page=" + page;
     url += "&sortedBy=" + sortedBy;
     url += "&pageSize=" + pageSize;
@@ -133,7 +133,7 @@ const ItemList = () => {
   }
 
   const itemListAddedForCustomerRequest = (subcategoryId) => {
-    let url = "/home/item_list?subcategoryId=" + subcategoryId;
+    let url = "/home/items/list?subcategoryId=" + subcategoryId;
     url += "&page=" + page;
     url += "&sortedBy=" + sortedBy;
     url += "&pageSize=" + pageSize;
