@@ -10,7 +10,7 @@ const Logout = () => {
 
   return (
     <>
-      <div>asdf</div>
+      <div>Loading</div>
     </>
   )
 }
