@@ -74,7 +74,7 @@ const HomeItemDiscount = () => {
               return (
                 <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}
                      key={itemDiscount.toString() + idx}>
-                  <a href={"/item/detail/"+itemDiscount.id}>
+                  <a href={"/items/detail/"+itemDiscount.id}>
                     <img src={"/attachment/" + itemDiscount.fileId} style={{height: "200px"}}/>
                   </a>
                   <div>

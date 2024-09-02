@@ -71,7 +71,7 @@ const HomeItemPopular = () => {
               return (
                 <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}
                      key={itemPopular.toString() + idx}>
-                  <a href={"/item/detail/" + itemPopular.id}>
+                  <a href={"/items/detail/" + itemPopular.id}>
                     <img src={"/attachment/" + itemPopular.fileId} style={{height: "200px"}}/>
                   </a>
                   <div>

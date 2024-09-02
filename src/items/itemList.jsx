@@ -236,7 +236,7 @@ const ItemList = () => {
               return (
                 <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}
                      key={item.price + (idx) * 100}>
-                  <a href={"/item/detail/" + item.id}>
+                  <a href={"/items/detail/" + item.id}>
                     <img src={"/attachment/" + item.fileIdForThumbnail} style={{height: "200px"}}/>
                   </a>
                   <div>
