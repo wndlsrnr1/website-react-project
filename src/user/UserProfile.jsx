@@ -20,9 +20,11 @@ import PasswordManagement from "./PasswordManagement";
 import AddressManagement from "./AddressManagement";
 import OrderHistory from "./OrderHistory";
 import CartList from "./CartList";
-import ReviewAndCommentManagement from "./ReviewAndCommentManagement";
+import ReviewManagement from "./ReviewManagement";
 import {checkLogin, handleDelete} from "../utils/LoginUtils";
 import {fetchWithAuth} from "../utils/fetchUtils";
+import CommentManagement from "./CommentManagement";
+
 
 const UserProfile = () => {
 
@@ -87,8 +89,12 @@ const UserProfile = () => {
           {/* Wishlist or Saved List Section */}
           {userInfo !== null  ? <CartList userInfo={userInfo}/> : null}
 
-          {/* Review and Question Management Section */}
-          <ReviewAndCommentManagement/>
+          {/* Review Management Section */}
+          <ReviewManagement/>
+
+          {/* Question Management Section */}
+          <CommentManagement/>
+
         </Col>
       </Row>
     </Container>
