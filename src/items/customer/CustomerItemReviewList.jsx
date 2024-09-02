@@ -78,7 +78,7 @@ const CustomerItemReviewList = (props) => {
                         height: "35px",
                         border: "0px"*/}
                       {/*<img src={"/images/star2.png"} style={{background: "url('/images/star2.png') 0px 0px / 40px 40px no-repeat", backgroundSize: "40px 40px", width: "40px", height: "40px", border: "0px"}}/>*/}
-                      <a href={"/item/detail/" + itemWithReviewed.itemId}>
+                      <a href={"/items/detail/" + itemWithReviewed.itemId}>
                         <img src={"/attachment/" + itemWithReviewed.imageIdForThumbnail}
                              style={{width: "60px", height: "60px", border: "0px"}}
                              className={"mt-3 mb-3"}/>

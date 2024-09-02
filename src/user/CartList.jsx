@@ -100,7 +100,7 @@ const CartList = (props) => {
                           <img className={"w-100"} src={"/attachment/" + thumbnailMap[bookmark.itemId]} alt="상품이미지"/>
                         </Col>
                         <Col xs="8" className={"d-flex align-items-center"}>
-                          <a className={"d-block w-100 text-center"} href={"/item/detail/" + bookmark.itemId}>
+                          <a className={"d-block w-100 text-center"} href={"/items/detail/" + bookmark.itemId}>
                             {itemMap[bookmark.itemId].nameKor}
                           </a>
                         </Col>

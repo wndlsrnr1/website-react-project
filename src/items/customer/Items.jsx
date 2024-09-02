@@ -138,7 +138,7 @@ const Items = (props) => {
                 return (
                   <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}
                        key={item.price + (idx) * 100}>
-                    <a href={"/item/detail/" + item.itemId}>
+                    <a href={"/items/detail/" + item.itemId}>
                       <img src={"/attachment/" + item.attachmentIdForThumbnail} style={{height: "200px"}}/>
                     </a>
                     <div>

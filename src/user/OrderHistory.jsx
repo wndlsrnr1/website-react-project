@@ -214,7 +214,7 @@ const OrderHistory = (props) => {
                   <tr key={purchases.orderNumber + idx}>
                     <th scope="row">{idx + 1}</th>
                     <td>{purchases.orderNumber}</td>
-                    <td><a href={"/item/detail/" + purchases.itemId}>{purchases.itemNameKor}</a></td>
+                    <td><a href={"/items/detail/" + purchases.itemId}>{purchases.itemNameKor}</a></td>
                     {/*<td>{purchases.imageIdForThumbnail}</td>*/}
                     <td>{statusObj[purchases.status]}</td>
                     <td>{purchases.totalAmount}</td>
