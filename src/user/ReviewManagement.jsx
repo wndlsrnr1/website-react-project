@@ -19,7 +19,7 @@ import {removeDuplicated} from "../utils/arrayUtils";
 import Star from "../common/Star";
 
 
-const ReviewAndCommentManagement = () => {
+const ReviewManagement = () => {
   //variables
   const [reviews, setReviews] = useState([]);
   const [editingReviewId, setEditingReviewId] = useState(null);
@@ -28,7 +28,7 @@ const ReviewAndCommentManagement = () => {
   const [isFirstFetch, setIsFirstFetch] = useState(true);
 
   //searching variable
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(10);
   const [nextSearchAfter, setNextSearchAfter] = useState(null);
   const [withTotalCount, setWithTotalCount] = useState(false);
   const [sortType, setSortType] = useState("RECENT");
@@ -48,15 +48,11 @@ const ReviewAndCommentManagement = () => {
 
   }, [reviews]);
 
-  useEffect(() => {
-    console.log("editingStars", editingStars);
-  }, [editingStars]);
 
 
   //onClicks
 
   const handleStarClick = (stars) => {
-    console.log("starts", stars);
     setEditingStars(stars);
   };
 
@@ -118,7 +114,6 @@ const ReviewAndCommentManagement = () => {
         const reviewsForUpdate = items.map((item, idx) => {
           return {...item, "item": itemMap[item.itemId], "thumbnail": thumbnailIdMap[item.itemId]}
         });
-        console.log("reviewsForUpdate", reviewsForUpdate);
         setReviews(reviewsForUpdate);
       } else {
         console.error("Failed to fetch reviews");
@@ -138,7 +133,7 @@ const ReviewAndCommentManagement = () => {
         console.error("리뷰 삭제하는 중 오류가 생겼습니다.");
       }
     } catch (error) {
-      console.error("Error deleting review", error);
+      console.error("리뷰 삭제하는 중 오류가 생겼습니다", error);
     }
   };
 
@@ -175,6 +170,7 @@ const ReviewAndCommentManagement = () => {
                        onClick={() => setStarOnClick(idx)}
                     />
    */
+
   const renderStars = (stars, isEditable = false) => {
     const starElements = [];
     for (let i = 0; i < 5; i++) {
@@ -300,4 +296,4 @@ const ReviewAndCommentManagement = () => {
     </Container>
   );
 }
-export default ReviewAndCommentManagement;
+export default ReviewManagement;
