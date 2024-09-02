@@ -23,8 +23,6 @@ const CustomerComments = (props) => {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
   const [selectedComment, setSelectedComment] = useState(null);
-  const [userMap, setUserMap] = useState(null);
-  const [itemMap, setItemMap] = useState(null);
   const [commentToAnswer, setCommentToAnswer] = useState(null);
   const [answers, setAnswers] = useState(null);
   const [errors, setErrors] = useState(null);
@@ -43,10 +41,10 @@ const CustomerComments = (props) => {
   }, []);
 
   useEffect(() => {
-    if (answers && commentToAnswer && userMap && itemMap && comments.length > 0) {
+    if (answers && commentToAnswer && comments.length > 0) {
       setLoading(false);
     }
-  }, [userMap, itemMap, comments]);
+  }, [comments]);
 
   useEffect(() => {
     setErrors(null);
@@ -60,13 +58,13 @@ const CustomerComments = (props) => {
 
   //requests
 
-  const getCustomerComments = async () => {
+  const getCustomerComments = async (isFirstPage) => {
     setLoading(true);
     try {
       let url = "/admin/comments";
       url += "?size="+size;
       url += "&sortType="+sorType;
-      if (nextSearchAfter !== null) {
+      if (nextSearchAfter !== null && !isFirstPage) {
         url += "&nextSearchAfter="+nextSearchAfter;
       }
       url += "&isNoneWithAnswer="+isNoneWithAnswer;
@@ -78,15 +76,11 @@ const CustomerComments = (props) => {
       }
 
       const data = await commentsResponse.json();
-      setComments(data.body.items);
-      setNextSearchAfter(data.body.nextSearchAfter);
-
-
       const commentToAnswerObj = {};
+
       data.body.items.forEach((comment, idx) => {
         commentToAnswerObj[comment.commentId] = comment.answerId;
       });
-      setCommentToAnswer(commentToAnswerObj);
 
       const commentExistsAnswer = data.body.items.filter((comment, idx) => {
         return comment.answerId;
@@ -94,32 +88,35 @@ const CustomerComments = (props) => {
         return {"commentId": comment.commentId, "answerId": comment.answerId};
       });
 
-      console.log("commentExistsAnswer", commentExistsAnswer);
       const answerResponse = await Promise.all(commentExistsAnswer.map(elem => fetchWithAuth(`/admin/comments/${elem.commentId}/answers`, {method: "GET"}, true)));
       const answerNew = getKeyMapObject("commentId", answerResponse);
-      setAnswers(answerNew);
-
-      console.log("commentToAnswerObj", commentToAnswerObj)
-
       let itemIdArray = data.body.items.map((elem) => elem.itemId);
+
       itemIdArray = removeDuplicated(itemIdArray);
       const itemResponse = await Promise.all(
         itemIdArray.map((itemId, idx) => {
           return fetchWithAuth("/admin/items/v2/" + itemId, {method: "GET"}, true);
         })
       );
-
-      setItemMap(getKeyMapObject("id", itemResponse));
-
       let userList = data.body.items.map((comment, idx) => comment.userId);
-      userList = removeDuplicated(userList);
 
+      userList = removeDuplicated(userList);
       const userResponse = await Promise.all(
         userList.map((userId, idx) => {
           return fetchWithAuth("/admin/users/" + userId, {method: "GET"}, true);
         })
       );
-      setUserMap(getKeyMapObject("userId", userResponse));
+
+      const itemMap = getKeyMapObject("id", itemResponse);
+      const userMap = getKeyMapObject("userId", userResponse);
+      const commentsForUpdate = data.body.items.map((elem) => {
+        return {...elem, item: itemMap[elem.itemId], user: userMap[elem.userId]};
+      });
+
+      setNextSearchAfter(data.body.nextSearchAfter);
+      setCommentToAnswer(commentToAnswerObj);
+      setAnswers(answerNew);
+      setComments(commentsForUpdate);
 
     } catch (error) {
       console.error("An error occurred while fetching customer comments", error);
@@ -143,7 +140,7 @@ const CustomerComments = (props) => {
           alert("Answer sent successfully");
           setContent("");
           setSelectedComment(null);
-          getCustomerComments(); // Refresh comments
+          getCustomerComments(true); // Refresh comments
         } else {
           response.json().then(data => {
             setErrors(data.body);
@@ -163,7 +160,7 @@ const CustomerComments = (props) => {
       const response = await fetchWithAuth(`/admin/comments/${commentId}/answers`, {method: "DELETE"});
       if (response.ok) {
         alert("Comment deleted successfully");
-        getCustomerComments(); // Refresh comments
+        getCustomerComments(true); // Refresh comments
       } else {
         console.error("Failed to delete comment");
       }
@@ -188,12 +185,11 @@ const CustomerComments = (props) => {
                   comments.map((comment) => (
                     <li key={comment.commentId} className="mb-3">
                       <Row className="border pb-2 pt-2">
-
                         <Col xs="8">
-                          <p><strong>{userMap[comment.userId]["username"]}</strong>: {comment.commentContent}</p>
+                          <p><strong>{comment.user.username}</strong>: {comment.commentContent}</p>
                           <p>
                             <a href={"/items/detail/" + comment.itemId}>
-                              <strong>제품</strong>: {itemMap[comment.itemId]["nameKor"]}
+                              <strong>제품</strong>: {comment.item.nameKor}
                             </a>
                           </p>
                           {comment.commentId  && comment.answerId && answers[comment.commentId] && (
@@ -226,7 +222,7 @@ const CustomerComments = (props) => {
               <ButtonGroup className={"d-flex justify-content-center"}>
                 {
                   nextSearchAfter &&
-                  <Button className={"bg-primary"} onClick={getCustomerComments}>다음</Button>
+                  <Button className={"bg-primary"} onClick={() => getCustomerComments(false)}>다음</Button>
                 }
               </ButtonGroup>
             </>
