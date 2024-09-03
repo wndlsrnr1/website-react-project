@@ -31,7 +31,6 @@ const ItemList = () => {
   //hooks
   const isDiscountRatio = (itemObject) => {
     const saleRate = itemObject?.saleRate;
-    console.log("discountRatio", saleRate)
     if (!saleRate) {
       return false;
     }
@@ -118,7 +117,6 @@ const ItemList = () => {
     fetchWithAuth(url)
       .then(resp => resp.json())
       .then(data => {
-        console.log(data);
         setPage(data.data.number);
         if (data.data.content.length > 0) {
           setLastItemId(parseInt(data.data.content[data.data.content.length - 1]["id"]));
@@ -126,8 +124,6 @@ const ItemList = () => {
         setTotalItems(data.data.totalElements);
         setItemList([...data.data.content])
         setTotalPages(data.data.totalPages);
-        console.log("page", data.data.number);
-        console.log("totalElements", data.data.totalElements);
 
       });
   }
@@ -143,7 +139,6 @@ const ItemList = () => {
     fetchWithAuth(url)
       .then(resp => resp.json())
       .then(data => {
-        console.log(data);
         setPage(data.data.number);
         setLastItemId(parseInt(data.data.content[data.data.content.length - 1]["id"]));
         setTotalItems(data.data.totalElements);

@@ -67,7 +67,6 @@ const HomeCarousel = (args) => {
     fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
-        console.log(data.data);
         setHomeCarousels(data.data);
         /*
          src: 'https://picsum.photos/id/123/1200/400',

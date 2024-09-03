@@ -52,25 +52,20 @@ const CartList = (props) => {
       const bookmarkResponse = await fetchWithAuth("/bookmarks", {method: "GET"}, true);
       const itemResponse = await Promise.all(bookmarkResponse.body.map((bookmark, idx) => fetchWithAuth("/item/basic/" + bookmark.itemId, {}, true)));
       const thumbnailResponse = await Promise.all(itemResponse.map((item, idx) => fetchWithAuth("/item/thumbnail/?itemId=" + item.data.itemId, {}, true)));
-      console.log("bookmarkResponse", bookmarkResponse);
       setBookmarkItemList(bookmarkResponse.body);
-      console.log("itemResponse", itemResponse);
       const itemMapObj = {};
       itemResponse.forEach((itemResp, idx) => {
         const item = itemResp.data;
         itemMapObj[item.itemId] = {"name": item.name, "nameKor": item.nameKor};
       });
-      console.log("itemMapObj", itemMapObj);
       setItemMap(itemMapObj);
 
       const thumbnailMapObj = {};
-      console.log("thumbnailResponse", thumbnailResponse);
       thumbnailResponse.forEach((resp, idx) => {
         const thumbnail = resp.data;
         thumbnailMapObj[thumbnail.itemId] = thumbnail.fileId;
       });
       setThumbnailMap(thumbnailMapObj);
-      console.log("thumbnailMapObj", thumbnailMapObj);
     }
 
     const bookmarkRequest = async () => {

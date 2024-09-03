@@ -76,9 +76,7 @@ const CommentManagement = (props) => {
       const data = await response.json();
       setNextSearchAfter(data.body.nextSearchAfter);
       const items = data.body.items;
-      console.log("items", items);
       const itemIdList = removeDuplicated(items.map((item) => item.itemId));
-      console.log("itemIdList", itemIdList);
       const commentIdList = removeDuplicated(items.map((e) => e.id));
       const thumbnailResponse = await Promise.all(itemIdList.map((itemId) =>
           fetchWithAuth("/item/thumbnail?itemId=" + itemId,
@@ -108,7 +106,6 @@ const CommentManagement = (props) => {
         return {...item, "item": itemMap[item.itemId], "imageId": thumbnailIdMap[item.itemId]}
       });
 
-      console.log("commentForUpdate", commentForUpdate);
       setComments(commentForUpdate);
 
 

@@ -261,11 +261,9 @@ const SubcategoryManage = () => {
     if (selectedCategoryId === -1) {
       return;
     }
-    console.log("??")
     formData.append("categoryId", selectedCategoryId);
     formData.append("name", nameInputSubcategoryAdd)
     formData.append("nameKor", nameKorInputSubcategoryAdd);
-    console.log("????????????")
     requestSubcategoryAdd(formData, "/admin/subcategory/create");
   }
 
@@ -291,7 +289,6 @@ const SubcategoryManage = () => {
       return;
     }
     const path = `/admin/subcategory/delete`;
-    console.log(path);
     requestSubcategoryDelete(path, selectedSubcategoryId);
     setSelectedSubcategoryId(-1);
   }

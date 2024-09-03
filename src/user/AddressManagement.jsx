@@ -26,7 +26,6 @@ const AddressManagement = (props) => {
   //useEffects
   useEffect(() => {
     if (loaded) return false;
-    console.log(props);
     setLoaded(true);
   }, []);
 

@@ -61,7 +61,6 @@ const ItemCustomerDetail = () => {
   //useEffects
 
   useEffect(() => {
-    console.log("itemId", itemId)
     if (loaded) {
       return;
     }

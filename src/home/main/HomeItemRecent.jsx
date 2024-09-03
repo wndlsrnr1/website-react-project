@@ -15,7 +15,6 @@ const HomeItemRecent = () => {
 
   const isDiscountRatio = (itemObject) => {
     const discountRatio = itemObject?.discountRatio;
-    console.log("discountRatio", discountRatio)
     if (!discountRatio) {
       return false;
     }

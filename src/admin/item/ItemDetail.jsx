@@ -113,7 +113,6 @@ const ItemDetail = (props) => {
         if (!data?.data) {
           return;
         }
-        console.log("data.data.fileId", data.data.fileId);
         setSelectedThumbNail(parseInt(data.data.fileId));
       });
   }
@@ -165,8 +164,6 @@ const ItemDetail = (props) => {
   useEffect(() => {
 
     const thumbNailImageObj = images.filter((img, idx) => {
-      console.log(img.fileId);
-      console.log(selectedThumbNail);
       return parseInt(img.fileId) === selectedThumbNail
     })[0];
     setThumbnailImage(thumbNailImageObj);

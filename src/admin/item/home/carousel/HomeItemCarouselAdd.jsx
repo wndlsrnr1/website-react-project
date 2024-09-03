@@ -66,7 +66,6 @@ const HomeItemCarouselAdd = () => {
     fetchWithAuth("/admin/categories", {method: "get"})
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         setCategories(data.data.content);
       });
   }
@@ -89,7 +88,6 @@ const HomeItemCarouselAdd = () => {
           imageObj.savedFileName = datum.savedFileName;
           imagesUpdated.push(imageObj);
         }
-        console.log("imageObj", imagesUpdated);
         setImages(imagesUpdated);
       });
   }
@@ -109,7 +107,6 @@ const HomeItemCarouselAdd = () => {
         }
       })
       .then(data => {
-        console.log(data);
       });
   };
 
@@ -142,7 +139,6 @@ const HomeItemCarouselAdd = () => {
     if (searchName) {
       searchCondObjUpdated["searchName"] = searchName
     }
-    console.log(searchCondObjUpdated);
     setSearchCondObj(searchCondObjUpdated)
     setSubmitted(false);
   }, [submitted])
@@ -161,10 +157,6 @@ const HomeItemCarouselAdd = () => {
   useEffect(() => {
     itemRequest(selectedItemId);
   }, [selectedItemId]);
-
-  useEffect(() => {
-    console.log("images", images.length);
-  }, [images]);
 
   //onClicks
 
@@ -205,7 +197,6 @@ const HomeItemCarouselAdd = () => {
       const value = obj[key];
       path += "&" + key + "=" + value;
     });
-    console.log(path);
     itemsRequest(path);
     setSearchCondObj(obj);
   }

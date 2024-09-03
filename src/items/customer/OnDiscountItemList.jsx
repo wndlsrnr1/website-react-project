@@ -89,7 +89,6 @@ const OnDiscountItemList = () => {
           console.error("error");
         } else {
           resp.json().then(data => {
-            console.log("asdf", data);
             const newVar = [...itemList, ...data.body.items];
             setItemList(newVar);
             setSearchAfter(data.body.nextSearchAfter);
