@@ -126,6 +126,7 @@ const CustomerComments = (props) => {
   // Handle answer to a customer comment
   const handleAnswerSubmit = async (e) => {
     e.preventDefault();
+
     if (selectedComment && content) {
       try {
         const response = await fetchWithAuth(`/admin/comments/${selectedComment.commentId}/answers`, {

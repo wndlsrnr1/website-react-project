@@ -17,6 +17,7 @@ const PrivateRoute = ({component: Component, ...rest}) => {
   }, []);
 
 
+
   const checkAdminStatus = async () => {
     try {
       const response = await fetchWithAuth("/auth/users", {method: "get"});
@@ -27,6 +28,7 @@ const PrivateRoute = ({component: Component, ...rest}) => {
         setIsAdmin(true);
         setLoading(false);
       }
+
     } catch (error) {
       console.error("Error checking admin status", error);
       setIsAdmin(false);
