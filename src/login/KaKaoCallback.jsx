@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
 import {useParams} from "react-router-dom";
-import {login, logout} from "../utils/LoginUtils";
+import {login, logout, SOCIAL_TYPE} from "../utils/LoginUtils";
 
 const KaKaoCallback = () => {
   const {method} = useParams();
@@ -65,7 +65,7 @@ const KaKaoCallback = () => {
     })
       .then((resp) => {
         if (resp.ok) {
-          resp.json().then(data => login(localStorage, data.body));
+          resp.json().then(data => login(sessionStorage, data.body, SOCIAL_TYPE.KAKAO));
           window.location.href = "/";
         } else {
           alert("로그인 실패");
@@ -83,10 +83,10 @@ const KaKaoCallback = () => {
     })
       .then((resp) => {
         if (resp.ok) {
-          logout(localStorage);
+          logout(sessionStorage);
           window.location.href = "/";
         } else {
-          logout(localStorage);
+          logout(sessionStorage);
           alert("logout 실패");
           window.location.href = "/";
         }
@@ -102,7 +102,7 @@ const KaKaoCallback = () => {
     })
       .then((resp) => {
         if (resp.ok) {
-          logout(localStorage);
+          logout(sessionStorage);
           window.location.href = "/";
         } else {
           alert("회원 탈퇴 실패");

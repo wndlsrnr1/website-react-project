@@ -193,7 +193,7 @@ const OrderHistory = (props) => {
   return (
     <Card className="mb-4">
       <CardBody>
-        <CardTitle tag="h4">Order History</CardTitle>
+        <CardTitle tag="h4" className={"text-center"}>주문 기록</CardTitle>
         <Table responsive>
           <thead>
           <tr>

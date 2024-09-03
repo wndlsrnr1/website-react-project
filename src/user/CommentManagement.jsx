@@ -175,7 +175,7 @@ const CommentManagement = (props) => {
   }
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-5 mb-5">
       <h2 className="text-center mb-4">문의 관리</h2>
       {
         comments.length !== 0 ? comments.map((comment) => (

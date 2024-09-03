@@ -3,7 +3,7 @@ import categories from "../common/Categories";
 
 export const fetchWithAuth = async (url, options = {}, serial) => {
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const headers = options.headers || {};
   if (token) {

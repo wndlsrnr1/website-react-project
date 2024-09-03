@@ -2,12 +2,12 @@ import {Button, Col, Container, Form, Input, ListGroup, ListGroupItem, Nav, NavI
 import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import logo from "../images/logo.jpg"
-import {checkLogin, handleLogout} from "../utils/LoginUtils";
+import {checkLogin, getLoginType, handleLogout, logout, SOCIAL_TYPE} from "../utils/LoginUtils";
 import {fetchWithAuth} from "../utils/fetchUtils";
 
 const Header = () => {
   //variables
-  const isLogin = checkLogin(localStorage);
+  const isLogin = checkLogin(sessionStorage);
   const [searchNameValue, setSearchNameValue] = useState("");
 
   //hooks
@@ -32,6 +32,31 @@ const Header = () => {
 
   //requests
 
+  //renders
+  const renderLogout = () => {
+    const loginType = getLoginType(sessionStorage);
+    switch (loginType) {
+      case SOCIAL_TYPE.KAKAO: {
+        return (
+          <NavItem>
+            <NavLink href={"/logout"} onClick={handleLogout}>로그아웃</NavLink>
+          </NavItem>
+        )
+      }
+      case SOCIAL_TYPE.NONE: {
+        return (
+          <NavItem>
+            <NavLink href={"/logout"} onClick={() => {
+              logout(sessionStorage)
+              window.location.href = "/";
+            }}>로그아웃</NavLink>
+          </NavItem>
+        );
+      }
+    }
+
+  }
+
   return (
     <>
       <Container className={"d-flex flex-column"}>
@@ -39,35 +64,29 @@ const Header = () => {
           <div className={""}>
             <Nav className={""}>
               {
-                (
+                !isLogin ? (
                   <>
-                    {isLogin === false ? (
-                      <>
-                        <NavItem className={"small text-dark"}>
-                          <NavLink href="/login">로그인</NavLink>
-                        </NavItem>
-                        <NavItem className={"small"}>
-                          <NavLink href="/join">회원가입</NavLink>
-                        </NavItem>
-                      </>
-                    ) : (
-                      <>
-                        <NavItem className={"small"}>
-                          <NavLink onClick={handleLogout}>로그아웃</NavLink>
-                        </NavItem>
-                      </>
-                    )
-                    }
+                    <NavItem className={"small text-dark"}>
+                      <NavLink href="/login">로그인</NavLink>
+                    </NavItem>
+                    <NavItem className={"small"}>
+                      <NavLink href="/join">회원가입</NavLink>
+                    </NavItem>
+                  </>
+                ) : (
+                  <>
+                    {renderLogout()}
+                    <NavItem className={"small"}>
+                      <NavLink href={"/users/profile"}>마이페이지</NavLink>
+                    </NavItem>
+                    <NavItem className={"small"}>
+                      <NavLink href="">장바구니</NavLink>
+                    </NavItem>
                   </>
                 )
               }
 
-              <NavItem className={"small"}>
-                <NavLink href={"/users/profile"}>마이페이지</NavLink>
-              </NavItem>
-              <NavItem className={"small"}>
-                <NavLink href="">장바구니</NavLink>
-              </NavItem>
+
               <NavItem className={"small"}>
                 <NavLink href="">고객센터</NavLink>
               </NavItem>
