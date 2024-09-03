@@ -51,7 +51,7 @@ const ProductReviews = (props) => {
   }
 
   const moveMyPage = () => {
-    if (!checkLogin(localStorage)) {
+    if (!checkLogin(sessionStorage)) {
       window.location.href = "/login";
       return;
     }

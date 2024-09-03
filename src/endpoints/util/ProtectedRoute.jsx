@@ -8,7 +8,7 @@ const PrivateRoute = ({component: Component, ...rest}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!checkLogin(localStorage)) {
+    if (!checkLogin(sessionStorage)) {
       setIsAdmin(false);
       return;
     }

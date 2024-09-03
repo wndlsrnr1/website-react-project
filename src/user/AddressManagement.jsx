@@ -81,7 +81,7 @@ const AddressManagement = (props) => {
   return (
     <Card className="mb-4">
       <CardBody>
-        <CardTitle tag="h4">주소 관리</CardTitle>
+        <CardTitle tag="h4" clsssName={"text-center"}>주소 관리</CardTitle>
         <Form onSubmit={addressUpdateOnSubmit}>
           <FormGroup>
             <Label for="address">주소</Label>

@@ -88,7 +88,7 @@ const CartList = (props) => {
     return (
       <Card className="mb-4">
         <CardBody>
-          <CardTitle tag="h4">장바구니</CardTitle>
+          <CardTitle tag="h4" className={"text-center"}>장바구니</CardTitle>
           <ul className="list-unstyled">
             {
               bookmarkItemList.length !== 0 ?
@@ -114,10 +114,11 @@ const CartList = (props) => {
                 : (
                   <li>
                     <Row>
-                      <Col xs="8">Product Name 1</Col>
-                      <Col xs="4">
-                        <Button color="danger" size="sm">Remove</Button>
+                      <Col xs="2"/>
+                      <Col xs="6">
+                        장바구니 목록이 없습니다
                       </Col>
+                      <Col xs="4"/>
                     </Row>
                   </li>
                 )

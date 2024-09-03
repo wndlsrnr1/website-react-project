@@ -13,7 +13,7 @@ import {
   FormGroup,
   Label,
   Input,
-  Table,
+  Table, ButtonGroup,
 } from 'reactstrap';
 import UserInfo from "./UserInfo";
 import PasswordManagement from "./PasswordManagement";
@@ -21,9 +21,10 @@ import AddressManagement from "./AddressManagement";
 import OrderHistory from "./OrderHistory";
 import CartList from "./CartList";
 import ReviewManagement from "./ReviewManagement";
-import {checkLogin, handleDelete} from "../utils/LoginUtils";
+import {checkLogin, getLoginType, handleDelete, SOCIAL_TYPE} from "../utils/LoginUtils";
 import {fetchWithAuth} from "../utils/fetchUtils";
 import CommentManagement from "./CommentManagement";
+import CancelMembership from "./CancelMembership";
 
 
 const UserProfile = () => {
@@ -37,7 +38,7 @@ const UserProfile = () => {
 
   //useEffects
   useEffect(() => {
-    if (!checkLogin(localStorage)) {
+    if (!checkLogin(sessionStorage)) {
       window.history.back();
     }
 
@@ -68,11 +69,29 @@ const UserProfile = () => {
       });
   }
 
+  // render
+  const renderCancelPage = () => {
+    switch (getLoginType(sessionStorage)) {
+      case SOCIAL_TYPE.KAKAO: {
+        return (
+          <ButtonGroup>
+            <Button tag={"a"} className={"bg-danger"} onClick={handleDelete}>탈퇴하기</Button>
+          </ButtonGroup>
+        );
+      }
+      case SOCIAL_TYPE.NONE: {
+        return (<CancelMembership/>);
+      }
+      default: {
+        return null;
+      }
+    }
+  }
+
 
   return (
     <Container className="my-5">
       <h2 className={"text-center mb-4"}>회원 정보 관리</h2>
-      <Button onClick={handleDelete}>카카오 회원 탈퇴하기</Button>
       <Row>
         <Col md={{size: 8, offset: 2}}>
           {/* Personal Information Section */}
@@ -81,13 +100,13 @@ const UserProfile = () => {
           {userInfo !== null && userInfo.socialType === "NONE" ? <PasswordManagement userInfo={userInfo}/> : null}
 
           {/* Address Management Section */}
-          {userInfo !== null  ? <AddressManagement userInfo={userInfo}/> : null}
+          {userInfo !== null ? <AddressManagement userInfo={userInfo}/> : null}
 
           {/* Order History Section */}
-          {userInfo !== null  ? <OrderHistory userInfo={userInfo}/> : null}
+          {userInfo !== null ? <OrderHistory userInfo={userInfo}/> : null}
 
           {/* Wishlist or Saved List Section */}
-          {userInfo !== null  ? <CartList userInfo={userInfo}/> : null}
+          {userInfo !== null ? <CartList userInfo={userInfo}/> : null}
 
           {/* Review Management Section */}
           <ReviewManagement/>
@@ -95,6 +114,7 @@ const UserProfile = () => {
           {/* Question Management Section */}
           <CommentManagement/>
 
+          {renderCancelPage()}
         </Col>
       </Row>
     </Container>

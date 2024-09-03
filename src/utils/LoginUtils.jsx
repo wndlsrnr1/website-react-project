@@ -20,20 +20,30 @@ export const handleDelete = () => {
   window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${API_KEY}&redirect_uri=${DELETE_REDIRECT_URI}&response_type=code`;
 }
 
-export const checkLogin = (localStorageParam) => {
-  const token = localStorageParam.getItem('token');
+export const checkLogin = (sessionStorageParam) => {
+  const token = sessionStorageParam.getItem('token');
   return !!token;
 }
 
-export const login = (localStorageParam, tokenValue) => {
-  localStorageParam.setItem("token", tokenValue);
+export const login = (sessionStorageParam, tokenValue, socialType) => {
+  sessionStorageParam.setItem("token", tokenValue);
+  sessionStorageParam.setItem("socialType", socialType);
 }
 
-export const logout = (localStorageParam) => {
-  localStorageParam.removeItem('token');
+export const logout = (sessionStorageParam) => {
+  sessionStorageParam.removeItem('token');
+  sessionStorageParam.removeItem("socialType");
 }
 
+export const getLoginType = (sessionStorageParam) => {
+  return sessionStorageParam.getItem("socialType");
+}
 
 export const getKakaoAuthUrl = (apiKey, redirectUrl) => {
   return `https://kauth.kakao.com/oauth/authorize?client_id=${apiKey}&redirect_uri=${redirectUrl}&response_type=code`;
 }
+
+export const SOCIAL_TYPE = {
+  "KAKAO": "KAKAO",
+  "NONE": "NONE"
+};

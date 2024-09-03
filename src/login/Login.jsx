@@ -2,7 +2,7 @@ import {Button, Col, Container, Form, Input, InputGroup, InputGroupText} from "r
 import logo from '../images/logo.jpg'
 import {useContext, useEffect, useReducer, useRef, useState} from "react";
 import {fetchWithAuth} from "../utils/fetchUtils";
-import {handleLogin, login} from "../utils/LoginUtils";
+import {handleLogin, login, SOCIAL_TYPE} from "../utils/LoginUtils";
 
 const Login = () => {
 
@@ -61,7 +61,7 @@ const Login = () => {
       .then((resp) => {
           if (resp.status === 200) {
             resp.json().then((data) => {
-              login(localStorage, data.body);
+              login(sessionStorage, data.body, SOCIAL_TYPE.NONE);
               window.location.href = "/";
             });
             return;
