@@ -6,8 +6,8 @@ import {handleLogin, login, SOCIAL_TYPE} from "../utils/LoginUtils";
 
 const Login = () => {
 
-  const [password, setPassword] = useState("anyPassword!@ASD213");
-  const [email, setEmail] = useState("example3@naver.com");
+  const [password, setPassword] = useState("12#$qwER");
+  const [email, setEmail] = useState("user@naver.com");
   const [error, setError] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [loaded, setLoaded] = useState(false);
@@ -122,7 +122,7 @@ const Login = () => {
                 <Button tag={"a"} className={"w-100 mb-3 bg-gradient"} href={"/join"}>회원가입</Button>
               </div>
               <div>
-                <a href={"/member/find"} className={"w-100 d-block text-end"}>비밀번호 찾기</a>
+                <a href={"/users/find"} className={"w-100 d-block text-end"}>비밀번호 찾기</a>
               </div>
             </Form>
           </div>

@@ -80,7 +80,7 @@ const Header = () => {
                       <NavLink href={"/users/profile"}>마이페이지</NavLink>
                     </NavItem>
                     <NavItem className={"small"}>
-                      <NavLink href="">장바구니</NavLink>
+                      <NavLink href="/users/profile">장바구니</NavLink>
                     </NavItem>
                   </>
                 )

@@ -26,7 +26,7 @@ const CommentManagement = (props) => {
   const [isFirstFetch, setIsFirstFetch] = useState(true);
 
   //searching variable
-  const [size, setSize] = useState(1);
+  const [size, setSize] = useState(5);
   const [nextSearchAfter, setNextSearchAfter] = useState(null);
   const [withTotalCount, setWithTotalCount] = useState(false);
   const [sortType, setSortType] = useState("RECENT");
@@ -57,12 +57,12 @@ const CommentManagement = (props) => {
   //onChanges
 
   //requests
-  const loadComments = async () => {
+  const loadComments = async (reset) => {
     try {
       //todo: implement method
       let url = "/v2/comments/me";
       url += "?size=" + size;
-      if (nextSearchAfter !== null) {
+      if (nextSearchAfter !== null && !reset) {
         url += "&nextSearchAfter=" + nextSearchAfter;
       }
       url += "&withTotalCount=" + withTotalCount;
@@ -119,7 +119,7 @@ const CommentManagement = (props) => {
       const response = await fetchWithAuth(`/comments/${commentId}`, {method: "DELETE"});
       if (response.ok) {
         alert("문의가 성공적으로 삭제되었습니다.");
-        loadComments();
+        loadComments(true);
       } else {
         console.error("문의 삭제하는 중 오류가 생겼습니다.");
       }

@@ -124,7 +124,6 @@ const ItemAdd = () => {
   const submitRequest = (url) => {
     const formData = new FormData();
     const updatedReleasedAt = getFormattedDateTime(releasedAtDate, releasedAtTime);
-
     formData.append("categoryId", categoryId);
     formData.append("subcategoryId", subcategoryId);
     formData.append("nameKor", nameKor);
@@ -148,10 +147,10 @@ const ItemAdd = () => {
     formData.append("manufacturer", manufacturer);
     formData.append("madeIn", madeIn);
 
-
     fetchWithAuth(url, {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
+          return;
           window.location.href = "/admin/items";
         } else {
           return resp.json();
