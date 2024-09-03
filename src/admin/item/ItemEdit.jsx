@@ -184,7 +184,6 @@ const ItemEdit = () => {
         setItemDescription(description);
         setSelectedSubcategory(subcategory);
         setItemQuantity(quantity);
-        console.log(subcategory);
         if (data?.data) {
           //이 형태로 다 바꾸어서 넣기ㅎㅎ
           const mappedArray = data.data.map((datum, idx) => {
@@ -247,7 +246,6 @@ const ItemEdit = () => {
           }
           return img;
         });
-        console.log("newArr", newArr);
         setImageList(newArr);
       });
   }
@@ -409,7 +407,6 @@ const ItemEdit = () => {
     if (!selectedSubcategory) {
       return;
     }
-    console.log(selectedSubcategory);
     requestCategory(selectedSubcategory.id);
   }, [selectedSubcategory]);
 
@@ -418,7 +415,6 @@ const ItemEdit = () => {
       let sort = imageList.sort((img1, img2) => {
         return sequenceList[img1.content.fileId] - sequenceList[img2.content.fileId];
       });
-      console.log("sorted", sort);
       setImageList(sort);
       requestThumbNail();
       setDefaultThumbnail(true);
@@ -436,7 +432,6 @@ const ItemEdit = () => {
 
   //onClicks
   const deleteImagesOnClick = (type, idxParam) => {
-    console.log("type", type);
     if (type === "update") {
       const newImageList = imageList.map((img, idx) => {
         if (img.type === "update" && idx === idxParam) {
@@ -446,10 +441,8 @@ const ItemEdit = () => {
         return img;
       });
       setImageList(newImageList);
-      console.log(newImageList);
     } else if (type === "upload") {
       const newImageList = imageList.filter((img, idx) => idx !== idxParam);
-      console.log("newImageList", newImageList);
       setImageList(newImageList);
     }
   }
@@ -481,7 +474,6 @@ const ItemEdit = () => {
       let newArr2 = Array.from(files).map((file, idx) => {
         return {type: "upload", content: file};
       });
-      console.log("asdf", newArr2);
       setImageList(newArr1.concat(newArr2));
     }
   }

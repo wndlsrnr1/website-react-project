@@ -61,7 +61,6 @@ const ItemCustomerDetail = () => {
   //useEffects
 
   useEffect(() => {
-    console.log("itemId", itemId)
     if (loaded) {
       return;
     }
@@ -203,7 +202,6 @@ const ItemCustomerDetail = () => {
                     onClick={() => onclickPageButton(pageValueConst.reviews)}>상품후기</Button>
             <Button className={"me-2"} page-value={pageValueConst.inquiry}
                     onClick={() => onclickPageButton(pageValueConst.inquiry)}>상품문의</Button>
-            <Button onClick={addBookmarkOnClick}>장바구니</Button>
           </ButtonGroup>
         </div>
         {
@@ -213,8 +211,10 @@ const ItemCustomerDetail = () => {
 
         }
         <ButtonGroup className={"d-flex justify-content-center"}>
-          <Button className={"me-2 bg-primary"}>장바구니</Button>
-          <Button className={"bg-primary"}>바로구매</Button>
+          <Button className={"me-2 bg-primary"} onClick={addBookmarkOnClick}>장바구니</Button>
+          <Button className={"bg-primary"} onClick={() => {
+            alert("미구현")
+          }}>바로구매</Button>
         </ButtonGroup>
 
       </Container>

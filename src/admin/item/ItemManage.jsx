@@ -41,7 +41,6 @@ const ItemManage = () => {
   //requests
 
   const itemsRequest = (path) => {
-    console.log("path", path);
     fetchWithAuth(path, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
@@ -60,7 +59,6 @@ const ItemManage = () => {
     fetchWithAuth("/admin/categories", {method: "get"})
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         setCategories(data.data.content);
       });
   }
@@ -94,7 +92,6 @@ const ItemManage = () => {
     if (searchName) {
       searchCondObjUpdated["searchName"] = searchName
     }
-    console.log(searchCondObjUpdated);
     setSearchCondObj(searchCondObjUpdated)
     setSubmitted(false);
 

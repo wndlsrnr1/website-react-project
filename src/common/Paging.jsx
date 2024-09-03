@@ -63,7 +63,6 @@ const Paging = (props) => {
   //onClicks
 // &lastItemId=${pageNumber}&lastPageNumber=${pageNumber}&pageChunk=${pageGroupSize}
   const move = (targetPage) => {
-    console.log(parameterOption);
     let path = requestDomain + entry("page", targetPage, true) + entry("size", pageSize) + entry("lastItemId", lastItemId) + entry("lastPageNumber", lastPageNumber) + entry("pageChunk", pageGroupSize);
     Object.keys(parameterOption).forEach((key, idx) => {
       const value = parameterOption[key];
@@ -75,7 +74,6 @@ const Paging = (props) => {
   }
 
   const moveLast = () => {
-    console.log(parameterOption);
     let path = requestDomain + `?isLastPage=${true}&size=${pageSize}`;
     Object.keys(parameterOption).forEach((key, idx) => {
       const value = parameterOption[key];

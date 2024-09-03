@@ -60,8 +60,6 @@ const HomeItemCarouselDetail = () => {
     fetchWithAuth("/admin/home/carousels/" + carouselId)
       .then(resp => resp.json())
       .then(data => {
-        console.log(data.data);
-        console.log("carouselData", data.data);
         setCarousel(data.data);
         setSelectedImage(data.data.attachmentId);
       });
@@ -71,7 +69,6 @@ const HomeItemCarouselDetail = () => {
     fetchWithAuth("/admin/items/" + carousel.itemId)
       .then(resp => resp.json())
       .then(data => {
-        console.log("itemData", data.data[0]);
         setItem(data.data[0]);
         const newArray = data.data.map((item, idx) => {
           const newObj = {};
@@ -80,13 +77,11 @@ const HomeItemCarouselDetail = () => {
           newObj.savedFileName = item.savedFileName;
           return newObj;
         });
-        console.log("imageArray", newArray);
         setImageList(newArray);
       });
   };
 
   const updateCarouselRequest = () => {
-    console.log("JSON.stringify(selectedImage)", JSON.stringify(selectedImage));
     fetchWithAuth(
       "/admin/home/carousels/update/attachment/" + carouselId,
       {method: "post", headers: {"Content-Type": "application/json"}, body: JSON.stringify(selectedImage)}
@@ -106,7 +101,6 @@ const HomeItemCarouselDetail = () => {
           window.history.back();
           return;
         }
-        console.log("has error");
       });
   }
 

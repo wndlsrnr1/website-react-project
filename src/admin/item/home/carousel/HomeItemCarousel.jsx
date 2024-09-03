@@ -46,7 +46,6 @@ const HomeItemCarousel = () => {
     fetchWithAuth("/admin/home/carousels")
       .then(resp => resp.json())
       .then(data => {
-        console.log(data);
         const sortedList = data.data.content.sort((a, b) => a.priority - b.priority);
         setCarouselList(sortedList);
       });

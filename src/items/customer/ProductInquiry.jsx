@@ -100,15 +100,16 @@ const ProductInquiry = (props) => {
         setStar(5);
         setToggleInquiryValue(false);
         setContent("");
+        requestSearchInquiry(true);
         //todo: request comment again.
       }
     })
   }
 
-  const requestSearchInquiry = () => {
+  const requestSearchInquiry = (reset) => {
     let path = "/comments"
     path += "?size=5";
-    if (nextSearchAfter !== null) {
+    if (nextSearchAfter !== null && !reset) {
       path += "&searchAfter=" + nextSearchAfter;
     }
     path += "&withTotalCount=" + withTotalCount;
@@ -121,6 +122,11 @@ const ProductInquiry = (props) => {
           return;
         } else {
           resp.json().then(data => {
+            if (reset) {
+              setInquiryList(data.body.items);
+              setNextSearchAfter(data.body.nextSearchAfter);
+              return;
+            }
             const listForUpdate = [...inquiryList, ...data.body.items];
             setInquiryList(listForUpdate);
             setNextSearchAfter(data.body.nextSearchAfter);
@@ -138,23 +144,23 @@ const ProductInquiry = (props) => {
         toggleInquiryValue ? (
           <div className={"mb-3 border p-2"}>
             <form onSubmit={inquiryAddOnSubmit}>
-              <ButtonGroup className={"mb-1"}>
-                {
-                  new Array(5).fill(0).map((elem, idx) => {
-                    return (
-                      <a key={elem.toString() + idx.toString()} style={{
-                        background: getStarImage(idx, star), backgroundSize: "30px 30px",
-                        width: "35px",
-                        height: "35px",
-                        border: "0px"
-                      }}
-                         className={"bg-white p-1"}
-                         onClick={() => setStarOnClick(idx)}
-                      />
-                    )
-                  })
-                }
-              </ButtonGroup>
+              {/*<ButtonGroup className={"mb-1"}>*/}
+              {/*  {*/}
+              {/*    new Array(5).fill(0).map((elem, idx) => {*/}
+              {/*      return (*/}
+              {/*        <a key={elem.toString() + idx.toString()} style={{*/}
+              {/*          background: getStarImage(idx, star), backgroundSize: "30px 30px",*/}
+              {/*          width: "35px",*/}
+              {/*          height: "35px",*/}
+              {/*          border: "0px"*/}
+              {/*        }}*/}
+              {/*           className={"bg-white p-1"}*/}
+              {/*           onClick={() => setStarOnClick(idx)}*/}
+              {/*        />*/}
+              {/*      )*/}
+              {/*    })*/}
+              {/*  }*/}
+              {/*</ButtonGroup>*/}
               <InputGroup className={"mb-3"}>
                 <InputGroupText>문의</InputGroupText>
                 <Input className={"bg-white"} type={"textarea"} onChange={contentOnChangeInput} value={content}

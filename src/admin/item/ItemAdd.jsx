@@ -17,8 +17,6 @@ import data from "bootstrap/js/src/dom/data";
 import {fetchWithAuth} from "../../utils/fetchUtils";
 
 const getFormattedDateTime = (date, time) => {
-  console.log(data);
-  console.log(time);
   const datetime1 = date + " " + time + ":00";
   return datetime1;
   // const datetime2 = new Date(datetime1)
@@ -126,8 +124,6 @@ const ItemAdd = () => {
   const submitRequest = (url) => {
     const formData = new FormData();
     const updatedReleasedAt = getFormattedDateTime(releasedAtDate, releasedAtTime);
-    console.log(updatedReleasedAt);
-
     formData.append("categoryId", categoryId);
     formData.append("subcategoryId", subcategoryId);
     formData.append("nameKor", nameKor);
@@ -151,17 +147,16 @@ const ItemAdd = () => {
     formData.append("manufacturer", manufacturer);
     formData.append("madeIn", madeIn);
 
-
     fetchWithAuth(url, {method: "post", body: formData})
       .then(resp => {
         if (resp.ok) {
+          return;
           window.location.href = "/admin/items";
         } else {
           return resp.json();
         }
       })
       .then((data) => {
-        console.log(data);
       });
   };
 
@@ -206,7 +201,6 @@ const ItemAdd = () => {
     }
 
     setImageFiles(imageFileListNew);
-    console.log(imageFileListNew);
   }
 
   //onSubmits
@@ -314,7 +308,6 @@ const ItemAdd = () => {
         return;
       }
     }
-    console.log("files = ", files);
     setImageFiles(Array.from(files));
     setImageNames(imageNameList);
   }
@@ -325,9 +318,6 @@ const ItemAdd = () => {
     const files = event.target.files;
     const maxSize = event.target.getAttribute("max-size");
     const thumbnailObj = event.target.files[0].name;
-    console.log("event.target", event.target);
-    console.log("event.target.files", event.target.files);
-    console.log("event.target.files[0].name", event.target.files[0].name);
     if (files[0].size > maxSize) {
       setThumbnailName(null);
       setThumbnailFile(null);

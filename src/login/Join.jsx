@@ -20,8 +20,6 @@ const Join = () => {
 
   //email값 변경시 email 인증 상태값 취소
   useEffect(() => {
-    console.log("errors: ", error);
-    console.log("emailExists: ", emailExists);
     if (emailExists === true) {
       setEmailExists(false);
     }

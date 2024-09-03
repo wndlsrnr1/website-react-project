@@ -63,7 +63,6 @@ const ProductReviews = (props) => {
     if (loaded) {
       return;
     }
-    console.log("itemId = " + itemId);
     requestReviews();
     setLoaded(true);
   }, [])
@@ -100,7 +99,6 @@ const ProductReviews = (props) => {
 
   //requests
   const requestReviews = () => {
-    console.log("??");
     fetchWithAuth("/reviews?" +
       "size=5" +
       "&itemId=" + itemId + "" +
