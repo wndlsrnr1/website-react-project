@@ -570,12 +570,12 @@ const ItemEdit = () => {
                        value={selectedSubcategory ? selectedSubcategory.id : null}
                        onChange={subCategoryOnChangeInput}>
                   {
-                    subcategories.length !== 0 ? subcategories.map((subcategory, idx) => {
+                    subcategories.length !== 0 && subcategories.map((subcategory, idx) => {
                       return (
                         <option key={subcategory.toString() + idx}
-                                value={subcategory.subcategorgyId}>{subcategory.nameKor} ({subcategory.name})</option>
+                                value={subcategory.subcategoryId}>{subcategory.nameKor} ({subcategory.name})</option>
                       )
-                    }) : null
+                    })
                   }
                 </Input>
               </InputGroup>
