@@ -52,7 +52,7 @@ const HomeItemRecent = () => {
 
   //requests
   const recentItemRequest = () => {
-    fetchWithAuth("/home/main/item/recent", {
+    fetchWithAuth("/home/main/items/recent", {
       method: "get"
     })
       .then(resp => resp.json())

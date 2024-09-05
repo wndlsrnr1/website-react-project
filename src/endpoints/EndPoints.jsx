@@ -8,15 +8,15 @@ import UserProfile from "../user/UserProfile";
 import NotFoundPage from "../errors/NotFoundPage";
 import PrivateRoute from "./util/ProtectedRoute";
 import AdminMain from "../admin/AdminMain";
-import HomeItemCarousel from "../admin/item/home/carousel/HomeItemCarousel";
-import HomeItemCarouselAdd from "../admin/item/home/carousel/HomeItemCarouselAdd";
-import HomeItemCarouselDetail from "../admin/item/home/carousel/HomeItemCarouselDetail";
+import HomeItemCarousel from "../admin/items/home/carousel/HomeItemCarousel";
+import HomeItemCarouselAdd from "../admin/items/home/carousel/HomeItemCarouselAdd";
+import HomeItemCarouselDetail from "../admin/items/home/carousel/HomeItemCarouselDetail";
 import CategoryManage from "../admin/category/CategoryManage";
 import SubcategoryManage from "../admin/category/SubcategoryManage";
-import ItemManage from "../admin/item/ItemManage";
-import ItemAdd from "../admin/item/ItemAdd";
-import ItemDetail from "../admin/item/ItemDetail";
-import ItemEdit from "../admin/item/ItemEdit";
+import ItemManage from "../admin/items/ItemManage";
+import ItemAdd from "../admin/items/ItemAdd";
+import ItemDetail from "../admin/items/ItemDetail";
+import ItemEdit from "../admin/items/ItemEdit";
 import Items from "../items/customer/Items";
 import OnDiscountItemList from "../items/customer/OnDiscountItemList";
 import CustomerItemReviewList from "../items/customer/CustomerItemReviewList";
@@ -24,6 +24,7 @@ import ItemCustomerDetail from "../items/customer/ItemCustomerDetail";
 import ItemList from "../items/itemList";
 import KaKaoCallback from "../login/KaKaoCallback";
 import CustomerComments from "../admin/answer/CustomerComments";
+import CartCheckout from "../items/CartCheckout";
 
 const EndPoints = () => {
 
@@ -49,6 +50,7 @@ const EndPoints = () => {
           <Route path={"/items/reviews"} exact component={CustomerItemReviewList}/>
           <Route path={"/items/detail/:itemId"} exact component={ItemCustomerDetail}/>
           <Route path={"/items/list"} exact component={ItemList}/>
+          <Route path={"/cart/items/checkout/:itemId"} exact component={CartCheckout}/>
 
           {/*admin*/}
           <PrivateRoute path={"/admin"} exact component={AdminMain}/>

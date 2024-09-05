@@ -87,7 +87,7 @@ const CommentManagement = (props) => {
 
       const commentIdList = removeDuplicated(items.map((e) => e.id));
       const thumbnailResponse = await Promise.all(itemIdList.map((itemId) =>
-          fetchWithAuth("/item/thumbnail?itemId=" + itemId,
+          fetchWithAuth("/items/thumbnail?itemId=" + itemId,
             {}, true)
         )
       );
@@ -101,7 +101,7 @@ const CommentManagement = (props) => {
 
       // makeItem
       const itemInfoResponse = await Promise.all(itemIdList.map((itemId) =>
-          fetchWithAuth("/item/basic/" + itemId, {}, true)
+          fetchWithAuth("/items/basic/" + itemId, {}, true)
         )
       );
       const itemMap = {};

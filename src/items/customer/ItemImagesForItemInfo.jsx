@@ -30,7 +30,7 @@ const ItemImagesForItemInfo = (props) => {
 
   //requests
   const itemImageRequest = () => {
-    fetchWithAuth("/attachment/item/" + itemId)
+    fetchWithAuth("/attachment/items/" + itemId)
       .then(resp => resp.json())
       .then(data => {
         setItemImages(data.data);

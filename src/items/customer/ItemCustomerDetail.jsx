@@ -10,6 +10,7 @@ import {useParams} from "react-router-dom";
 import {getDiscountedPrice} from "../../utils/priceUtils";
 import {parseDate} from "../../utils/timeUtils";
 import {fetchWithAuth} from "../../utils/fetchUtils";
+import {checkLogin} from "../../utils/LoginUtils";
 
 const ItemCustomerDetail = () => {
 
@@ -107,7 +108,7 @@ const ItemCustomerDetail = () => {
       });
   }
   const requestThumbnailImage = () => {
-    fetchWithAuth("/item/thumbnail?itemId=" + itemId, {method: "get"})
+    fetchWithAuth("/items/thumbnail?itemId=" + itemId, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setThumbnailImage(data.data);
@@ -115,7 +116,7 @@ const ItemCustomerDetail = () => {
   }
 
   const requestItemBasic = () => {
-    fetchWithAuth("/item/basic/" + itemId, {method: "get"})
+    fetchWithAuth("/items/basic/" + itemId, {method: "get"})
       .then(resp => resp.json())
       .then(data => {
         setName(data.data.name);
@@ -212,9 +213,7 @@ const ItemCustomerDetail = () => {
         }
         <ButtonGroup className={"d-flex justify-content-center"}>
           <Button className={"me-2 bg-primary"} onClick={addBookmarkOnClick}>장바구니</Button>
-          <Button className={"bg-primary"} onClick={() => {
-            alert("미구현")
-          }}>바로구매</Button>
+          <a className={"btn bg-primary text-white"} href={checkLogin(sessionStorage) ? "/cart/items/checkout/" + itemId : "/login"}>바로구매</a>
         </ButtonGroup>
 
       </Container>

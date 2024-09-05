@@ -89,7 +89,7 @@ const ReviewManagement = () => {
 
 
         const thumbnailResponse = await Promise.all(itemIdList.map((itemId) =>
-            fetchWithAuth("/item/thumbnail?itemId=" + itemId,
+            fetchWithAuth("/items/thumbnail?itemId=" + itemId,
               {}, true)
           )
         );
@@ -102,7 +102,7 @@ const ReviewManagement = () => {
 
         // makeItem
         const itemInfoResponse = await Promise.all(itemIdList.map((itemId) =>
-            fetchWithAuth("/item/basic/" + itemId, {}, true)
+            fetchWithAuth("/items/basic/" + itemId, {}, true)
           )
         );
         const itemMap = {};

@@ -72,7 +72,7 @@ const Items = (props) => {
 
   //requests
   const requestItem = () => {
-    let path = "/item"
+    let path = "/items"
     path += "?size=" + size;
     path += "&sortType=" + sortType;
     path += "&searchName=" + searchName;

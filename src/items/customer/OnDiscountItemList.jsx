@@ -72,7 +72,7 @@ const OnDiscountItemList = () => {
 
   //requests
   const requestItem = () => {
-    let path = "/item"
+    let path = "/items"
     path += "?size=" + size;
     path += "&onDiscount=" + onDiscount;
     path += "&sortType=" + sortType;

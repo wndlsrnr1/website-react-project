@@ -36,7 +36,7 @@ const CustomerItemReviewList = (props) => {
 
   //requests
   const requestItemWithReviewed = () => {
-    let path = "/item/reviewed";
+    let path = "/items/reviewed";
     path += "?size=" + size;
     if (nextSearchAfter !== null && nextSearchAfter) {
       path += "&nextSearchAfter=" + nextSearchAfter;

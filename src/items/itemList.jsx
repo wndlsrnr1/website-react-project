@@ -149,7 +149,7 @@ const ItemList = () => {
   }
 
   const categoryAndSubcategoryRequestBySubcategoryId = (subcategoryId) => {
-    const url = "/home/info/item/category/subcategory/" + subcategoryId
+    const url = "/home/info/items/category/subcategory/" + subcategoryId
     fetchWithAuth(url, {method: "get"})
       .then(resp => {
         if (resp.status === 404) {
@@ -169,7 +169,6 @@ const ItemList = () => {
         setSubcategory(data?.data)
       });
   }
-
 
 
   return (
@@ -232,7 +231,7 @@ const ItemList = () => {
                 <div className={"d-flex flex-column align-items-center border pt-3 pb-3"}
                      key={item.price + (idx) * 100}>
                   <a href={"/items/detail/" + item.id}>
-                    <img src={"/attachment/" + item.fileIdForThumbnail} style={{height: "200px"}}/>
+                    <img className={"w-100"} src={"/attachment/" + item.fileIdForThumbnail} style={{height: "200px"}}/>
                   </a>
                   <div>
                     <span>이름: </span>
@@ -277,7 +276,7 @@ const ItemList = () => {
         </Row>
         <div className={"w-100"}>
           {
-            isLastPage() ? null : (
+            !isLastPage() && itemList && itemList.length > 0 && (
               <Button className={"bg-secondary w-100 opacity-75"} onClick={showMoreOnClick}>더보기</Button>
             )
           }

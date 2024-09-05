@@ -55,7 +55,7 @@ const HomeItemDiscount = () => {
   //requests
 
   const recentItemRequest = () => {
-    fetchWithAuth("/home/main/item/special-sale", {
+    fetchWithAuth("/home/main/items/special-sale", {
       method: "get"
     })
       .then(resp => resp.json())

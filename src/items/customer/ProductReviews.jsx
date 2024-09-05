@@ -121,7 +121,7 @@ const ProductReviews = (props) => {
   }
 
   const requestFindOrders = () => {
-    fetchWithAuth("/item/{itemId}/purchases",
+    fetchWithAuth("/items/{itemId}/purchases",
       {method: "get", headers: {"Content-Type": "application/json"}}
     ).then(resp => {
       if (!resp.ok) {
